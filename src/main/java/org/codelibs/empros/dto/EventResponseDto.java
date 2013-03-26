@@ -18,6 +18,6 @@ public class EventResponseDto {
     }
 
     public void setProcessed(final long num) {
-        this.processed = num;
+        processed = num;
     }
 }

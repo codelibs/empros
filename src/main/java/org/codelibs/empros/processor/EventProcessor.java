@@ -4,26 +4,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.codelibs.empros.event.Event;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class EventProcessor {
-    private static final Logger logger = LoggerFactory
-            .getLogger(EventProcessor.class);
+public abstract class EventProcessor {
 
-    protected List<EventProcessor> nextProcessorList = new ArrayList<>();
+    protected List<EventProcessor> nextProcessorList;
 
-    public void process(final List<Event> eventList) {
-        if (logger.isInfoEnabled()) {
-            logger.info("incoming event: {}", eventList.toString());
-        }
-
-        invokeNextProcessors(eventList);
+    public EventProcessor() {
+        nextProcessorList = new ArrayList<>();
     }
 
-    public void addNext(final EventProcessor processor) {
-        nextProcessorList.add(processor);
+    public EventProcessor(final List<EventProcessor> processorList) {
+        nextProcessorList = processorList;
     }
+
+    public void invoke(final List<Event> eventList) {
+        final List<Event> newEventlist = process(eventList);
+
+        invokeNextProcessors(newEventlist);
+    }
+
+    public abstract List<Event> process(final List<Event> eventList);
 
     protected void invokeNextProcessors(final List<Event> eventList) {
         for (final EventProcessor processor : nextProcessorList) {

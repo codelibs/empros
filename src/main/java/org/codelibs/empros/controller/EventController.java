@@ -1,6 +1,7 @@
 package org.codelibs.empros.controller;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -23,6 +24,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 /**
  * Handles requests for events.
@@ -47,14 +50,18 @@ public class EventController {
 
         final List<Event> eventList = new ArrayList<>();
         if (data instanceof Map<?, ?>) {
-            final Event event = new Event(
-                    (Map<? extends String, ? extends Object>) data);
+            final Event event = new Event((Map<?, ?>) data);
+            event.setCreatedBy(getCreatedBy());
+            event.setCreatedTime(new Date());
             eventList.add(event);
         } else if (data instanceof List<?>) {
+            final String createdBy = getCreatedBy();
+            final Date now = new Date();
             for (final Object obj : (List<?>) data) {
                 if (obj instanceof Map<?, ?>) {
-                    final Event event = new Event(
-                            (Map<? extends String, ? extends Object>) obj);
+                    final Event event = new Event((Map<?, ?>) obj);
+                    event.setCreatedBy(createdBy);
+                    event.setCreatedTime(now);
                     eventList.add(event);
                 } else {
                     throw new EmprosClientException("EEM0001",
@@ -66,7 +73,7 @@ public class EventController {
         }
 
         if (!eventList.isEmpty()) {
-            eventProcessor.process(eventList);
+            eventProcessor.invoke(eventList);
         }
 
         final EventResponseDto responseDto = new EventResponseDto();
@@ -99,6 +106,8 @@ public class EventController {
     @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
     @ResponseBody
     public ErrorResponseDto handlerException(final Exception e) {
+        logger.error("System Error occured.", e);
+
         final ErrorDto errorDto = new ErrorResponseDto.ErrorDto();
         errorDto.setCode("SYSTEM");
         errorDto.setMessage(e.getMessage());
@@ -106,6 +115,11 @@ public class EventController {
         responseDto.setStatus("error");
         responseDto.setError(errorDto);
         return responseDto;
+    }
+
+    protected String getCreatedBy() {
+        return ((ServletRequestAttributes) RequestContextHolder
+                .currentRequestAttributes()).getRequest().getRemoteAddr();
     }
 
 }

@@ -3,7 +3,15 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-	<bean id="eventProcessor" class="org.codelibs.empros.processor.EventProcessor">
+	<bean id="persistentProcessor" class="org.codelibs.empros.processor.PersistentProcessor">
+	</bean>
+
+	<bean id="eventProcessor" class="org.codelibs.empros.processor.LoggingProcessor">
+		<constructor-arg>
+			<list>
+				<ref bean="persistentProcessor" />
+			</list>
+		</constructor-arg>
 	</bean>
 
 </beans>

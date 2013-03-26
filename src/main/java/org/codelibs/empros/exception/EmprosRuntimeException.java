@@ -6,8 +6,8 @@ public class EmprosRuntimeException extends SRuntimeException {
 
     private static final long serialVersionUID = 1L;
 
-    public EmprosRuntimeException(final String messageCode, final Object[] args,
-            final Throwable cause) {
+    public EmprosRuntimeException(final String messageCode,
+            final Object[] args, final Throwable cause) {
         super(messageCode, args, cause);
     }
 
@@ -15,7 +15,8 @@ public class EmprosRuntimeException extends SRuntimeException {
         super(messageCode, args);
     }
 
-    public EmprosRuntimeException(final String messageCode, final Throwable cause) {
+    public EmprosRuntimeException(final String messageCode,
+            final Throwable cause) {
         super(messageCode, new Object[] {}, cause);
     }
 

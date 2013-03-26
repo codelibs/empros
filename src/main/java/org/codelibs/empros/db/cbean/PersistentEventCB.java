@@ -1,0 +1,14 @@
+package org.codelibs.empros.db.cbean;
+
+import org.codelibs.empros.db.cbean.bs.BsPersistentEventCB;
+
+/**
+ * The condition-bean of PERSISTENT_EVENT.
+ * <p>
+ * You can implement your original methods here.
+ * This class remains when re-generating.
+ * </p>
+ * @author DBFlute(AutoGenerator)
+ */
+public class PersistentEventCB extends BsPersistentEventCB {
+}
