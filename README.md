@@ -4,6 +4,7 @@ Empros
 ## Overview
 
 Empros is Event Management and Processing System.
+Empros runs on a Servlet container which supports Servlet 3.0.
 
 ## Usage
 

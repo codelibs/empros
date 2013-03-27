@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 import javax.annotation.Resource;
 
@@ -43,43 +44,49 @@ public class EventController {
 
     @RequestMapping(method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
     @ResponseBody
-    public EventResponseDto create(@RequestBody final Object data) {
+    public Callable<EventResponseDto> create(@RequestBody final Object data) {
         if (logger.isInfoEnabled()) {
             logger.info("event request");
         }
 
-        final List<Event> eventList = new ArrayList<>();
-        if (data instanceof Map<?, ?>) {
-            final Event event = new Event((Map<?, ?>) data);
-            event.setCreatedBy(getCreatedBy());
-            event.setCreatedTime(new Date());
-            eventList.add(event);
-        } else if (data instanceof List<?>) {
-            final String createdBy = getCreatedBy();
-            final Date now = new Date();
-            for (final Object obj : (List<?>) data) {
-                if (obj instanceof Map<?, ?>) {
-                    final Event event = new Event((Map<?, ?>) obj);
-                    event.setCreatedBy(createdBy);
-                    event.setCreatedTime(now);
+        return new Callable<EventResponseDto>() {
+            @Override
+            public EventResponseDto call() throws Exception {
+                final List<Event> eventList = new ArrayList<>();
+                if (data instanceof Map<?, ?>) {
+                    final Event event = new Event((Map<?, ?>) data);
+                    event.setCreatedBy(getCreatedBy());
+                    event.setCreatedTime(new Date());
                     eventList.add(event);
+                } else if (data instanceof List<?>) {
+                    final String createdBy = getCreatedBy();
+                    final Date now = new Date();
+                    for (final Object obj : (List<?>) data) {
+                        if (obj instanceof Map<?, ?>) {
+                            final Event event = new Event((Map<?, ?>) obj);
+                            event.setCreatedBy(createdBy);
+                            event.setCreatedTime(now);
+                            eventList.add(event);
+                        } else {
+                            throw new EmprosClientException("EEM0001",
+                                    new Object[] { obj });
+                        }
+                    }
                 } else {
                     throw new EmprosClientException("EEM0001",
-                            new Object[] { obj });
+                            new Object[] { data });
                 }
+
+                if (!eventList.isEmpty()) {
+                    eventProcessor.invoke(eventList);
+                }
+
+                final EventResponseDto responseDto = new EventResponseDto();
+                responseDto.setStatus("ok");
+                responseDto.setProcessed(eventList.size());
+                return responseDto;
             }
-        } else {
-            throw new EmprosClientException("EEM0001", new Object[] { data });
-        }
-
-        if (!eventList.isEmpty()) {
-            eventProcessor.invoke(eventList);
-        }
-
-        final EventResponseDto responseDto = new EventResponseDto();
-        responseDto.setStatus("ok");
-        responseDto.setProcessed(eventList.size());
-        return responseDto;
+        };
     }
 
     @RequestMapping(produces = { MediaType.APPLICATION_JSON_VALUE })
