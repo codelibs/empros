@@ -79,7 +79,7 @@ map:{
     #
     # @JavaSpringLucyOnly
     #; dbfluteBeansPackageName = ../resources
-    ; dbfluteBeansPackageName = ../h2/resources
+    ; dbfluteBeansPackageName = ../mysql/resources
     # - - - - - - - - - -/
 
     # /- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

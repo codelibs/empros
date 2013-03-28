@@ -1,0 +1,174 @@
+# /---------------------------------------------------------------------------
+# documentDefinitionMap: (NotRequired - Default map:{})
+#
+# o documentOutputDirectory (NotRequired - Default './output/doc')
+# o aliasDelimiterInDbComment (NotRequired - Default '')
+# o isDbCommentOnAliasBasis (NotRequired - Default false)
+# o isEntityJavaDocDbCommentValid (NotRequired - Default false)
+# o isEntityDBMetaDbCommentValid (NotRequired - Default false)
+# o schemaHtmlFileName (NotRequired - Default 'schema-[project-name].html')
+# o isSuppressSchemaHtmlOutsideSql (NotRequired - Default false)
+# o historyHtmlFileName (NotRequired - Default 'history-[project-name].html')
+# o isCheckColumnDefOrderDiff (NotRequired - Default false)
+# o isCheckDbCommentDiff (NotRequired - Default false)
+# o isCheckProcedureDiff (NotRequired - Default false)
+# o loadDataReverseMap (NotRequired - Default map:{})
+# o schemaSyncCheckMap (NotRequired - Default map:{})
+#
+# Example:
+# map:{
+#     ; documentOutputDirectory = ./output/doc
+#     ; aliasDelimiterInDbComment = :
+#     ; isDbCommentOnAliasBasis = true
+#     ; isEntityJavaDocDbCommentValid = true
+#     ; isEntityDBMetaDbCommentValid = true
+#     ; schemaHtmlFileName = xxx.html
+#     ; isSuppressSchemaHtmlOutsideSql = false
+#     ; historyHtmlFileName = xxx.html
+#     ; isCheckColumnDefOrderDiff = true
+#     ; isCheckDbCommentDiff = true
+#     ; isCheckProcedureDiff = true
+#     ; loadDataReverseMap = map:{
+#         ; recordLimit = -1
+#         ; isContainsCommonColumn = true
+#         ; isOutputToPlaySql = true
+#     }
+#     ; schemaSyncCheckMap = map:{
+#         ; url = jdbc:...
+#         ; schema = EXAMPLEDB
+#         ; user = exampuser
+#         ; password = exampword
+#     }
+# }
+#
+# *The line that starts with '#' means comment-out.
+#
+map:{
+    # /- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # o documentOutputDirectory (NotRequired - Default './output/doc')
+    #  The output directory mainly for SchemaHtml and DataXlsTemplate.
+    #  Basically you don't need this.
+    #  It is considered of value that it always exists at same plain.
+    #
+    #; documentOutputDirectory = ./output/doc
+    # - - - - - - - - - -/
+
+    # /- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # o aliasDelimiterInDbComment (NotRequired - Default '')
+    #  If the alias exists in its DB comment like as follows:
+    #    member name : The name of member's full name
+    #  you can use the alias in DBFlute world, java-doc, SchemaHTML...
+    #  DB comment which does not have the delimiter is not treated
+    #  as alias, treated as description (real comment).
+    #  But you can change it by 'isDbCommentOnAliasBasis'.
+    #
+    #; aliasDelimiterInDbComment = :
+    # - - - - - - - - - -/
+
+    # /- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # o isDbCommentOnAliasBasis (NotRequired - Default false)
+    #  Is DB comment on alias basis?
+    #  (Is DB comment alias name when it has no alias delimiter?)
+    #  This property works with 'aliasDelimiterInDbComment'.
+    #
+    #; isDbCommentOnAliasBasis = false
+    # - - - - - - - - - -/
+
+    # /- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # o isEntityJavaDocDbCommentValid (NotRequired - Default false)
+    #  Does it allow DB comment to be on java-doc?
+    #
+    #; isEntityJavaDocDbCommentValid = false
+    # - - - - - - - - - -/
+
+    # /- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # o isEntityDBMetaDbCommentValid (NotRequired - Default false)
+    #  Does it allow DB comment to be on DB meta of entity?
+    #
+    #; isEntityDBMetaDbCommentValid = false
+    # - - - - - - - - - -/
+
+    # /- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # o schemaHtmlFileName (NotRequired - Default 'schema-[project-name].html')
+    #  The file name (not contain path) of SchemaHtml.
+    #  Basically you don't need this.
+    #  (For example, when you use Application Behavior, you need this)
+    #
+    #; schemaHtmlFileName = xxx.html
+    # - - - - - - - - - -/
+
+    # /- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # o isSuppressSchemaHtmlOutsideSql (NotRequired - Default false)
+    #  Does it remove outsideSql information from SchemaHtml?
+    #  Basically you don't need this.
+    #  OutsideSql information (related to tables) is very useful.
+    #
+    #; isSuppressSchemaHtmlOutsideSql = false
+    # - - - - - - - - - -/
+
+    # /- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # o historyHtmlFileName (NotRequired - Default 'history-[project-name].html')
+    #  The file name (not contain path) of HistoryHtml.
+    #  Basically you don't need this.
+    #  (For example, when you use Application Behavior, you need this)
+    #
+    #; historyHtmlFileName = xxx.html
+    # - - - - - - - - - -/
+
+    # /- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # o isCheckColumnDefOrderDiff (NotRequired - Default false)
+    #  Does it check differences of column-def order?
+    #  (except added or deleted columns)
+    #
+    #; isCheckColumnDefOrderDiff = false
+    # - - - - - - - - - -/
+
+    # /- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # o isCheckDbCommentDiff (NotRequired - Default false)
+    #  Does it check differences of table or column or others comment?
+    #
+    #; isCheckDbCommentDiff = false
+    # - - - - - - - - - -/
+
+    # /- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # o isCheckProcedureDiff (NotRequired - Default false)
+    #  Does it check differences of procedures?
+    #
+    #; isCheckProcedureDiff = false
+    # - - - - - - - - - -/
+
+    # /- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # o loadDataReverseMap: (NotRequired - Default map:{})
+    #  You can set LoadDataReverse settings.
+    #  This property is valid when the property 'recordLimit' is set.
+    #  Elements of this map are as below:
+    #   o recordLimit: The limit of records to output. Minus means no limit. (NotRequired - Default '')
+    #   o isContainsCommonColumn: Does the data contain common columns? (NotRequired - Default false)
+    #   o isOutputToPlaySql: Does it output the data to playsql? (NotRequired - Default false)
+    #
+    #; loadDataReverseMap = map:{
+    #    ; recordLimit = -1
+    #    ; isContainsCommonColumn = false
+    #    ; isOutputToPlaySql = false
+    #}
+    # - - - - - - - - - -/
+
+    # /- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # o schemaSyncCheckMap: (NotRequired - Default map:{})
+    #  You can set SchemaSyncCheck settings.
+    #  This property is valid when the property 'user' is set.
+    #  Elements of this map are as below:
+    #   o url: The URL for connecting database. (NotRequired - Default same as databaseInfoMap)
+    #   o schema: The schema name. (NotRequired - Default '' e.g. no setting when MySQL)
+    #   o user: The database user name. (Required)
+    #   o password: The database password. (NotRequired - Default '')
+    #
+    #; schemaSyncCheckMap = map:{
+    #    ; url = jdbc:...
+    #    ; schema = EXAMPLEDB
+    #    ; user = exampuser
+    #    ; password = exampword
+    #}
+    # - - - - - - - - - -/
+}
+# ----------------/

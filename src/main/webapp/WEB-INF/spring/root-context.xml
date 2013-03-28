@@ -10,8 +10,8 @@
 	<context:annotation-config />
 
 	<!-- Root Context: defines shared resources visible to all other web components -->
-	<import resource="data-source.xml" />
-	<import resource="dbflute.xml" />
+	<import resource="classpath:data-source.xml" />
+	<import resource="classpath:dbflute.xml" />
 	<import resource="empros-processor.xml" />
 
 	<tx:annotation-driven />
