@@ -13,17 +13,13 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.codelibs.empros.db.cbean;
+package org.codelibs.empros.store;
 
-import org.codelibs.empros.db.cbean.bs.BsPersistentEventValueCB;
+import java.util.List;
 
-/**
- * The condition-bean of PERSISTENT_EVENT_VALUE.
- * <p>
- * You can implement your original methods here.
- * This class remains when re-generating.
- * </p>
- * @author DBFlute(AutoGenerator)
- */
-public class PersistentEventValueCB extends BsPersistentEventValueCB {
+import org.codelibs.empros.event.Event;
+
+public interface DataStore {
+    void store(List<Event> eventList);
+
 }

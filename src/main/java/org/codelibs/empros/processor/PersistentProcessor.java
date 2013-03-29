@@ -1,21 +1,27 @@
+/*
+ * Copyright 2013 the CodeLibs Project and the Others.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
 package org.codelibs.empros.processor;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Resource;
-
-import org.codelibs.empros.db.exbhv.PersistentEventBhv;
-import org.codelibs.empros.db.exbhv.PersistentEventValueBhv;
-import org.codelibs.empros.db.exentity.PersistentEvent;
 import org.codelibs.empros.event.Event;
+import org.codelibs.empros.store.DataStore;
 
 public class PersistentProcessor extends EventProcessor {
-    @Resource
-    protected PersistentEventBhv persistentEventBhv;
-
-    @Resource
-    protected PersistentEventValueBhv persistentEventValueBhv;
+    protected DataStore dataStore;
 
     public PersistentProcessor() {
         super();
@@ -28,24 +34,17 @@ public class PersistentProcessor extends EventProcessor {
     @Override
     public List<Event> process(final List<Event> eventList) {
 
-        final List<PersistentEvent> pEventList = new ArrayList<>(
-                eventList.size());
-        for (final Event event : eventList) {
-            pEventList.add(new PersistentEvent(event));
-        }
-
-        store(pEventList);
+        dataStore.store(eventList);
 
         return eventList;
     }
 
-    protected void store(final List<PersistentEvent> pEventList) {
-        for (final PersistentEvent pEvent : pEventList) {
-            persistentEventBhv.insert(pEvent);
-            pEvent.updateValues();
-            persistentEventValueBhv.batchInsert(pEvent
-                    .getPersistentEventValueList());
-        }
+    public DataStore getDataStore() {
+        return dataStore;
+    }
+
+    public void setDataStore(final DataStore dataStore) {
+        this.dataStore = dataStore;
     }
 
 }

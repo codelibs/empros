@@ -14,16 +14,6 @@
 	<import resource="classpath:dbflute.xml" />
 	<import resource="empros-processor.xml" />
 
-	<tx:annotation-driven />
-	<tx:advice id="txAdvice" transaction-manager="transactionManager">
-		<tx:attributes>
-			<tx:method name="*" propagation="REQUIRED" />
-		</tx:attributes>
-	</tx:advice>
-	<aop:config proxy-target-class="true">
-		<aop:pointcut id="processorOperation"
-			expression="execution(public * org.codelibs.empros.processor.*.process(..))" />
-		<aop:advisor advice-ref="txAdvice" pointcut-ref="processorOperation" />
-	</aop:config>
+	<tx:annotation-driven proxy-target-class="true"/>
 
 </beans>
