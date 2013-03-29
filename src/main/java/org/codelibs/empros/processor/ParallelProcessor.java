@@ -80,7 +80,7 @@ public class ParallelProcessor extends EventProcessor {
     }
 
     @Override
-    public List<Event> process(final List<Event> eventList) {
+    protected List<Event> process(final List<Event> eventList) {
         // nothing
         return null;
     }

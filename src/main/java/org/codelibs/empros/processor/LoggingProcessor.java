@@ -34,7 +34,7 @@ public class LoggingProcessor extends EventProcessor {
     }
 
     @Override
-    public List<Event> process(final List<Event> eventList) {
+    protected List<Event> process(final List<Event> eventList) {
         if (logger.isInfoEnabled()) {
             logger.info("incoming event: {}", eventList.toString());
         }

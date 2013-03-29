@@ -3,21 +3,41 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
+	<!-- DataStore -->
 	<bean id="dbStore" class="org.codelibs.empros.store.DatabaseStore">
 	</bean>
+	<bean id="csvStore" class="org.codelibs.empros.store.CsvStore" destroy-method="destroy">
+		<property name="columnList">
+			<list>
+				<value>aaa</value>
+				<value>bbb</value>
+			</list>
+		</property>
+		<property name="rotationDatePattern">
+			<value>yyyyMMddHHmm</value>
+		</property>
+	</bean>
 
-	<bean id="persistentProcessor" class="org.codelibs.empros.processor.PersistentProcessor">
+	<!-- Processor -->
+	<bean id="dbProcessor" class="org.codelibs.empros.processor.PersistentProcessor">
 		<property name="dataStore">
 			<ref bean="dbStore"/>
+		</property>
+	</bean>
+	<bean id="csvProcessor" class="org.codelibs.empros.processor.PersistentProcessor">
+		<property name="dataStore">
+			<ref bean="csvStore"/>
 		</property>
 	</bean>
 	<bean id="loggingProcessor" class="org.codelibs.empros.processor.LoggingProcessor">
 	</bean>
 
+	<!-- Main Processor -->
 	<bean id="eventProcessor" class="org.codelibs.empros.processor.ParallelProcessor">
 		<constructor-arg>
 			<list>
-				<ref bean="persistentProcessor" />
+				<ref bean="dbProcessor" />
+				<ref bean="csvProcessor" />
 				<ref bean="loggingProcessor" />
 			</list>
 		</constructor-arg>
