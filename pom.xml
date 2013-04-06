@@ -3,9 +3,9 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.codelibs</groupId>
-	<artifactId>empros</artifactId>
-	<name>Empros</name>
-	<packaging>war</packaging>
+	<artifactId>empros-project</artifactId>
+	<name>Empros Project</name>
+	<packaging>pom</packaging>
 	<version>1.0.0-SNAPSHOT</version>
 	<url>https://github.com/codelibs/empros</url>
 	<inceptionYear>2012</inceptionYear>
@@ -35,154 +35,103 @@
 	</scm>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<java-version>1.7</java-version>
+		<java-version>1.6</java-version>
 		<org.springframework-version>3.2.2.RELEASE</org.springframework-version>
 		<org.aspectj-version>1.7.2</org.aspectj-version>
 		<org.slf4j-version>1.7.2</org.slf4j-version>
 		<junit-version>4.11</junit-version>
 	</properties>
-	<profiles>
-		<profile>
-			<id>h2</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
-			<properties>
-				<database>h2</database>
-				<databaseGroupId>com.h2database</databaseGroupId>
-				<databaseArtifactId>h2</databaseArtifactId>
-				<databaseVersion>1.3.170</databaseVersion>
-				<databaseDriver>org.h2.Driver</databaseDriver>
-				<databaseUrl>jdbc:h2:file:${basedir}/src/main/webapp/WEB-INF/db/empros</databaseUrl>
-				<databaseTestUrl>jdbc:h2:file:${basedir}/target/test-classes/db/empros</databaseTestUrl>
-				<databaseUsername>sa</databaseUsername>
-				<databasePassword />
-			</properties>
-		</profile>
-		<profile>
-			<id>mysql</id>
-			<properties>
-				<database>mysql</database>
-				<databaseGroupId>mysql</databaseGroupId>
-				<databaseArtifactId>mysql-connector-java</databaseArtifactId>
-				<databaseVersion>5.1.22</databaseVersion>
-				<databaseDriver>com.mysql.jdbc.Driver</databaseDriver>
-				<databaseUrl>jdbc:mysql://localhost:3306/empros_db?noDatetimeStringSync=true&amp;zeroDateTimeBehavior=convertToNull&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;autoReconnect=true</databaseUrl>
-				<databaseTestUrl>jdbc:mysql://localhost:3306/empros_testdb?noDatetimeStringSync=true&amp;zeroDateTimeBehavior=convertToNull&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;autoReconnect=true</databaseTestUrl>
-				<databaseUsername>empros_user</databaseUsername>
-				<databasePassword>empros_pass</databasePassword>
-			</properties>
-		</profile>
-	</profiles>
+	<modules>
+		<module>empros-core</module>
+		<module>empros-dbstore</module>
+		<module>empros-dbstore-h2</module>
+		<module>empros-dbstore-mysql</module>
+		<module>empros-war</module>
+	</modules>
 	<build>
-		<finalName>empros</finalName>
-		<resources>
-			<resource>
-				<directory>src/main/${database}/resources</directory>
-			</resource>
-			<resource>
-				<directory>src/main/resources</directory>
-			</resource>
-		</resources>
-		<plugins>
-			<plugin>
-				<artifactId>maven-eclipse-plugin</artifactId>
-				<version>2.9</version>
-				<configuration>
-					<additionalProjectnatures>
-						<projectnature>org.springframework.ide.eclipse.core.springnature</projectnature>
-					</additionalProjectnatures>
-					<additionalBuildcommands>
-						<buildcommand>org.springframework.ide.eclipse.core.springbuilder</buildcommand>
-					</additionalBuildcommands>
-					<downloadSources>true</downloadSources>
-					<downloadJavadocs>true</downloadJavadocs>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.5.1</version>
-				<configuration>
-					<source>${java-version}</source>
-					<target>${java-version}</target>
-					<encoding>UTF-8</encoding>
-					<compilerArgument>-Xlint:all</compilerArgument>
-					<showWarnings>true</showWarnings>
-					<showDeprecation>true</showDeprecation>
-				</configuration>
-			</plugin>
-			<plugin>
-				<artifactId>maven-source-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>source-jar</id>
-						<phase>package</phase>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<configuration>
-					<encoding>UTF-8</encoding>
-					<docencoding>UTF-8</docencoding>
-					<charset>UTF-8</charset>
-					<links>
-						<link>http://docs.oracle.com/javase/6/docs/api/</link>
-						<link>http://docs.oracle.com/javaee/6/api/</link>
-						<link>http://aopalliance.sourceforge.net/doc/</link>
-						<link>http://www.csg.is.titech.ac.jp/~chiba/javassist/html/</link>
-						<link>http://s2container.seasar.org/2.4/s2-framework/ja/apidocs/</link>
-						<link>http://s2container.seasar.org/2.4/s2-extension/ja/apidocs/</link>
-						<link>http://s2container.seasar.org/2.4/s2-tiger/ja/apidocs/</link>
-					</links>
-				</configuration>
-				<executions>
-					<execution>
-						<phase>site</phase>
-						<goals>
-							<goal>javadoc</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>com.mycila.maven-license-plugin</groupId>
-				<artifactId>maven-license-plugin</artifactId>
-				<version>1.9.0</version>
-				<configuration>
-					<header>${basedir}/src/etc/header.txt</header>
-					<includes>
-						<include>src/**/*.java</include>
-					</includes>
-					<encoding>UTF-8</encoding>
-					<headerDefinitions>
-						<headerDefinition>${basedir}/src/etc/header-definition.xml</headerDefinition>
-					</headerDefinitions>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.tomcat.maven</groupId>
-				<artifactId>tomcat7-maven-plugin</artifactId>
-				<version>2.0</version>
-			</plugin>
-			<plugin>
-				<groupId>org.seasar.dbflute</groupId>
-				<artifactId>dbflute-maven-plugin</artifactId>
-				<version>1.0.1</version>
-				<configuration>
-					<dbfluteVersion>1.0.0</dbfluteVersion>
-					<rootPackage>org.codelibs.empros</rootPackage>
-					<dbPackage>org.codelibs.empros.db</dbPackage>
-					<clientProject>empros</clientProject>
-					<dbfluteClientDir>${basedir}/dbflute_${database}</dbfluteClientDir>
-					<databaseUrl>${databaseUrl}</databaseUrl>
-				</configuration>
-			</plugin>
-		</plugins>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<artifactId>maven-eclipse-plugin</artifactId>
+					<version>2.9</version>
+					<configuration>
+						<additionalProjectnatures>
+							<projectnature>org.springframework.ide.eclipse.core.springnature</projectnature>
+						</additionalProjectnatures>
+						<additionalBuildcommands>
+							<buildcommand>org.springframework.ide.eclipse.core.springbuilder</buildcommand>
+						</additionalBuildcommands>
+						<downloadSources>true</downloadSources>
+						<downloadJavadocs>true</downloadJavadocs>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>3.0</version>
+					<configuration>
+						<source>${java-version}</source>
+						<target>${java-version}</target>
+						<encoding>UTF-8</encoding>
+						<compilerArgument>-Xlint:all</compilerArgument>
+						<showWarnings>true</showWarnings>
+						<showDeprecation>true</showDeprecation>
+					</configuration>
+				</plugin>
+				<plugin>
+					<artifactId>maven-source-plugin</artifactId>
+					<executions>
+						<execution>
+							<id>source-jar</id>
+							<phase>package</phase>
+							<goals>
+								<goal>jar</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<artifactId>maven-javadoc-plugin</artifactId>
+					<configuration>
+						<encoding>UTF-8</encoding>
+						<docencoding>UTF-8</docencoding>
+						<charset>UTF-8</charset>
+						<links>
+							<link>http://docs.oracle.com/javase/6/docs/api/</link>
+							<link>http://docs.oracle.com/javaee/6/api/</link>
+							<link>http://aopalliance.sourceforge.net/doc/</link>
+							<link>http://www.csg.is.titech.ac.jp/~chiba/javassist/html/</link>
+							<link>http://s2container.seasar.org/2.4/s2-framework/ja/apidocs/</link>
+							<link>http://s2container.seasar.org/2.4/s2-extension/ja/apidocs/</link>
+							<link>http://s2container.seasar.org/2.4/s2-tiger/ja/apidocs/</link>
+						</links>
+					</configuration>
+					<executions>
+						<execution>
+							<phase>site</phase>
+							<goals>
+								<goal>javadoc</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>com.mycila.maven-license-plugin</groupId>
+					<artifactId>maven-license-plugin</artifactId>
+					<version>1.9.0</version>
+					<configuration>
+						<header>${basedir}/src/etc/header.txt</header>
+						<includes>
+							<include>src/**/*.java</include>
+						</includes>
+						<encoding>UTF-8</encoding>
+						<headerDefinitions>
+							<headerDefinition>${basedir}/src/etc/header-definition.xml</headerDefinition>
+						</headerDefinitions>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 		<extensions>
 			<extension>
 				<groupId>org.apache.maven.wagon</groupId>
@@ -241,12 +190,6 @@
 		</repository>
 	</repositories>
 	<dependencies>
-		<dependency>
-			<groupId>${databaseGroupId}</groupId>
-			<artifactId>${databaseArtifactId}</artifactId>
-			<version>${databaseVersion}</version>
-		</dependency>
-
 		<!-- Spring -->
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -259,21 +202,6 @@
 					<artifactId>commons-logging</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-webmvc</artifactId>
-			<version>${org.springframework-version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-web</artifactId>
-			<version>${org.springframework-version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-jdbc</artifactId>
-			<version>${org.springframework-version}</version>
 		</dependency>
 
 		<!-- AspectJ -->
@@ -338,31 +266,6 @@
 			<version>1</version>
 		</dependency>
 
-		<!-- Servlet -->
-		<dependency>
-			<groupId>org.apache.tomcat</groupId>
-			<artifactId>tomcat-servlet-api</artifactId>
-			<version>7.0.37</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.tomcat</groupId>
-			<artifactId>tomcat-jsp-api</artifactId>
-			<version>7.0.37</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>jstl</artifactId>
-			<version>1.2</version>
-			<exclusions>
-				<exclusion>
-					<groupId>javax.servlet</groupId>
-					<artifactId>servlet-api</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
 		<!-- Jackson -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
@@ -375,18 +278,6 @@
 			<version>2.1.4</version>
 		</dependency>
 
-		<!-- DBFlute -->
-		<dependency>
-			<groupId>org.seasar.dbflute</groupId>
-			<artifactId>dbflute-runtime</artifactId>
-			<version>1.0.0</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-dbcp</groupId>
-			<artifactId>commons-dbcp</artifactId>
-			<version>1.4</version>
-		</dependency>
-
 		<!-- Utilties -->
 		<dependency>
 			<groupId>org.codelibs</groupId>
@@ -397,13 +288,6 @@
 			<groupId>org.seasar.util</groupId>
 			<artifactId>s2util</artifactId>
 			<version>0.0.1</version>
-		</dependency>
-
-		<!-- CSV -->
-		<dependency>
-			<groupId>jp.sf.orangesignal</groupId>
-			<artifactId>orangesignal-csv</artifactId>
-			<version>1.3.1</version>
 		</dependency>
 
 		<!-- Test -->

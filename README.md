@@ -8,7 +8,7 @@ Empros runs on a Servlet container which supports Servlet 3.0.
 
 ## Usage
 
-Empros provides a server and client(agent) component.
+Empros project provides a server and client(agent) component.
 
 ### Run Server
 
@@ -16,6 +16,8 @@ Empros server component is provided as WAR component to run on Servlet 3.0 conta
 You can deploy the war file on your application server. 
 If you want to try it easily, just run the following command:
 
+    $ mvn install
+    $ cd empros-war
     $ mvn tomcat7:run
 
 ### Send Events
@@ -39,7 +41,7 @@ or
 
 ### Environment
 
-- Java 7
+- Java 6
 - Eclipse (m2e, m2e-wtp, Spring Tool Suite)
 - Maven 3
 

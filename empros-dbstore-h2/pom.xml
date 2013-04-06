@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.codelibs</groupId>
+		<artifactId>empros-project</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+	<artifactId>empros-dbstore-h2</artifactId>
+	<name>Empros H2 DBStore</name>
+	<packaging>jar</packaging>
+	<properties>
+		<h2-version>1.3.170</h2-version>
+		<database>h2</database>
+		<databaseGroupId>com.h2database</databaseGroupId>
+		<databaseArtifactId>h2</databaseArtifactId>
+		<databaseVersion>${h2-version}</databaseVersion>
+		<databaseDriver>org.h2.Driver</databaseDriver>
+		<databaseUrl>jdbc:h2:file:${basedir}/src/main/config/db/empros</databaseUrl>
+		<databaseTestUrl>jdbc:h2:file:${basedir}/target/db/empros</databaseTestUrl>
+		<databaseUsername>sa</databaseUsername>
+		<databasePassword />
+	</properties>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.seasar.dbflute</groupId>
+				<artifactId>dbflute-maven-plugin</artifactId>
+				<version>1.0.1</version>
+				<configuration>
+					<dbfluteVersion>1.0.0</dbfluteVersion>
+					<rootPackage>org.codelibs.empros</rootPackage>
+					<dbPackage>org.codelibs.empros.db</dbPackage>
+					<clientProject>empros</clientProject>
+					<dbfluteClientDir>${basedir}/dbflute_${database}</dbfluteClientDir>
+					<databaseUrl>${databaseUrl}</databaseUrl>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	<dependencies>
+		<dependency>
+			<groupId>org.codelibs</groupId>
+			<artifactId>empros-core</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${databaseGroupId}</groupId>
+			<artifactId>${databaseArtifactId}</artifactId>
+			<version>${databaseVersion}</version>
+		</dependency>
+
+		<!-- Spring -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+			<version>${org.springframework-version}</version>
+		</dependency>
+
+		<!-- DBFlute -->
+		<dependency>
+			<groupId>org.seasar.dbflute</groupId>
+			<artifactId>dbflute-runtime</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-dbcp</groupId>
+			<artifactId>commons-dbcp</artifactId>
+			<version>1.4</version>
+		</dependency>
+
+	</dependencies>
+</project>
