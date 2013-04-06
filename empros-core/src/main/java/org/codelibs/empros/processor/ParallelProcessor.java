@@ -34,9 +34,6 @@ public class ParallelProcessor extends BaseProcessor {
 
     protected ExecutorService executorService;
 
-    public ParallelProcessor() {
-    }
-
     public ParallelProcessor(final List<EventProcessor> processorList,
             final int threadPoolSize) {
         super(processorList);

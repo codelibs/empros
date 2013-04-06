@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd">
+
+	<context:annotation-config />
+
+	<import resource="classpath:data-source.xml" />
+	<import resource="classpath:dbflute.xml" />
+
+	<tx:annotation-driven proxy-target-class="true" />
+
+	<!-- DataStore -->
+	<bean id="dbStore" class="org.codelibs.empros.store.DatabaseStore">
+	</bean>
+	<bean id="csvStore" class="org.codelibs.empros.store.CsvStore"
+		destroy-method="destroy">
+		<property name="columnList">
+			<list>
+				<value>aaa</value>
+				<value>bbb</value>
+			</list>
+		</property>
+		<property name="rotationDatePattern">
+			<value>yyyyMMddHHmm</value>
+		</property>
+	</bean>
+
+	<!-- Processor -->
+	<bean id="dbProcessor" class="org.codelibs.empros.processor.DataStoreProcessor">
+		<property name="dataStore">
+			<ref bean="dbStore" />
+		</property>
+	</bean>
+	<bean id="csvProcessor" class="org.codelibs.empros.processor.DataStoreProcessor">
+		<property name="dataStore">
+			<ref bean="csvStore" />
+		</property>
+	</bean>
+
+	<!-- Main Processor -->
+	<bean id="eventProcessor" class="org.codelibs.empros.processor.ParallelProcessor">
+		<constructor-arg>
+			<list>
+				<ref bean="dbProcessor" />
+				<ref bean="csvProcessor" />
+			</list>
+		</constructor-arg>
+		<constructor-arg>
+			<value>10</value>
+		</constructor-arg>
+	</bean>
+</beans>

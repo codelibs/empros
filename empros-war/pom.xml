@@ -45,6 +45,11 @@
 			<artifactId>empros-dbstore-h2</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.codelibs</groupId>
+			<artifactId>empros-sample</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 
 		<!-- Spring -->
 		<dependency>

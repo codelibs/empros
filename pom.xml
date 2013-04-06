@@ -46,6 +46,7 @@
 		<module>empros-dbstore</module>
 		<module>empros-dbstore-h2</module>
 		<module>empros-dbstore-mysql</module>
+		<module>empros-sample</module>
 		<module>empros-war</module>
 	</modules>
 	<build>
