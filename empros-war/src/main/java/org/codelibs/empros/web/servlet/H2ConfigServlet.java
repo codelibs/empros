@@ -79,7 +79,13 @@ public class H2ConfigServlet extends HttpServlet {
                 logger.info("Starting H2 server...");
             }
             server = getH2Server(argList.toArray(new String[argList.size()]));
-            logger.info("H2 DataStore Server is running.");
+            if (logger.isInfoEnabled()) {
+                if (server == null) {
+                    logger.info("H2 DataStore Server is not supported.");
+                } else {
+                    logger.info("H2 DataStore Server is running.");
+                }
+            }
         } catch (final Exception e) {
             throw new ServletException("Could not start H2 DataStore..", e);
         }
