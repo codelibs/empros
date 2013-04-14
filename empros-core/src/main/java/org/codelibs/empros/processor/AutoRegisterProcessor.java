@@ -5,6 +5,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
 
+import org.codelibs.core.CoreLibConstants;
 import org.codelibs.empros.exception.EmprosAutoRegisterException;
 import org.codelibs.empros.factory.ProcessorFactory;
 import org.seasar.util.io.InputStreamUtil;
@@ -42,12 +43,12 @@ public class AutoRegisterProcessor extends ParallelProcessor {
             final URL url = resources.nextElement();
             try {
                 final String content = new String(
-                        InputStreamUtil.getBytes(URLUtil.openStream(url)));
-                for (String factoryClassName : content.split("\n")) {
-                    if (org.seasar.util.lang.StringUtil
-                            .isNotBlank(factoryClassName)) {
-                        factoryClassName = factoryClassName.trim();
-                        if (factoryClassName.startsWith("#")) {
+                        InputStreamUtil.getBytes(URLUtil.openStream(url)),
+                        CoreLibConstants.UTF_8);
+                for (final String value : content.split("\n")) {
+                    if (org.seasar.util.lang.StringUtil.isNotBlank(value)) {
+                        final String factoryClassName = value.trim();
+                        if (factoryClassName.charAt(0) == '#') {
                             continue;
                         }
                         final Class<ProcessorFactory> factoryClass = ClassUtil

@@ -13,16 +13,17 @@ import org.codelibs.empros.event.Event;
  * @author shinsuke
  *
  */
-public class ProcessContext {
+public class ProcessContext implements Cloneable {
     private List<Event> incomingEventList;
 
     private List<Event> processingEventList;
 
-    private final AtomicLong processed = new AtomicLong(0);
+    private AtomicLong processed = new AtomicLong(0);
 
     private Object response;
 
     protected ProcessContext() {
+        // nothing
     }
 
     public ProcessContext(final List<Event> eventList) {
@@ -59,14 +60,22 @@ public class ProcessContext {
 
     @Override
     protected ProcessContext clone() {
-        final ProcessContext context = new ProcessContext();
-        context.incomingEventList = incomingEventList;
-        if (processingEventList != null) {
-            context.processingEventList = new ArrayList<Event>(
-                    processingEventList.size());
-            Collections.copy(context.processingEventList, processingEventList);
+        ProcessContext context = null;
+        try {
+            context = (ProcessContext) super.clone();
+            context.incomingEventList = incomingEventList;
+            context.response = response;
+            // replace with the following values.
+            context.processed = new AtomicLong(0);
+            if (processingEventList != null) {
+                context.processingEventList = new ArrayList<Event>(
+                        processingEventList.size());
+                Collections.copy(context.processingEventList,
+                        processingEventList);
+            }
+        } catch (final CloneNotSupportedException e) {
+            //  Won't happen
         }
-        context.response = response;
         return context;
     }
 }

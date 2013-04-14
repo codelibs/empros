@@ -45,11 +45,11 @@ public class Event extends HashMap<String, Object> {
     }
 
     public Date getCreatedTime() {
-        return createdTime;
+        return (Date) createdTime.clone();
     }
 
     public void setCreatedTime(final Date createdTime) {
-        this.createdTime = createdTime;
+        this.createdTime = (Date) createdTime.clone();
     }
 
     public String getCreatedBy() {

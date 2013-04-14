@@ -54,7 +54,7 @@ public class ParallelProcessor extends BaseProcessor {
             final Future<ProcessContext> future = executorService
                     .submit(new Callable<ProcessContext>() {
                         @Override
-                        public ProcessContext call() throws Exception {
+                        public ProcessContext call() {
                             final ProcessContext childContext = context.clone();
                             processor.process(childContext);
                             return childContext;

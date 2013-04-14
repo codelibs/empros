@@ -67,7 +67,7 @@ public class EventController {
 
         return new Callable<Object>() {
             @Override
-            public Object call() throws Exception {
+            public Object call() {
                 final List<Event> eventList = new ArrayList<Event>();
                 if (data instanceof Map<?, ?>) {
                     final Event event = new Event((Map<?, ?>) data);

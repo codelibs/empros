@@ -34,6 +34,7 @@ public class DatabaseStore implements DataStore {
     protected PersistentEventValueBhv persistentEventValueBhv;
 
     public DatabaseStore() {
+        // nothing
     }
 
     /* (non-Javadoc)

@@ -15,6 +15,7 @@
  */
 package org.codelibs.empros.web.servlet;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -110,7 +111,9 @@ public class H2ConfigServlet extends HttpServlet {
         });
     }
 
-    private Object getH2Server(final String[] args) throws Exception {
+    private Object getH2Server(final String[] args)
+            throws IllegalArgumentException, IllegalAccessException,
+            InvocationTargetException, SecurityException, NoSuchMethodException {
         try {
             serverClass = Class.forName("org.h2.tools.Server");
         } catch (final ClassNotFoundException e) {
