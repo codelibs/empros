@@ -19,19 +19,22 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
 
 import javax.annotation.Resource;
 
 import org.codelibs.empros.event.Event;
 import org.codelibs.empros.exception.EmprosClientException;
+import org.codelibs.empros.exception.EmprosProcessException;
+import org.codelibs.empros.exception.EmprosProcessTimeoutException;
 import org.codelibs.empros.processor.EventProcessor;
+import org.codelibs.empros.processor.ProcessCallback;
 import org.codelibs.empros.processor.ProcessContext;
 import org.codelibs.empros.response.ErrorResponse;
 import org.codelibs.empros.response.ErrorResponse.ErrorDto;
 import org.codelibs.empros.response.EventResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -43,6 +46,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.context.request.async.DeferredResult;
 
 /**
  * Handles requests for events.
@@ -58,64 +62,108 @@ public class EventController {
     @Resource(name = "eventProcessor")
     protected EventProcessor eventProcessor;
 
+    @Resource(name = "taskExecutor")
+    protected TaskExecutor taskExecutor;
+
     @RequestMapping(method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
     @ResponseBody
-    public Callable<Object> create(@RequestBody final Object data) {
+    public DeferredResult<Object> create(@RequestBody final Object data) {
         if (logger.isInfoEnabled()) {
             logger.info("event request");
         }
 
-        return new Callable<Object>() {
-            @Override
-            public Object call() {
-                final List<Event> eventList = new ArrayList<Event>();
-                if (data instanceof Map<?, ?>) {
-                    final Event event = new Event((Map<?, ?>) data);
-                    event.setCreatedBy(getCreatedBy());
-                    event.setCreatedTime(new Date());
+        final List<Event> eventList = new ArrayList<Event>();
+        if (data instanceof Map<?, ?>) {
+            final Event event = new Event((Map<?, ?>) data);
+            event.setCreatedBy(getCreatedBy());
+            event.setCreatedTime(new Date());
+            eventList.add(event);
+        } else if (data instanceof List<?>) {
+            final String createdBy = getCreatedBy();
+            final Date now = new Date();
+            for (final Object obj : (List<?>) data) {
+                if (obj instanceof Map<?, ?>) {
+                    final Event event = new Event((Map<?, ?>) obj);
+                    event.setCreatedBy(createdBy);
+                    event.setCreatedTime(now);
                     eventList.add(event);
-                } else if (data instanceof List<?>) {
-                    final String createdBy = getCreatedBy();
-                    final Date now = new Date();
-                    for (final Object obj : (List<?>) data) {
-                        if (obj instanceof Map<?, ?>) {
-                            final Event event = new Event((Map<?, ?>) obj);
-                            event.setCreatedBy(createdBy);
-                            event.setCreatedTime(now);
-                            eventList.add(event);
-                        } else {
-                            throw new EmprosClientException("EEMW0001",
-                                    new Object[] { obj });
-                        }
-                    }
                 } else {
                     throw new EmprosClientException("EEMW0001",
-                            new Object[] { data });
+                            new Object[] { obj });
                 }
+            }
+        } else {
+            throw new EmprosClientException("EEMW0001", new Object[] { data });
+        }
 
+        final DeferredResult<Object> result = new DeferredResult<Object>();
+        result.onTimeout(new Runnable() {
+            @Override
+            public void run() {
+                result.setErrorResult(new EmprosProcessTimeoutException(
+                        "EEMC0006", new Object[0]));
+            }
+        });
+
+        final Runnable task = new Runnable() {
+            @Override
+            public void run() {
                 final ProcessContext context = new ProcessContext(eventList);
                 if (!eventList.isEmpty()) {
-                    eventProcessor.process(context);
-                }
+                    eventProcessor.process(context, new ProcessCallback() {
+                        @Override
+                        public void onSuccess() {
+                            if (processed.getAndSet(true)) {
+                                if (logger.isInfoEnabled()) {
+                                    logger.info("events had already been processed.");
+                                }
+                                return;
+                            }
 
-                final Object response = context.getResponse();
-                if (response != null) {
-                    return response;
+                            if (failureList.isEmpty()) {
+                                final Object response = context.getResponse();
+                                if (response != null) {
+                                    result.setResult(response);
+                                } else {
+                                    final EventResponse eventResponse = new EventResponse();
+                                    eventResponse.setStatus("ok");
+                                    eventResponse.setReceived(eventList.size());
+                                    eventResponse.setProcessed(context
+                                            .getProcessed());
+                                    result.setResult(eventResponse);
+                                }
+                            } else {
+                                result.setErrorResult(new EmprosProcessException(
+                                        failureList));
+                            }
+                        }
+                    });
                 }
-                final EventResponse responseDto = new EventResponse();
-                responseDto.setStatus("ok");
-                responseDto.setReceived(eventList.size());
-                responseDto.setProcessed(context.getProcessed());
-                return responseDto;
-
             }
         };
+        taskExecutor.execute(task);
+
+        return result;
     }
 
     @RequestMapping(produces = { MediaType.APPLICATION_JSON_VALUE })
     @ResponseBody
     public void index() {
         throw new EmprosClientException("EEMW0001", new Object[0]);
+    }
+
+    @ExceptionHandler(EmprosProcessTimeoutException.class)
+    @ResponseStatus(value = HttpStatus.REQUEST_TIMEOUT)
+    @ResponseBody
+    public ErrorResponse handlerEmprosProcessTimeoutException(
+            final EmprosProcessTimeoutException e) {
+        final ErrorDto errorDto = new ErrorResponse.ErrorDto();
+        errorDto.setCode(e.getMessageCode());
+        errorDto.setMessage(e.getMessage());
+        final ErrorResponse responseDto = new ErrorResponse();
+        responseDto.setStatus("error");
+        responseDto.setError(errorDto);
+        return responseDto;
     }
 
     @ExceptionHandler(EmprosClientException.class)

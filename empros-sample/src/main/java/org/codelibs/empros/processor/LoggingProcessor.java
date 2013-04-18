@@ -40,14 +40,15 @@ public class LoggingProcessor extends BaseProcessor {
     }
 
     @Override
-    public void process(final ProcessContext context) {
+    public void process(final ProcessContext context,
+            final ProcessCallback callback) {
         if (logger.isInfoEnabled()) {
             final List<Event> eventList = getCurrentEventList(context);
             logger.info("incoming event: {}", eventList.toString());
             context.addNumOfProcessedEvents(eventList.size());
         }
 
-        invokeNext(context);
+        invokeNext(context, callback);
     }
 
 }

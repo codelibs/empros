@@ -20,20 +20,19 @@ import java.io.PrintWriter;
 import java.util.List;
 
 /**
- * EmprosParallelProcessException contains multiple exceptions on a parallel processing.
+ * EmprosProcessException contains multiple exceptions on a event processing.
  * 
  * @author shinsuke
  *
  */
-public class EmprosParallelProcessException extends EmprosRuntimeException {
+public class EmprosProcessException extends EmprosRuntimeException {
 
     private static final long serialVersionUID = 1L;
 
-    private final List<Exception> exceptionList;
+    private final List<Throwable> exceptionList;
 
-    public EmprosParallelProcessException(final int processed,
-            final List<Exception> exceptionList) {
-        super("EEMC0002", new Object[] { processed });
+    public EmprosProcessException(final List<Throwable> exceptionList) {
+        super("EEMC0002", new Object[0]);
         this.exceptionList = exceptionList;
     }
 
@@ -42,7 +41,7 @@ public class EmprosParallelProcessException extends EmprosRuntimeException {
         super.printStackTrace(s);
 
         int count = 1;
-        for (final Exception e : exceptionList) {
+        for (final Throwable e : exceptionList) {
             s.println("Caused " + count + ":");
             e.printStackTrace(s);
             count++;
@@ -54,7 +53,7 @@ public class EmprosParallelProcessException extends EmprosRuntimeException {
         super.printStackTrace(s);
 
         int count = 1;
-        for (final Exception e : exceptionList) {
+        for (final Throwable e : exceptionList) {
             s.println("Caused " + count + ":");
             e.printStackTrace(s);
             count++;

@@ -7,6 +7,6 @@ package org.codelibs.empros.processor;
  *
  */
 public interface EventProcessor {
-    void process(ProcessContext context);
+    void process(ProcessContext context, ProcessCallback callback);
 
 }

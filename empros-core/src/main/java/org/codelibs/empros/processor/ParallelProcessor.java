@@ -15,14 +15,10 @@
  */
 package org.codelibs.empros.processor;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-
-import org.codelibs.empros.exception.EmprosParallelProcessException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * ParallelProcessor sends events to multiple event-processors simultaneously.
@@ -42,48 +38,56 @@ public class ParallelProcessor extends BaseProcessor {
     }
 
     @Override
-    public void process(final ProcessContext context) {
-        invokeNext(context);
+    public void process(final ProcessContext context,
+            final ProcessCallback callback) {
+        invokeNext(context, callback);
     }
 
     @Override
-    protected void invokeNext(final ProcessContext context) {
-        final List<Future<ProcessContext>> futureList = new ArrayList<Future<ProcessContext>>(
-                nextProcessorList.size());
+    protected void invokeNext(final ProcessContext context,
+            final ProcessCallback callback) {
+        final int size = nextProcessorList.size();
+        try {
+            if (size == 0) {
+                callback.onSuccess();
+            } else {
+                invokeProcessorsByParallel(context, callback, size);
+            }
+        } catch (final Throwable t) {
+            callback.onFailure(t);
+        }
+    }
+
+    protected void invokeProcessorsByParallel(final ProcessContext context,
+            final ProcessCallback callback, final int size) {
+        final AtomicInteger counter = new AtomicInteger(size);
         for (final EventProcessor processor : nextProcessorList) {
-            final Future<ProcessContext> future = executorService
-                    .submit(new Callable<ProcessContext>() {
+            executorService.execute(new Runnable() {
+                @Override
+                public void run() {
+                    final ProcessContext childContext = context.clone();
+                    processor.process(childContext, new ProcessCallback() {
                         @Override
-                        public ProcessContext call() {
-                            final ProcessContext childContext = context.clone();
-                            processor.process(childContext);
-                            return childContext;
+                        public void onSuccess() {
+                            if (childContext.getResponse() != null) {
+                                context.setResponse(childContext.getResponse());
+                            }
+                            context.addNumOfProcessedEvents(childContext
+                                    .getProcessed());
+                            final int count = counter.decrementAndGet();
+                            if (count == 0) {
+                                callback.onSuccess();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(final Throwable t) {
+                            callback.onFailure(t);
                         }
                     });
-            futureList.add(future);
-        }
-
-        List<Exception> exceptionList = null;
-        final int processed = 0;
-        for (final Future<ProcessContext> future : futureList) {
-            try {
-                final ProcessContext childContext = future.get();
-                if (childContext.getResponse() != null) {
-                    context.setResponse(childContext.getResponse());
                 }
-                context.addNumOfProcessedEvents(childContext.getProcessed());
-            } catch (final Exception e) {
-                if (exceptionList == null) {
-                    exceptionList = new ArrayList<Exception>();
-                }
-                exceptionList.add(e);
-            }
+            });
         }
-
-        if (exceptionList != null) {
-            throw new EmprosParallelProcessException(processed, exceptionList);
-        }
-
     }
 
 }

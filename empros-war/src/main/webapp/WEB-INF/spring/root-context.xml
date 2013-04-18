@@ -12,6 +12,12 @@
 	<!-- Root Context: defines shared resources visible to all other web components -->
 	<import resource="empros-processor.xml" />
 
-	<tx:annotation-driven proxy-target-class="true"/>
+	<tx:annotation-driven proxy-target-class="true" />
 
+	<bean id="taskExecutor"
+		class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+		<property name="corePoolSize" value="5" />
+		<property name="maxPoolSize" value="10" />
+		<property name="queueCapacity" value="1000" />
+	</bean>
 </beans>

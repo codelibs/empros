@@ -38,13 +38,14 @@ public class DataStoreProcessor extends BaseProcessor {
     }
 
     @Override
-    public void process(final ProcessContext context) {
+    public void process(final ProcessContext context,
+            final ProcessCallback callback) {
 
         final List<Event> eventList = getCurrentEventList(context);
         dataStore.store(eventList);
         context.addNumOfProcessedEvents(eventList.size());
 
-        invokeNext(context);
+        invokeNext(context, callback); // TODO non-blocking?
     }
 
     public DataStore getDataStore() {

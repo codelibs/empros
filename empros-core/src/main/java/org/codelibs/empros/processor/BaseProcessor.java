@@ -42,11 +42,36 @@ public abstract class BaseProcessor implements EventProcessor {
      * @see org.codelibs.empros.processor.EventProcessor#process(org.codelibs.empros.processor.ProcessContext)
      */
     @Override
-    public abstract void process(final ProcessContext context);
+    public abstract void process(final ProcessContext context,
+            ProcessCallback callback);
 
-    protected void invokeNext(final ProcessContext context) {
-        for (final EventProcessor processor : nextProcessorList) {
-            processor.process(context);
+    protected void invokeNext(final ProcessContext context,
+            final ProcessCallback callback) {
+        ProcessCallback nextCallback = callback;
+        final int size = nextProcessorList.size();
+        try {
+            if (size == 0) {
+                callback.onSuccess();
+            } else {
+                for (int i = size - 1; i >= 0; i--) {
+                    final EventProcessor currentProcessor = nextProcessorList
+                            .get(i);
+                    final ProcessCallback currentCallback = nextCallback;
+                    if (i == 0) {
+                        currentProcessor.process(context, currentCallback);
+                    } else {
+                        nextCallback = new ProcessCallback() {
+                            @Override
+                            public void onSuccess() {
+                                currentProcessor.process(context,
+                                        currentCallback);
+                            }
+                        };
+                    }
+                }
+            }
+        } catch (final Throwable t) {
+            callback.onFailure(t);
         }
     }
 
