@@ -8,19 +8,19 @@
 		<version>1.0.0-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
-	<artifactId>empros-sample</artifactId>
-	<name>Empros Sample</name>
+	<artifactId>empros-esstore</artifactId>
+	<name>Empros Data Store for elasticsearch</name>
 	<packaging>jar</packaging>
 	<dependencies>
-        <dependency>
-            <groupId>org.codelibs</groupId>
-            <artifactId>empros-core</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.codelibs</groupId>
-            <artifactId>empros-esstore</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+		<dependency>
+			<groupId>org.codelibs</groupId>
+			<artifactId>empros-core</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.elasticsearch</groupId>
+			<artifactId>elasticsearch</artifactId>
+			<version>0.90.0.RC2</version>
+		</dependency>
 	</dependencies>
 </project>

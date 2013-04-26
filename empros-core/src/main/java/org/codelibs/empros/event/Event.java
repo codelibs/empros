@@ -16,8 +16,11 @@
 package org.codelibs.empros.event;
 
 import java.util.Date;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
+
+import org.seasar.util.lang.StringUtil;
+import org.seasar.util.security.MessageDigestUtil;
 
 /**
  * An event data is represented as Event instance.
@@ -25,7 +28,7 @@ import java.util.Map;
  * @author shinsuke
  *
  */
-public class Event extends HashMap<String, Object> {
+public class Event extends LinkedHashMap<String, Object> {
 
     private static final long serialVersionUID = 1L;
 
@@ -60,4 +63,13 @@ public class Event extends HashMap<String, Object> {
         this.createdBy = createdBy;
     }
 
+    public String getID(final String idKey) {
+        if (StringUtil.isNotBlank(idKey)) {
+            final Object idValue = get(idKey);
+            if (idValue != null) {
+                return idValue.toString();
+            }
+        }
+        return MessageDigestUtil.digest("MD5", super.toString());
+    }
 }

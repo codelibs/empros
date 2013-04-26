@@ -26,6 +26,6 @@ import org.codelibs.empros.event.Event;
  *
  */
 public interface DataStore {
-    void store(List<Event> eventList);
+    void store(List<Event> eventList, DataStoreListener listener);
 
 }

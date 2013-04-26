@@ -13,21 +13,20 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.codelibs.empros.exception;
+package org.codelibs.empros.processor;
 
-/**
- * EmprosProcessTimeoutException is thrown when processors exceeded the timeout.
- * 
- * @author shinsuke
- *
- */
-public class EmprosProcessTimeoutException extends EmprosRuntimeException {
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
-    private static final long serialVersionUID = 1L;
+public abstract class ProcessorListener {
+    protected List<Throwable> failureList = Collections
+            .synchronizedList(new ArrayList<Throwable>());
 
-    public EmprosProcessTimeoutException(final String messageCode,
-            final Object[] args) {
-        super(messageCode, args);
+    public abstract void onSuccess(ProcessContext context);
+
+    public void onFailure(final Throwable t) {
+        failureList.add(t);
     }
 
 }

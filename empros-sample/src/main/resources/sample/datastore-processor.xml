@@ -29,6 +29,11 @@
 			<value>yyyyMMddHHmm</value>
 		</property>
 	</bean>
+	<bean id="esStore" class="org.codelibs.empros.store.ElasticSearchStore"
+		init-method="init" destroy-method="destroy">
+		<property name="index"><value>empros</value></property>
+		<property name="type"><value>event</value></property>
+	</bean>
 
 	<!-- Processor -->
 	<bean id="dbProcessor" class="org.codelibs.empros.processor.DataStoreProcessor">
@@ -41,6 +46,11 @@
 			<ref bean="csvStore" />
 		</property>
 	</bean>
+	<bean id="esProcessor" class="org.codelibs.empros.processor.DataStoreProcessor">
+		<property name="dataStore">
+			<ref bean="esStore" />
+		</property>
+	</bean>
 
 	<!-- Main Processor -->
 	<bean id="eventProcessor" class="org.codelibs.empros.processor.ParallelProcessor">
@@ -48,6 +58,7 @@
 			<list>
 				<ref bean="dbProcessor" />
 				<ref bean="csvProcessor" />
+				<ref bean="esProcessor" />
 			</list>
 		</constructor-arg>
 		<constructor-arg>

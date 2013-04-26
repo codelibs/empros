@@ -1,3 +1,18 @@
+/*
+ * Copyright 2013 the CodeLibs Project and the Others.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
 package org.codelibs.empros.store;
 
 import java.io.BufferedWriter;
@@ -75,30 +90,37 @@ public class CsvStore implements DataStore {
     }
 
     @Override
-    public void store(final List<Event> eventList) {
-        if (columnList == null || columnList.isEmpty()) {
-            throw new EmprosDataStoreException("WEMC0001");
-        }
-
-        for (final Event event : eventList) {
-            final List<String> valueList = new ArrayList<String>(
-                    columnList.size());
-            for (final String key : columnList) {
-                final Object value = event.get(key);
-                valueList.add(value != null ? value.toString() : null);
-
-                final CsvData csvData = new CsvData();
-                final Object timestamp = event.get(timestampKey);
-                if (timestamp instanceof Long) {
-                    csvData.timestamp = ((Long) timestamp).longValue();
-                } else {
-                    csvData.timestamp = System.currentTimeMillis();
-                }
-                csvData.valueList = valueList;
-                csvDataWriter.add(csvData);
+    public void store(final List<Event> eventList,
+            final DataStoreListener listener) {
+        try {
+            if (columnList == null || columnList.isEmpty()) {
+                throw new EmprosDataStoreException("WEMC0001");
             }
+
+            for (final Event event : eventList) {
+                final List<String> valueList = new ArrayList<String>(
+                        columnList.size());
+                for (final String key : columnList) {
+                    final Object value = event.get(key);
+                    valueList.add(value != null ? value.toString() : null);
+
+                    final CsvData csvData = new CsvData();
+                    final Object timestamp = event.get(timestampKey);
+                    if (timestamp instanceof Long) {
+                        csvData.timestamp = ((Long) timestamp).longValue();
+                    } else {
+                        csvData.timestamp = System.currentTimeMillis();
+                    }
+                    csvData.valueList = valueList;
+                    csvDataWriter.add(csvData);
+                }
+            }
+            csvDataWriter.flush();
+
+            listener.onSuccess(this, eventList);
+        } catch (final Exception e) {
+            listener.onFailure(e);
         }
-        csvDataWriter.flush();
     }
 
     public void destroy() {

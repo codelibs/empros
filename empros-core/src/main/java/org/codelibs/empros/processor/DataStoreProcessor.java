@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.codelibs.empros.event.Event;
 import org.codelibs.empros.store.DataStore;
+import org.codelibs.empros.store.DataStoreListener;
 
 /**
  * DataStoreProcessor sends events to a specified data store.
@@ -39,13 +40,22 @@ public class DataStoreProcessor extends BaseProcessor {
 
     @Override
     public void process(final ProcessContext context,
-            final ProcessCallback callback) {
+            final ProcessorListener listener) {
 
         final List<Event> eventList = getCurrentEventList(context);
-        dataStore.store(eventList);
-        context.addNumOfProcessedEvents(eventList.size());
+        dataStore.store(eventList, new DataStoreListener() {
+            @Override
+            public void onSuccess(final DataStore dataStore,
+                    final List<Event> eventList) {
+                context.addNumOfProcessedEvents(eventList.size());
+                invokeNext(context, listener);
+            }
 
-        invokeNext(context, callback); // TODO non-blocking?
+            @Override
+            public void onFailure(final Throwable t) {
+                listener.onFailure(t);
+            }
+        });
     }
 
     public DataStore getDataStore() {

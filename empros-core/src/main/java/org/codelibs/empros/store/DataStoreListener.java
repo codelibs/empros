@@ -13,21 +13,14 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.codelibs.empros.exception;
+package org.codelibs.empros.store;
 
-/**
- * EmprosProcessTimeoutException is thrown when processors exceeded the timeout.
- * 
- * @author shinsuke
- *
- */
-public class EmprosProcessTimeoutException extends EmprosRuntimeException {
+import java.util.List;
 
-    private static final long serialVersionUID = 1L;
+import org.codelibs.empros.event.Event;
 
-    public EmprosProcessTimeoutException(final String messageCode,
-            final Object[] args) {
-        super(messageCode, args);
-    }
+public interface DataStoreListener {
+    void onSuccess(DataStore dataStore, List<Event> eventList);
 
+    void onFailure(Throwable t);
 }

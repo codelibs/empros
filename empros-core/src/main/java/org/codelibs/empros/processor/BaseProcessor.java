@@ -43,27 +43,28 @@ public abstract class BaseProcessor implements EventProcessor {
      */
     @Override
     public abstract void process(final ProcessContext context,
-            ProcessCallback callback);
+            ProcessorListener listener);
 
     protected void invokeNext(final ProcessContext context,
-            final ProcessCallback callback) {
-        ProcessCallback nextCallback = callback;
+            final ProcessorListener listener) {
+        ProcessorListener nextCallback = listener;
         final int size = nextProcessorList.size();
         try {
             if (size == 0) {
-                callback.onSuccess();
+                listener.onSuccess(context);
             } else {
+                final ProcessContext currentContext = context;
                 for (int i = size - 1; i >= 0; i--) {
                     final EventProcessor currentProcessor = nextProcessorList
                             .get(i);
-                    final ProcessCallback currentCallback = nextCallback;
+                    final ProcessorListener currentCallback = nextCallback;
                     if (i == 0) {
                         currentProcessor.process(context, currentCallback);
                     } else {
-                        nextCallback = new ProcessCallback() {
+                        nextCallback = new ProcessorListener() {
                             @Override
-                            public void onSuccess() {
-                                currentProcessor.process(context,
+                            public void onSuccess(final ProcessContext context) {
+                                currentProcessor.process(currentContext,
                                         currentCallback);
                             }
                         };
@@ -71,7 +72,7 @@ public abstract class BaseProcessor implements EventProcessor {
                 }
             }
         } catch (final Throwable t) {
-            callback.onFailure(t);
+            listener.onFailure(t);
         }
     }
 

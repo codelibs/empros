@@ -42,18 +42,24 @@ public class DatabaseStore implements DataStore {
      */
     @Override
     @Transactional
-    public void store(final List<Event> eventList) {
+    public void store(final List<Event> eventList,
+            final DataStoreListener listener) {
         final List<PersistentEvent> pEventList = new ArrayList<PersistentEvent>(
                 eventList.size());
-        for (final Event event : eventList) {
-            pEventList.add(new PersistentEvent(event));
-        }
+        try {
+            for (final Event event : eventList) {
+                pEventList.add(new PersistentEvent(event));
+            }
 
-        for (final PersistentEvent pEvent : pEventList) {
-            persistentEventBhv.insert(pEvent);
-            pEvent.updateValues();
-            persistentEventValueBhv.batchInsert(pEvent
-                    .getPersistentEventValueList());
+            for (final PersistentEvent pEvent : pEventList) {
+                persistentEventBhv.insert(pEvent);
+                pEvent.updateValues();
+                persistentEventValueBhv.batchInsert(pEvent
+                        .getPersistentEventValueList());
+            }
+            listener.onSuccess(this, eventList);
+        } catch (final Exception e) {
+            listener.onFailure(e);
         }
     }
 }

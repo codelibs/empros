@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.annotation.Resource;
 
@@ -27,8 +28,8 @@ import org.codelibs.empros.exception.EmprosClientException;
 import org.codelibs.empros.exception.EmprosProcessException;
 import org.codelibs.empros.exception.EmprosProcessTimeoutException;
 import org.codelibs.empros.processor.EventProcessor;
-import org.codelibs.empros.processor.ProcessCallback;
 import org.codelibs.empros.processor.ProcessContext;
+import org.codelibs.empros.processor.ProcessorListener;
 import org.codelibs.empros.response.ErrorResponse;
 import org.codelibs.empros.response.ErrorResponse.ErrorDto;
 import org.codelibs.empros.response.EventResponse;
@@ -110,34 +111,41 @@ public class EventController {
             public void run() {
                 final ProcessContext context = new ProcessContext(eventList);
                 if (!eventList.isEmpty()) {
-                    eventProcessor.process(context, new ProcessCallback() {
-                        @Override
-                        public void onSuccess() {
-                            if (processed.getAndSet(true)) {
-                                if (logger.isInfoEnabled()) {
-                                    logger.info("events had already been processed.");
-                                }
-                                return;
-                            }
+                    eventProcessor.process(context,
+                            new ProcessorListener() {
+                                protected AtomicBoolean processed = new AtomicBoolean(
+                                        false);
 
-                            if (failureList.isEmpty()) {
-                                final Object response = context.getResponse();
-                                if (response != null) {
-                                    result.setResult(response);
-                                } else {
-                                    final EventResponse eventResponse = new EventResponse();
-                                    eventResponse.setStatus("ok");
-                                    eventResponse.setReceived(eventList.size());
-                                    eventResponse.setProcessed(context
-                                            .getProcessed());
-                                    result.setResult(eventResponse);
+                                @Override
+                                public void onSuccess(
+                                        final ProcessContext context) {
+                                    if (processed.getAndSet(true)) {
+                                        if (logger.isInfoEnabled()) {
+                                            logger.info("events had already been processed.");
+                                        }
+                                        return;
+                                    }
+
+                                    if (failureList.isEmpty()) {
+                                        final Object response = context
+                                                .getResponse();
+                                        if (response != null) {
+                                            result.setResult(response);
+                                        } else {
+                                            final EventResponse eventResponse = new EventResponse();
+                                            eventResponse.setStatus("ok");
+                                            eventResponse.setReceived(eventList
+                                                    .size());
+                                            eventResponse.setProcessed(context
+                                                    .getProcessed());
+                                            result.setResult(eventResponse);
+                                        }
+                                    } else {
+                                        result.setErrorResult(new EmprosProcessException(
+                                                failureList));
+                                    }
                                 }
-                            } else {
-                                result.setErrorResult(new EmprosProcessException(
-                                        failureList));
-                            }
-                        }
-                    });
+                            });
                 }
             }
         };

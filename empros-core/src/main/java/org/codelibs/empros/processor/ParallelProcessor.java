@@ -39,52 +39,57 @@ public class ParallelProcessor extends BaseProcessor {
 
     @Override
     public void process(final ProcessContext context,
-            final ProcessCallback callback) {
-        invokeNext(context, callback);
+            final ProcessorListener listener) {
+        invokeNext(context, listener);
     }
 
     @Override
     protected void invokeNext(final ProcessContext context,
-            final ProcessCallback callback) {
+            final ProcessorListener listener) {
         final int size = nextProcessorList.size();
         try {
             if (size == 0) {
-                callback.onSuccess();
+                listener.onSuccess(context);
             } else {
-                invokeProcessorsByParallel(context, callback, size);
+                invokeProcessorsByParallel(context, listener, size);
             }
         } catch (final Throwable t) {
-            callback.onFailure(t);
+            listener.onFailure(t);
         }
     }
 
     protected void invokeProcessorsByParallel(final ProcessContext context,
-            final ProcessCallback callback, final int size) {
+            final ProcessorListener listener, final int size) {
         final AtomicInteger counter = new AtomicInteger(size);
+        final ProcessContext currentContext = context;
         for (final EventProcessor processor : nextProcessorList) {
             executorService.execute(new Runnable() {
                 @Override
                 public void run() {
                     final ProcessContext childContext = context.clone();
-                    processor.process(childContext, new ProcessCallback() {
-                        @Override
-                        public void onSuccess() {
-                            if (childContext.getResponse() != null) {
-                                context.setResponse(childContext.getResponse());
-                            }
-                            context.addNumOfProcessedEvents(childContext
-                                    .getProcessed());
-                            final int count = counter.decrementAndGet();
-                            if (count == 0) {
-                                callback.onSuccess();
-                            }
-                        }
+                    processor.process(childContext,
+                            new ProcessorListener() {
+                                @Override
+                                public void onSuccess(
+                                        final ProcessContext context) {
+                                    if (childContext.getResponse() != null) {
+                                        currentContext.setResponse(childContext
+                                                .getResponse());
+                                    }
+                                    currentContext
+                                            .addNumOfProcessedEvents(childContext
+                                                    .getProcessed());
+                                    final int count = counter.decrementAndGet();
+                                    if (count == 0) {
+                                        listener.onSuccess(currentContext);
+                                    }
+                                }
 
-                        @Override
-                        public void onFailure(final Throwable t) {
-                            callback.onFailure(t);
-                        }
-                    });
+                                @Override
+                                public void onFailure(final Throwable t) {
+                                    listener.onFailure(t);
+                                }
+                            });
                 }
             });
         }
