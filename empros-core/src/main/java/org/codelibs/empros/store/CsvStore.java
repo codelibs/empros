@@ -34,6 +34,7 @@ import jp.sf.orangesignal.csv.CsvWriter;
 import org.apache.commons.io.IOUtils;
 import org.codelibs.empros.event.Event;
 import org.codelibs.empros.exception.EmprosDataStoreException;
+import org.seasar.util.lang.StringUtil;
 import org.seasar.util.message.MessageFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,18 +103,19 @@ public class CsvStore implements DataStore {
                         columnList.size());
                 for (final String key : columnList) {
                     final Object value = event.get(key);
-                    valueList.add(value != null ? value.toString() : null);
-
-                    final CsvData csvData = new CsvData();
-                    final Object timestamp = event.get(timestampKey);
-                    if (timestamp instanceof Long) {
-                        csvData.timestamp = ((Long) timestamp).longValue();
-                    } else {
-                        csvData.timestamp = System.currentTimeMillis();
-                    }
-                    csvData.valueList = valueList;
-                    csvDataWriter.add(csvData);
+                    valueList.add(value != null ? value.toString()
+                            : StringUtil.EMPTY);
                 }
+
+                final CsvData csvData = new CsvData();
+                final Object timestamp = event.get(timestampKey);
+                if (timestamp instanceof Long) {
+                    csvData.timestamp = ((Long) timestamp).longValue();
+                } else {
+                    csvData.timestamp = System.currentTimeMillis();
+                }
+                csvData.valueList = valueList;
+                csvDataWriter.add(csvData);
             }
             csvDataWriter.flush();
 
@@ -244,6 +246,9 @@ public class CsvStore implements DataStore {
                     try {
                         final CsvWriter writer = getCsvWriter(csvData.timestamp);
                         writer.writeValues(csvData.valueList);
+                        if (logger.isDebugEnabled()) {
+                            writer.flush();
+                        }
                     } catch (final Exception e) {
                         logger.error(MessageFormatter.getSimpleMessage(
                                 "EEMC0004", new Object[] { csvData }), e);
