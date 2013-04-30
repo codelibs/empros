@@ -53,7 +53,7 @@ public class ParallelProcessor extends BaseProcessor {
             } else {
                 invokeProcessorsByParallel(context, listener, size);
             }
-        } catch (final Throwable t) {
+        } catch (final Throwable t) { // NOPMD
             listener.onFailure(t);
         }
     }
@@ -67,29 +67,26 @@ public class ParallelProcessor extends BaseProcessor {
                 @Override
                 public void run() {
                     final ProcessContext childContext = context.clone();
-                    processor.process(childContext,
-                            new ProcessorListener() {
-                                @Override
-                                public void onSuccess(
-                                        final ProcessContext context) {
-                                    if (childContext.getResponse() != null) {
-                                        currentContext.setResponse(childContext
-                                                .getResponse());
-                                    }
-                                    currentContext
-                                            .addNumOfProcessedEvents(childContext
-                                                    .getProcessed());
-                                    final int count = counter.decrementAndGet();
-                                    if (count == 0) {
-                                        listener.onSuccess(currentContext);
-                                    }
-                                }
+                    processor.process(childContext, new ProcessorListener() {
+                        @Override
+                        public void onSuccess(final ProcessContext context) {
+                            if (childContext.getResponse() != null) {
+                                currentContext.setResponse(childContext
+                                        .getResponse());
+                            }
+                            currentContext.addNumOfProcessedEvents(childContext
+                                    .getProcessed());
+                            final int count = counter.decrementAndGet();
+                            if (count == 0) {
+                                listener.onSuccess(currentContext);
+                            }
+                        }
 
-                                @Override
-                                public void onFailure(final Throwable t) {
-                                    listener.onFailure(t);
-                                }
-                            });
+                        @Override
+                        public void onFailure(final Throwable t) {
+                            listener.onFailure(t);
+                        }
+                    });
                 }
             });
         }

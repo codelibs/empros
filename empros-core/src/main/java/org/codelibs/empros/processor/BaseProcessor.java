@@ -71,7 +71,7 @@ public abstract class BaseProcessor implements EventProcessor {
                     }
                 }
             }
-        } catch (final Throwable t) {
+        } catch (final Throwable t) { // NOPMD
             listener.onFailure(t);
         }
     }

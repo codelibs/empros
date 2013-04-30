@@ -13,6 +13,9 @@
         <dependent-module archiveName="empros-dbstore-h2-1.0.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/empros-dbstore-h2/empros-dbstore-h2">
             <dependency-type>uses</dependency-type>
         </dependent-module>
+        <dependent-module archiveName="empros-esstore-1.0.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/empros-esstore/empros-esstore">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <dependent-module archiveName="empros-sample-1.0.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/empros-sample/empros-sample">
             <dependency-type>uses</dependency-type>
         </dependent-module>

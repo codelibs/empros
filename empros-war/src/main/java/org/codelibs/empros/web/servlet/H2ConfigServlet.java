@@ -112,8 +112,8 @@ public class H2ConfigServlet extends HttpServlet {
     }
 
     private Object getH2Server(final String[] args)
-            throws IllegalArgumentException, IllegalAccessException,
-            InvocationTargetException, SecurityException, NoSuchMethodException {
+            throws IllegalAccessException, InvocationTargetException,
+            SecurityException, NoSuchMethodException {
         try {
             serverClass = Class.forName("org.h2.tools.Server");
         } catch (final ClassNotFoundException e) {
