@@ -29,11 +29,16 @@ public class EmprosProcessException extends EmprosRuntimeException {
 
     private static final long serialVersionUID = 1L;
 
-    private final List<Throwable> exceptionList;
+    private final Throwable[] throwables;
 
-    public EmprosProcessException(final List<Throwable> exceptionList) {
+    public EmprosProcessException(final Throwable[] throwables) {
         super("EEMC0002", new Object[0]);
-        this.exceptionList = exceptionList;
+        this.throwables = throwables;
+    }
+
+    public EmprosProcessException(final List<Throwable> throwableList) {
+        super("EEMC0002", new Object[0]);
+        throwables = throwableList.toArray(new Throwable[throwableList.size()]);
     }
 
     @Override
@@ -41,9 +46,9 @@ public class EmprosProcessException extends EmprosRuntimeException {
         super.printStackTrace(s);
 
         int count = 1;
-        for (final Throwable e : exceptionList) {
+        for (final Throwable t : throwables) {
             s.println("Caused " + count + ":");
-            e.printStackTrace(s);
+            t.printStackTrace(s);
             count++;
         }
     }
@@ -53,9 +58,9 @@ public class EmprosProcessException extends EmprosRuntimeException {
         super.printStackTrace(s);
 
         int count = 1;
-        for (final Throwable e : exceptionList) {
+        for (final Throwable t : throwables) {
             s.println("Caused " + count + ":");
-            e.printStackTrace(s);
+            t.printStackTrace(s);
             count++;
         }
     }

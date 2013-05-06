@@ -20,13 +20,15 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.codelibs.empros.util.ProcessorUtil;
+
 /**
  * ParallelProcessor sends events to multiple event-processors simultaneously.
  * 
  * @author shinsuke
  *
  */
-public class ParallelProcessor extends BaseProcessor {
+public class ParallelProcessor extends DispatchProcessor {
 
     protected ExecutorService executorService;
 
@@ -35,12 +37,6 @@ public class ParallelProcessor extends BaseProcessor {
         super(processorList);
 
         executorService = Executors.newFixedThreadPool(threadPoolSize);
-    }
-
-    @Override
-    public void process(final ProcessContext context,
-            final ProcessorListener listener) {
-        invokeNext(context, listener);
     }
 
     @Override
@@ -61,7 +57,6 @@ public class ParallelProcessor extends BaseProcessor {
     protected void invokeProcessorsByParallel(final ProcessContext context,
             final ProcessorListener listener, final int size) {
         final AtomicInteger counter = new AtomicInteger(size);
-        final ProcessContext currentContext = context;
         for (final EventProcessor processor : nextProcessorList) {
             executorService.execute(new Runnable() {
                 @Override
@@ -69,22 +64,24 @@ public class ParallelProcessor extends BaseProcessor {
                     final ProcessContext childContext = context.clone();
                     processor.process(childContext, new ProcessorListener() {
                         @Override
-                        public void onSuccess(final ProcessContext context) {
+                        public void onSuccess(
+                                final ProcessContext currentContext) {
                             if (childContext.getResponse() != null) {
-                                currentContext.setResponse(childContext
-                                        .getResponse());
+                                context.setResponse(childContext.getResponse());
                             }
-                            currentContext.addNumOfProcessedEvents(childContext
+                            context.addNumOfProcessedEvents(childContext
                                     .getProcessed());
                             final int count = counter.decrementAndGet();
                             if (count == 0) {
-                                listener.onSuccess(currentContext);
+                                ProcessorUtil.finish(context,
+                                        ParallelProcessor.this, listener);
                             }
                         }
 
                         @Override
                         public void onFailure(final Throwable t) {
-                            listener.onFailure(t);
+                            ProcessorUtil.fail(context, ParallelProcessor.this,
+                                    listener, t);
                         }
                     });
                 }

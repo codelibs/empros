@@ -20,6 +20,7 @@ import java.util.List;
 import org.codelibs.empros.event.Event;
 import org.codelibs.empros.store.DataStore;
 import org.codelibs.empros.store.DataStoreListener;
+import org.codelibs.empros.util.ProcessorUtil;
 
 /**
  * DataStoreProcessor sends events to a specified data store.
@@ -27,35 +28,35 @@ import org.codelibs.empros.store.DataStoreListener;
  * @author shinsuke
  *
  */
-public class DataStoreProcessor extends BaseProcessor {
+public class DataStoreProcessor implements EventProcessor {
     protected DataStore dataStore;
-
-    public DataStoreProcessor() {
-        super();
-    }
-
-    public DataStoreProcessor(final List<EventProcessor> processorList) {
-        super(processorList);
-    }
 
     @Override
     public void process(final ProcessContext context,
             final ProcessorListener listener) {
+        context.start(this);
 
-        final List<Event> eventList = getCurrentEventList(context);
-        dataStore.store(eventList, new DataStoreListener() {
-            @Override
-            public void onSuccess(final DataStore dataStore,
-                    final List<Event> eventList) {
-                context.addNumOfProcessedEvents(eventList.size());
-                invokeNext(context, listener);
-            }
+        final List<Event> eventList = ProcessorUtil
+                .getCurrentEventList(context);
+        try {
+            dataStore.store(eventList, new DataStoreListener() {
+                @Override
+                public void onSuccess(final DataStore dataStore,
+                        final List<Event> eventList) {
+                    context.addNumOfProcessedEvents(eventList.size());
+                    ProcessorUtil.finish(context, DataStoreProcessor.this,
+                            listener);
+                }
 
-            @Override
-            public void onFailure(final Throwable t) {
-                listener.onFailure(t);
-            }
-        });
+                @Override
+                public void onFailure(final Throwable t) {
+                    ProcessorUtil.fail(context, DataStoreProcessor.this,
+                            listener, t);
+                }
+            });
+        } catch (final Throwable t) {
+            ProcessorUtil.fail(context, this, listener, t);
+        }
     }
 
     public DataStore getDataStore() {

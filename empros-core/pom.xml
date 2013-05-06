@@ -12,6 +12,12 @@
 	<name>Empros</name>
 	<packaging>jar</packaging>
 	<dependencies>
+		<!-- HTTP -->
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpasyncclient</artifactId>
+			<version>4.0-beta3</version>
+		</dependency>
 		<!-- CSV -->
 		<dependency>
 			<groupId>jp.sf.orangesignal</groupId>

@@ -18,41 +18,45 @@ package org.codelibs.empros.processor;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.codelibs.empros.event.Event;
+import org.codelibs.empros.util.ProcessorUtil;
 
 /**
- * BaseProcessor is a base event processor class.
+ * SerialProcessor is a serial event processor class.
  * 
  * @author shinsuke
  *
  */
-public abstract class BaseProcessor implements EventProcessor {
+public class SerialProcessor extends DispatchProcessor {
 
-    protected List<EventProcessor> nextProcessorList;
-
-    public BaseProcessor() {
-        nextProcessorList = new ArrayList<EventProcessor>();
+    public SerialProcessor() {
+        super(new ArrayList<EventProcessor>());
     }
 
-    public BaseProcessor(final List<EventProcessor> processorList) {
-        nextProcessorList = processorList;
+    public SerialProcessor(final List<EventProcessor> processorList) {
+        super(processorList);
     }
 
-    /* (non-Javadoc)
-     * @see org.codelibs.empros.processor.EventProcessor#process(org.codelibs.empros.processor.ProcessContext)
-     */
     @Override
-    public abstract void process(final ProcessContext context,
-            ProcessorListener listener);
-
     protected void invokeNext(final ProcessContext context,
             final ProcessorListener listener) {
-        ProcessorListener nextCallback = listener;
         final int size = nextProcessorList.size();
         try {
             if (size == 0) {
-                listener.onSuccess(context);
+                ProcessorUtil.finish(context, this, listener);
             } else {
+                ProcessorListener nextCallback = new ProcessorListener() {
+                    @Override
+                    public void onSuccess(final ProcessContext context) {
+                        ProcessorUtil.finish(context, SerialProcessor.this,
+                                listener);
+                    }
+
+                    @Override
+                    public void onFailure(final Throwable t) {
+                        ProcessorUtil.fail(context, SerialProcessor.this,
+                                listener, t);
+                    }
+                };
                 final ProcessContext currentContext = context;
                 for (int i = size - 1; i >= 0; i--) {
                     final EventProcessor currentProcessor = nextProcessorList
@@ -67,21 +71,18 @@ public abstract class BaseProcessor implements EventProcessor {
                                 currentProcessor.process(currentContext,
                                         currentCallback);
                             }
+
+                            @Override
+                            public void onFailure(final Throwable t) {
+                                currentCallback.onFailure(t);
+                            }
                         };
                     }
                 }
             }
         } catch (final Throwable t) { // NOPMD
-            listener.onFailure(t);
+            ProcessorUtil.fail(context, this, listener, t);
         }
     }
 
-    protected List<Event> getCurrentEventList(final ProcessContext context) {
-        final List<Event> processingEventList = context
-                .getProcessingEventList();
-        if (processingEventList != null) {
-            return processingEventList;
-        }
-        return context.getIncomingEventList();
-    }
 }

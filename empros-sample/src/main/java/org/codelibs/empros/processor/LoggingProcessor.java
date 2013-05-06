@@ -18,6 +18,7 @@ package org.codelibs.empros.processor;
 import java.util.List;
 
 import org.codelibs.empros.event.Event;
+import org.codelibs.empros.util.ProcessorUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +28,7 @@ import org.slf4j.LoggerFactory;
  * @author shinsuke
  *
  */
-public class LoggingProcessor extends BaseProcessor {
+public class LoggingProcessor implements EventProcessor {
     private static final Logger logger = LoggerFactory
             .getLogger(LoggingProcessor.class);
 
@@ -35,20 +36,18 @@ public class LoggingProcessor extends BaseProcessor {
         super();
     }
 
-    public LoggingProcessor(final List<EventProcessor> processorList) {
-        super(processorList);
-    }
-
     @Override
     public void process(final ProcessContext context,
             final ProcessorListener listener) {
+        context.start(this);
         if (logger.isInfoEnabled()) {
-            final List<Event> eventList = getCurrentEventList(context);
+            final List<Event> eventList = ProcessorUtil
+                    .getCurrentEventList(context);
             logger.info("incoming event: {}", eventList.toString());
             context.addNumOfProcessedEvents(eventList.size());
         }
 
-        invokeNext(context, listener);
+        ProcessorUtil.finish(context, this, listener);
     }
 
 }
