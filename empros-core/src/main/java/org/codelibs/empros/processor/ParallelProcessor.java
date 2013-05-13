@@ -18,6 +18,7 @@ package org.codelibs.empros.processor;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.codelibs.empros.util.ProcessorUtil;
@@ -36,7 +37,21 @@ public class ParallelProcessor extends DispatchProcessor {
             final int threadPoolSize) {
         super(processorList);
 
-        executorService = Executors.newFixedThreadPool(threadPoolSize);
+        executorService = Executors.newFixedThreadPool(threadPoolSize,
+                new ThreadFactory() {
+                    @Override
+                    public Thread newThread(final Runnable r) {
+                        final Thread thread = new Thread(r,
+                                "ParallelProcessor-"
+                                        + System.currentTimeMillis());
+                        thread.setDaemon(true);
+                        return thread;
+                    }
+                });
+    }
+
+    public void destroy() {
+        executorService.shutdown();
     }
 
     @Override

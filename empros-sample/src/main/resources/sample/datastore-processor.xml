@@ -53,7 +53,8 @@
 	</bean>
 
 	<!-- Main Processor -->
-	<bean id="eventProcessor" class="org.codelibs.empros.processor.ParallelProcessor">
+	<bean id="eventProcessor" class="org.codelibs.empros.processor.ParallelProcessor"
+		destroy-method="destroy">
 		<constructor-arg>
 			<list>
 				<ref bean="dbProcessor" />
