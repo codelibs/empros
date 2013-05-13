@@ -4,7 +4,8 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
 	<!-- Main Processor -->
-	<bean id="eventProcessor" class="org.codelibs.empros.processor.AutoRegisterProcessor">
+	<bean id="eventProcessor" class="org.codelibs.empros.processor.AutoRegisterProcessor"
+		destroy-method="destroy">
 		<constructor-arg>
 			<value>10</value>
 		</constructor-arg>
