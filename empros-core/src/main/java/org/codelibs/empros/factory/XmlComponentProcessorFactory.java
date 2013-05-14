@@ -17,6 +17,7 @@ package org.codelibs.empros.factory;
 
 import org.codelibs.empros.processor.EventProcessor;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
@@ -39,4 +40,10 @@ public abstract class XmlComponentProcessorFactory implements ProcessorFactory {
         return context.getBean(eventProcessorName, EventProcessor.class);
     }
 
+    @Override
+    public void destroy() {
+        if (context instanceof ConfigurableApplicationContext) {
+            ((ConfigurableApplicationContext) context).close();
+        }
+    }
 }

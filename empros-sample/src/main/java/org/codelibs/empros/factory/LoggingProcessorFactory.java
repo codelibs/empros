@@ -25,4 +25,9 @@ public class LoggingProcessorFactory implements ProcessorFactory {
         return new LoggingProcessor();
     }
 
+    @Override
+    public void destroy() {
+        // nothing        
+    }
+
 }

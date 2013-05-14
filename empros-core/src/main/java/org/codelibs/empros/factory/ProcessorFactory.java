@@ -25,4 +25,6 @@ import org.codelibs.empros.processor.EventProcessor;
  */
 public interface ProcessorFactory {
     EventProcessor create();
+
+    void destroy();
 }

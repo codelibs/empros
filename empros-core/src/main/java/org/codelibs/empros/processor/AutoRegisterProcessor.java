@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 
 import org.codelibs.core.CoreLibConstants;
 import org.codelibs.empros.exception.EmprosAutoRegisterException;
@@ -37,10 +38,12 @@ import org.slf4j.LoggerFactory;
  */
 public class AutoRegisterProcessor extends ParallelProcessor {
 
-    private static final String PROCESSOR_FACTORY_RESOURCE = "META-INF/empros/ProcessorFactory";
+    protected static final String PROCESSOR_FACTORY_RESOURCE = "META-INF/empros/ProcessorFactory";
 
     private static final Logger logger = LoggerFactory
             .getLogger(AutoRegisterProcessor.class);
+
+    protected List<ProcessorFactory> processorFactoryList = new ArrayList<ProcessorFactory>();
 
     public AutoRegisterProcessor(final int threadPoolSize) {
         super(new ArrayList<EventProcessor>(), threadPoolSize);
@@ -70,6 +73,7 @@ public class AutoRegisterProcessor extends ParallelProcessor {
                                 .forName(factoryClassName);
                         final ProcessorFactory processorFactory = factoryClass
                                 .newInstance();
+                        processorFactoryList.add(processorFactory);
                         nextProcessorList.add(processorFactory.create());
                         logger.info("{} loaded.", factoryClass);
                     }
@@ -80,5 +84,17 @@ public class AutoRegisterProcessor extends ParallelProcessor {
             }
         }
 
+    }
+
+    @Override
+    public void destroy() {
+        super.destroy();
+        for (final ProcessorFactory factory : processorFactoryList) {
+            try {
+                factory.destroy();
+            } catch (final Exception e) {
+                logger.error("Failed to destroy " + factory, e);
+            }
+        }
     }
 }
