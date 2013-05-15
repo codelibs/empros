@@ -5,7 +5,7 @@
 	<artifactId>empros-project</artifactId>
 	<name>Empros Project</name>
 	<packaging>pom</packaging>
-	<version>1.0.0</version>
+	<version>1.0.1-SNAPSHOT</version>
 	<url>https://github.com/codelibs/empros</url>
 	<inceptionYear>2012</inceptionYear>
 	<licenses>
