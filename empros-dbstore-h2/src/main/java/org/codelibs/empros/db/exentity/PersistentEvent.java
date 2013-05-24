@@ -40,22 +40,34 @@ public class PersistentEvent extends BsPersistentEvent {
     }
 
     public PersistentEvent(final Event event) {
-        final List<PersistentEventValue> pEventValueList = getPersistentEventValueList();
-        for (final Map.Entry<String, Object> entry : event.entrySet()) {
-            final PersistentEventValue pEventValue = new PersistentEventValue();
-            pEventValue.setName(entry.getKey());
-            final Object value = entry.getValue();
-            if (value != null) {
-                pEventValue.setValue(value.toString());
-                pEventValue.setClassType(value.getClass().getCanonicalName());
-            } else {
-                pEventValue.setValue("null");
-                pEventValue.setClassType("null");
-            }
-            pEventValueList.add(pEventValue);
-        }
+        parseObject(org.seasar.util.lang.StringUtil.EMPTY, event);
         setCreatedBy(event.getCreatedBy());
         setCreatedTime(new Timestamp(event.getCreatedTime().getTime()));
+    }
+
+    private void parseObject(String namePrefix, final Map<?, ?> event) {
+        final List<PersistentEventValue> pEventValueList = getPersistentEventValueList();
+        for (final Map.Entry<?, ?> entry : event.entrySet()) {
+            String key = entry.getKey().toString().trim();
+            if (key.length() > 0) {
+                Object value = entry.getValue();
+                if (value instanceof Map<?, ?>) {
+                    parseObject(namePrefix + key + ".", (Map<?, ?>) value);
+                } else {
+                    final PersistentEventValue pEventValue = new PersistentEventValue();
+                    pEventValue.setName(namePrefix + key);
+                    if (value != null) {
+                        pEventValue.setValue(value.toString());
+                        pEventValue.setClassType(value.getClass()
+                                .getCanonicalName());
+                    } else {
+                        pEventValue.setValue("null");
+                        pEventValue.setClassType("null");
+                    }
+                    pEventValueList.add(pEventValue);
+                }
+            }
+        }
     }
 
     public void updateValues() {

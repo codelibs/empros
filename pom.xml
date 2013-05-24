@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.codelibs</groupId>
 	<artifactId>empros-project</artifactId>
@@ -42,6 +43,7 @@
 	</properties>
 	<modules>
 		<module>empros-core</module>
+		<module>empros-csvstore</module>
 		<module>empros-dbstore</module>
 		<module>empros-dbstore-h2</module>
 		<module>empros-dbstore-mysql</module>
@@ -66,73 +68,75 @@
 						<downloadJavadocs>true</downloadJavadocs>
 					</configuration>
 				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.0</version>
-					<configuration>
-						<source>${java-version}</source>
-						<target>${java-version}</target>
-						<encoding>UTF-8</encoding>
-						<compilerArgument>-Xlint:all</compilerArgument>
-						<showWarnings>true</showWarnings>
-						<showDeprecation>true</showDeprecation>
-					</configuration>
-				</plugin>
-				<plugin>
-					<artifactId>maven-source-plugin</artifactId>
-					<executions>
-						<execution>
-							<id>source-jar</id>
-							<phase>package</phase>
-							<goals>
-								<goal>jar</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>
-				<plugin>
-					<artifactId>maven-javadoc-plugin</artifactId>
-					<configuration>
-						<encoding>UTF-8</encoding>
-						<docencoding>UTF-8</docencoding>
-						<charset>UTF-8</charset>
-						<links>
-							<link>http://docs.oracle.com/javase/6/docs/api/</link>
-							<link>http://docs.oracle.com/javaee/6/api/</link>
-							<link>http://aopalliance.sourceforge.net/doc/</link>
-							<link>http://www.csg.is.titech.ac.jp/~chiba/javassist/html/</link>
-							<link>http://s2container.seasar.org/2.4/s2-framework/ja/apidocs/</link>
-							<link>http://s2container.seasar.org/2.4/s2-extension/ja/apidocs/</link>
-							<link>http://s2container.seasar.org/2.4/s2-tiger/ja/apidocs/</link>
-						</links>
-					</configuration>
-					<executions>
-						<execution>
-							<phase>site</phase>
-							<goals>
-								<goal>javadoc</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>
-				<plugin>
-					<groupId>com.mycila.maven-license-plugin</groupId>
-					<artifactId>maven-license-plugin</artifactId>
-					<version>1.9.0</version>
-					<configuration>
-						<header>https://raw.github.com/codelibs/empros/master/src/etc/header.txt</header>
-						<includes>
-							<include>src/**/*.java</include>
-						</includes>
-						<encoding>UTF-8</encoding>
-						<headerDefinitions>
-							<headerDefinition>https://raw.github.com/codelibs/empros/master/src/etc/header-definition.xml</headerDefinition>
-						</headerDefinitions>
-					</configuration>
-				</plugin>
 			</plugins>
 		</pluginManagement>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.0</version>
+				<configuration>
+					<source>${java-version}</source>
+					<target>${java-version}</target>
+					<encoding>UTF-8</encoding>
+					<compilerArgument>-Xlint:all</compilerArgument>
+					<showWarnings>true</showWarnings>
+					<showDeprecation>true</showDeprecation>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-source-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>source-jar</id>
+						<phase>package</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<configuration>
+					<encoding>UTF-8</encoding>
+					<docencoding>UTF-8</docencoding>
+					<charset>UTF-8</charset>
+					<links>
+						<link>http://docs.oracle.com/javase/6/docs/api/</link>
+						<link>http://docs.oracle.com/javaee/6/api/</link>
+						<link>http://aopalliance.sourceforge.net/doc/</link>
+						<link>http://www.csg.is.titech.ac.jp/~chiba/javassist/html/</link>
+						<link>http://s2container.seasar.org/2.4/s2-framework/ja/apidocs/</link>
+						<link>http://s2container.seasar.org/2.4/s2-extension/ja/apidocs/</link>
+						<link>http://s2container.seasar.org/2.4/s2-tiger/ja/apidocs/</link>
+					</links>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>site</phase>
+						<goals>
+							<goal>javadoc</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>com.mycila.maven-license-plugin</groupId>
+				<artifactId>maven-license-plugin</artifactId>
+				<version>1.9.0</version>
+				<configuration>
+					<header>https://raw.github.com/codelibs/empros/master/src/etc/header.txt</header>
+					<includes>
+						<include>src/**/*.java</include>
+					</includes>
+					<encoding>UTF-8</encoding>
+					<headerDefinitions>
+						<headerDefinition>https://raw.github.com/codelibs/empros/master/src/etc/header-definition.xml</headerDefinition>
+					</headerDefinitions>
+				</configuration>
+			</plugin>
+		</plugins>
 		<extensions>
 			<extension>
 				<groupId>org.apache.maven.wagon</groupId>

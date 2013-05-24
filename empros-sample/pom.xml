@@ -18,6 +18,11 @@
         </dependency>
         <dependency>
             <groupId>org.codelibs</groupId>
+            <artifactId>empros-csvstore</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codelibs</groupId>
             <artifactId>empros-esstore</artifactId>
             <version>${project.version}</version>
         </dependency>

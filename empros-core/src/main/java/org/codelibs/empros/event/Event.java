@@ -72,4 +72,27 @@ public class Event extends LinkedHashMap<String, Object> {
         }
         return MessageDigestUtil.digest("MD5", super.toString());
     }
+
+    public Object getObject(final String path) {
+        if (path == null) {
+            return null;
+        }
+        final String[] paths = path.split("\\.");
+        if (paths.length > 0) {
+            return getObject(this, paths, 0);
+        }
+        return null;
+    }
+
+    protected Object getObject(final Object target, final String[] paths,
+            final int depth) {
+        if (target instanceof Map<?, ?>) {
+            final Object value = ((Map<?, ?>) target).get(paths[depth]);
+            if (depth == paths.length - 1 || value == null) {
+                return value;
+            }
+            return getObject(value, paths, depth + 1);
+        }
+        return null;
+    }
 }

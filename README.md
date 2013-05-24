@@ -32,6 +32,11 @@ or
     $ curl http://localhost:8080/empros/events/ -H "Content-type: application/json" \
       -X POST -d "[{\"aaa\":1,\"bbb\":2}]"
 
+#### Send Nested Event
+
+    $ curl http://localhost:8080/empros/events/ -H "Content-type: application/json" \
+      -X POST -d "[{\"aaa\":1,\"bbb\":2,\"ccc\":{\"ddd\":3,\"eee\":4}}]"
+
 #### Send Multiple Events
 
     $ curl http://localhost:8080/empros/events/ -H "Content-type: application/json" \

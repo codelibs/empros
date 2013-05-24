@@ -23,6 +23,7 @@
 			<list>
 				<value>aaa</value>
 				<value>bbb</value>
+				<value>ccc.ddd</value>
 			</list>
 		</property>
 		<property name="rotationDatePattern">

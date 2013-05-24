@@ -102,7 +102,7 @@ public class CsvStore implements DataStore {
                 final List<String> valueList = new ArrayList<String>(
                         columnList.size());
                 for (final String key : columnList) {
-                    final Object value = event.get(key);
+                    final Object value = event.getObject(key);
                     valueList.add(value != null ? value.toString()
                             : StringUtil.EMPTY);
                 }

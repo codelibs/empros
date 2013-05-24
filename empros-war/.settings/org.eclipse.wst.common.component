@@ -4,19 +4,22 @@
         <wb-resource deploy-path="/" source-path="/src/main/webapp" tag="defaultRootSource"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
-        <dependent-module archiveName="empros-core-1.0.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/empros-core/empros-core">
+        <dependent-module archiveName="empros-core-1.0.1-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/empros-core/empros-core">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="empros-dbstore-1.0.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/empros-dbstore/empros-dbstore">
+        <dependent-module archiveName="empros-csvstore-1.0.1-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/empros-csvstore/empros-csvstore">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="empros-dbstore-h2-1.0.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/empros-dbstore-h2/empros-dbstore-h2">
+        <dependent-module archiveName="empros-dbstore-1.0.1-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/empros-dbstore/empros-dbstore">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="empros-esstore-1.0.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/empros-esstore/empros-esstore">
+        <dependent-module archiveName="empros-dbstore-h2-1.0.1-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/empros-dbstore-h2/empros-dbstore-h2">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="empros-sample-1.0.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/empros-sample/empros-sample">
+        <dependent-module archiveName="empros-esstore-1.0.1-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/empros-esstore/empros-esstore">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="empros-sample-1.0.1-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/empros-sample/empros-sample">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <property name="context-root" value="empros"/>
