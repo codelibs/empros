@@ -19,7 +19,7 @@
 		<dependency>
 			<groupId>org.elasticsearch</groupId>
 			<artifactId>elasticsearch</artifactId>
-			<version>0.90.0.RC2</version>
+			<version>7.6.2</version>
 		</dependency>
 	</dependencies>
 </project>

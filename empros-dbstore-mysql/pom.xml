@@ -11,7 +11,7 @@
 	<name>Empros MySQL DBStore</name>
 	<packaging>jar</packaging>
 	<properties>
-		<mysql-version>5.1.22</mysql-version>
+		<mysql-version>8.0.19</mysql-version>
 		<database>mysql</database>
 		<databaseGroupId>mysql</databaseGroupId>
 		<databaseArtifactId>mysql-connector-java</databaseArtifactId>
@@ -27,9 +27,9 @@
 			<plugin>
 				<groupId>org.seasar.dbflute</groupId>
 				<artifactId>dbflute-maven-plugin</artifactId>
-				<version>1.0.1</version>
+				<version>1.0.2</version>
 				<configuration>
-					<dbfluteVersion>1.0.0</dbfluteVersion>
+					<dbfluteVersion>1.2.2</dbfluteVersion>
 					<rootPackage>org.codelibs.empros</rootPackage>
 					<dbPackage>org.codelibs.empros.db</dbPackage>
 					<clientProject>empros</clientProject>
@@ -62,7 +62,7 @@
 		<dependency>
 			<groupId>org.seasar.dbflute</groupId>
 			<artifactId>dbflute-runtime</artifactId>
-			<version>1.0.0</version>
+			<version>1.2.2</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-dbcp</groupId>
