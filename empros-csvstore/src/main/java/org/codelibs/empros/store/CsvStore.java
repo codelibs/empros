@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 the CodeLibs Project and the Others.
+ * Copyright 2012-2020 CodeLibs Project and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,8 +28,8 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.regex.Pattern;
 
-import jp.sf.orangesignal.csv.CsvConfig;
-import jp.sf.orangesignal.csv.CsvWriter;
+import com.orangesignal.csv.CsvConfig;
+import com.orangesignal.csv.CsvWriter;
 
 import org.apache.commons.io.IOUtils;
 import org.codelibs.empros.event.Event;
@@ -216,7 +216,6 @@ public class CsvStore implements DataStore {
             }
         }
 
-        @Override
         public void destroy() {
             running = false;
             interrupt();

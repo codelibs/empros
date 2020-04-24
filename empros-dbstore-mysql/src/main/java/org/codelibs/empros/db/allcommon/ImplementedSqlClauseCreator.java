@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 the CodeLibs Project and the Others.
+ * Copyright 2012-2020 CodeLibs Project and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,25 +15,11 @@
  */
 package org.codelibs.empros.db.allcommon;
 
-import org.seasar.dbflute.DBDef;
-import org.seasar.dbflute.cbean.ConditionBean;
-import org.seasar.dbflute.cbean.cipher.GearedCipherManager;
-import org.seasar.dbflute.cbean.sqlclause.AbstractSqlClause;
-import org.seasar.dbflute.cbean.sqlclause.SqlClause;
-import org.seasar.dbflute.cbean.sqlclause.SqlClauseCreator;
-import org.seasar.dbflute.cbean.sqlclause.SqlClauseDb2;
-import org.seasar.dbflute.cbean.sqlclause.SqlClauseDefault;
-import org.seasar.dbflute.cbean.sqlclause.SqlClauseDerby;
-import org.seasar.dbflute.cbean.sqlclause.SqlClauseFirebird;
-import org.seasar.dbflute.cbean.sqlclause.SqlClauseH2;
-import org.seasar.dbflute.cbean.sqlclause.SqlClauseMsAccess;
-import org.seasar.dbflute.cbean.sqlclause.SqlClauseMySql;
-import org.seasar.dbflute.cbean.sqlclause.SqlClauseOracle;
-import org.seasar.dbflute.cbean.sqlclause.SqlClausePostgreSql;
-import org.seasar.dbflute.cbean.sqlclause.SqlClauseSqlServer;
-import org.seasar.dbflute.cbean.sqlclause.SqlClauseSqlite;
-import org.seasar.dbflute.cbean.sqlclause.SqlClauseSybase;
-import org.seasar.dbflute.dbmeta.DBMetaProvider;
+import org.dbflute.cbean.ConditionBean;
+import org.dbflute.cbean.cipher.GearedCipherManager;
+import org.dbflute.cbean.sqlclause.*;
+import org.dbflute.dbmeta.DBMetaProvider;
+import org.dbflute.dbway.DBDef;
 
 /**
  * The creator of SQL clause.
@@ -46,24 +32,22 @@ public class ImplementedSqlClauseCreator implements SqlClauseCreator {
     //                                                                      ==============
     /**
      * Create SQL clause. {for condition-bean}
-     * @param cb Condition-bean. (NotNull) 
+     * @param cb Condition-bean. (NotNull)
      * @return SQL clause. (NotNull)
      */
-    @Override
-    public SqlClause createSqlClause(final ConditionBean cb) {
-        final String tableDbName = cb.getTableDbName();
-        final SqlClause sqlClause = createSqlClause(tableDbName);
+    public SqlClause createSqlClause(ConditionBean cb) {
+        String tableDbName = cb.asTableDbName();
+        SqlClause sqlClause = createSqlClause(tableDbName);
         return sqlClause;
     }
 
     /**
      * Create SQL clause.
-     * @param tableDbName The DB name of table. (NotNull) 
+     * @param tableDbName The DB name of table. (NotNull)
      * @return SQL clause. (NotNull)
      */
-    @Override
-    public SqlClause createSqlClause(final String tableDbName) {
-        final SqlClause sqlClause = doCreateSqlClause(tableDbName);
+    public SqlClause createSqlClause(String tableDbName) {
+        SqlClause sqlClause = doCreateSqlClause(tableDbName);
         setupSqlClauseOption(sqlClause);
         return sqlClause;
     }
@@ -71,7 +55,7 @@ public class ImplementedSqlClauseCreator implements SqlClauseCreator {
     // ===================================================================================
     //                                                                            Creation
     //                                                                            ========
-    protected SqlClause doCreateSqlClause(final String tableDbName) {
+    protected SqlClause doCreateSqlClause(String tableDbName) {
         AbstractSqlClause sqlClause; // dynamic resolution but no perfect (almost static)
         if (isCurrentDBDef(DBDef.MySQL)) {
             sqlClause = createSqlClauseMySql(tableDbName);
@@ -91,71 +75,68 @@ public class ImplementedSqlClauseCreator implements SqlClauseCreator {
             sqlClause = createSqlClauseSqlite(tableDbName);
         } else if (isCurrentDBDef(DBDef.MSAccess)) {
             sqlClause = createSqlClauseMsAccess(tableDbName);
-        } else if (isCurrentDBDef(DBDef.FireBird)) {
+        } else if (isCurrentDBDef(DBDef.Firebird)) {
             sqlClause = createSqlClauseFirebird(tableDbName);
         } else if (isCurrentDBDef(DBDef.Sybase)) {
             sqlClause = createSqlClauseSybase(tableDbName);
         } else {
             // as the database when generating
-            sqlClause = createSqlClauseH2(tableDbName);
+            sqlClause = createSqlClauseMySql(tableDbName);
         }
         prepareSupporterComponent(sqlClause);
         return sqlClause;
     }
 
-    protected SqlClauseMySql createSqlClauseMySql(final String tableDbName) {
+    protected SqlClauseMySql createSqlClauseMySql(String tableDbName) {
         return new SqlClauseMySql(tableDbName);
     }
 
-    protected SqlClausePostgreSql createSqlClausePostgreSql(
-            final String tableDbName) {
+    protected SqlClausePostgreSql createSqlClausePostgreSql(String tableDbName) {
         return new SqlClausePostgreSql(tableDbName);
     }
 
-    protected SqlClauseOracle createSqlClauseOracle(final String tableDbName) {
+    protected SqlClauseOracle createSqlClauseOracle(String tableDbName) {
         return new SqlClauseOracle(tableDbName);
     }
 
-    protected SqlClauseDb2 createSqlClauseDb2(final String tableDbName) {
+    protected SqlClauseDb2 createSqlClauseDb2(String tableDbName) {
         return new SqlClauseDb2(tableDbName);
     }
 
-    protected SqlClauseSqlServer createSqlClauseSqlServer(
-            final String tableDbName) {
+    protected SqlClauseSqlServer createSqlClauseSqlServer(String tableDbName) {
         return new SqlClauseSqlServer(tableDbName);
     }
 
-    protected SqlClauseH2 createSqlClauseH2(final String tableDbName) {
+    protected SqlClauseH2 createSqlClauseH2(String tableDbName) {
         return new SqlClauseH2(tableDbName);
     }
 
-    protected SqlClauseDerby createSqlClauseDerby(final String tableDbName) {
+    protected SqlClauseDerby createSqlClauseDerby(String tableDbName) {
         return new SqlClauseDerby(tableDbName);
     }
 
-    protected SqlClauseSqlite createSqlClauseSqlite(final String tableDbName) {
+    protected SqlClauseSqlite createSqlClauseSqlite(String tableDbName) {
         return new SqlClauseSqlite(tableDbName);
     }
 
-    protected SqlClauseMsAccess createSqlClauseMsAccess(final String tableDbName) {
+    protected SqlClauseMsAccess createSqlClauseMsAccess(String tableDbName) {
         return new SqlClauseMsAccess(tableDbName);
     }
 
-    protected SqlClauseFirebird createSqlClauseFirebird(final String tableDbName) {
+    protected SqlClauseFirebird createSqlClauseFirebird(String tableDbName) {
         return new SqlClauseFirebird(tableDbName);
     }
 
-    protected SqlClauseSybase createSqlClauseSybase(final String tableDbName) {
+    protected SqlClauseSybase createSqlClauseSybase(String tableDbName) {
         return new SqlClauseSybase(tableDbName);
     }
 
-    protected SqlClause createSqlClauseDefault(final String tableDbName) {
+    protected SqlClause createSqlClauseDefault(String tableDbName) {
         return new SqlClauseDefault(tableDbName);
     }
 
-    protected void prepareSupporterComponent(final AbstractSqlClause sqlClause) {
-        sqlClause.dbmetaProvider(getDBMetaProvider()).cipherManager(
-                getGearedCipherManager());
+    protected void prepareSupporterComponent(AbstractSqlClause sqlClause) {
+        sqlClause.dbmetaProvider(getDBMetaProvider()).cipherManager(getGearedCipherManager());
     }
 
     // ===================================================================================
@@ -172,16 +153,77 @@ public class ImplementedSqlClauseCreator implements SqlClauseCreator {
     // ===================================================================================
     //                                                                              Option
     //                                                                              ======
-    protected void setupSqlClauseOption(final SqlClause sqlClause) {
+    protected void setupSqlClauseOption(SqlClause sqlClause) {
+        doSetupSqlClauseInnerJoinAutoDetect(sqlClause);
+        doSetupSqlClauseThatsBadTimingDetect(sqlClause);
+        doSetupSqlClauseNullOrEmptyQuery(sqlClause);
+        doSetupSqlClauseEmptyStringQuery(sqlClause);
+        doSetupSqlClauseOverridingQuery(sqlClause);
+        doSetupSqlClauseColumnNullObject(sqlClause);
+        doSetupSqlClauseColumnNullObjectGearedToSpecify(sqlClause);
+        doSetupSqlClauseTruncateConditionDatetimePrecision(sqlClause);
+        doSetupSqlClauseSelectIndex(sqlClause);
+    }
+
+    protected void doSetupSqlClauseInnerJoinAutoDetect(SqlClause sqlClause) {
         if (isInnerJoinAutoDetect()) {
-            sqlClause.allowInnerJoinAutoDetect();
+            sqlClause.enableInnerJoinAutoDetect();
         }
+    }
+
+    protected void doSetupSqlClauseThatsBadTimingDetect(SqlClause sqlClause) {
+        if (isThatsBadTimingDetect()) {
+            sqlClause.enableThatsBadTimingDetect();
+        }
+    }
+
+    protected void doSetupSqlClauseNullOrEmptyQuery(SqlClause sqlClause) {
+        if (isNullOrEmptyQueryAllowed()) { // default for 1.0.5
+            sqlClause.ignoreNullOrEmptyQuery();
+        } else { // default for 1.1
+            sqlClause.checkNullOrEmptyQuery();
+        }
+    }
+
+    protected void doSetupSqlClauseEmptyStringQuery(SqlClause sqlClause) {
         if (isEmptyStringQueryAllowed()) {
-            sqlClause.allowEmptyStringQuery();
+            sqlClause.enableEmptyStringQuery();
         }
-        if (isInvalidQueryChecked()) {
-            sqlClause.checkInvalidQuery();
+    }
+
+    protected void doSetupSqlClauseOverridingQuery(SqlClause sqlClause) {
+        if (isOverridingQueryAllowed()) { // default for 1.0.5
+            sqlClause.enableOverridingQuery();
+        } else { // default for 1.1
+            sqlClause.disableOverridingQuery();
         }
+    }
+
+    protected void doSetupSqlClauseColumnNullObject(SqlClause sqlClause) {
+        if (isColumnNullObjectAllowed()) {
+            sqlClause.enableColumnNullObject();
+        } else {
+            sqlClause.disableColumnNullObject();
+        }
+    }
+
+    protected void doSetupSqlClauseColumnNullObjectGearedToSpecify(SqlClause sqlClause) {
+        if (isColumnNullObjectGearedToSpecify()) {
+            sqlClause.enableColumnNullObjectGearedToSpecify();
+        } else {
+            sqlClause.disableColumnNullObjectGearedToSpecify();
+        }
+    }
+
+    protected void doSetupSqlClauseTruncateConditionDatetimePrecision(SqlClause sqlClause) {
+        if (isDatetimePrecisionTruncationOfCondition()) {
+            sqlClause.enableDatetimePrecisionTruncationOfCondition();
+        } else {
+            sqlClause.disableDatetimePrecisionTruncationOfCondition();
+        }
+    }
+
+    protected void doSetupSqlClauseSelectIndex(SqlClause sqlClause) {
         if (isDisableSelectIndex()) {
             sqlClause.disableSelectIndex();
         }
@@ -190,7 +232,7 @@ public class ImplementedSqlClauseCreator implements SqlClauseCreator {
     // ===================================================================================
     //                                                                       Determination
     //                                                                       =============
-    protected boolean isCurrentDBDef(final DBDef currentDBDef) {
+    protected boolean isCurrentDBDef(DBDef currentDBDef) {
         return DBCurrent.getInstance().isCurrentDBDef(currentDBDef);
     }
 
@@ -198,12 +240,32 @@ public class ImplementedSqlClauseCreator implements SqlClauseCreator {
         return DBFluteConfig.getInstance().isInnerJoinAutoDetect();
     }
 
+    protected boolean isThatsBadTimingDetect() {
+        return DBFluteConfig.getInstance().isThatsBadTimingDetect();
+    }
+
+    protected boolean isNullOrEmptyQueryAllowed() {
+        return DBFluteConfig.getInstance().isNullOrEmptyQueryAllowed();
+    }
+
     protected boolean isEmptyStringQueryAllowed() {
         return DBFluteConfig.getInstance().isEmptyStringQueryAllowed();
     }
 
-    protected boolean isInvalidQueryChecked() {
-        return DBFluteConfig.getInstance().isInvalidQueryChecked();
+    protected boolean isOverridingQueryAllowed() {
+        return DBFluteConfig.getInstance().isOverridingQueryAllowed();
+    }
+
+    protected boolean isColumnNullObjectAllowed() {
+        return DBFluteConfig.getInstance().isColumnNullObjectAllowed();
+    }
+
+    protected boolean isColumnNullObjectGearedToSpecify() {
+        return DBFluteConfig.getInstance().isColumnNullObjectGearedToSpecify();
+    }
+
+    protected boolean isDatetimePrecisionTruncationOfCondition() {
+        return DBFluteConfig.getInstance().isDatetimePrecisionTruncationOfCondition();
     }
 
     protected boolean isDisableSelectIndex() {

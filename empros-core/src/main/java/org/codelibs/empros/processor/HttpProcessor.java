@@ -1,22 +1,45 @@
+/*
+ * Copyright 2012-2020 CodeLibs Project and the Others.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
 package org.codelibs.empros.processor;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javax.net.ssl.SSLContext;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.concurrent.FutureCallback;
+import org.apache.http.config.SocketConfig;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.nio.client.DefaultHttpAsyncClient;
-import org.apache.http.nio.client.HttpAsyncClient;
+import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
+import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
+import org.apache.http.impl.nio.client.HttpAsyncClients;
+import org.apache.http.impl.nio.reactor.IOReactorConfig;
 import org.apache.http.params.CoreConnectionPNames;
 import org.apache.http.params.HttpParams;
 import org.codelibs.empros.event.Event;
+import org.codelibs.empros.exception.EmprosClientException;
 import org.codelibs.empros.exception.EmprosConfigException;
 import org.codelibs.empros.exception.EmprosHttpRequestException;
 import org.codelibs.empros.util.ProcessorUtil;
@@ -25,7 +48,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class HttpProcessor implements EventProcessor {
-    protected HttpAsyncClient httpClient;
+    protected CloseableHttpAsyncClient httpClient;
 
     protected String defaultUrl;
 
@@ -40,14 +63,13 @@ public class HttpProcessor implements EventProcessor {
 
     protected void initHttpClient() {
         try {
-            httpClient = new DefaultHttpAsyncClient();
-            final HttpParams params = httpClient.getParams();
-            params.setIntParameter(CoreConnectionPNames.SO_TIMEOUT, 3000)
-                    .setIntParameter(CoreConnectionPNames.CONNECTION_TIMEOUT,
-                            3000)
-                    .setIntParameter(CoreConnectionPNames.SOCKET_BUFFER_SIZE,
-                            8 * 1024)
-                    .setBooleanParameter(CoreConnectionPNames.TCP_NODELAY, true);
+            final IOReactorConfig ioReactorConfig = IOReactorConfig.custom()
+                    .setSoTimeout(3000)
+                    .setConnectTimeout(3000)
+                    .build();
+            httpClient = HttpAsyncClientBuilder.create()
+                    .setDefaultIOReactorConfig(ioReactorConfig)
+                    .build();
             httpClient.start();
         } catch (final Exception e) {
             throw new EmprosConfigException("EEMC0007", e);
@@ -60,9 +82,10 @@ public class HttpProcessor implements EventProcessor {
 
     public void destroy() {
         try {
-            httpClient.shutdown();
-        } catch (final InterruptedException e) {
+            httpClient.close();
+        } catch (final IOException e) {
             // ignore
+            // throw new EmprosClientException("Failed to close HttpClient", e);
         }
     }
 
@@ -115,14 +138,7 @@ public class HttpProcessor implements EventProcessor {
     }
 
     protected HttpEntity getHttpEntity(final List<Event> eventList) {
-        try {
-            final HttpEntity entity = new StringEntity(
-                    getBodyContent(eventList), requestEncoding);
-            return entity;
-        } catch (final UnsupportedEncodingException e) {
-            throw new EmprosHttpRequestException("EEMC0008",
-                    new Object[] { requestEncoding }, e);
-        }
+        return new StringEntity(getBodyContent(eventList), requestEncoding);
     }
 
     protected String getBodyContent(final List<Event> eventList) {

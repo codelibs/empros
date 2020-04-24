@@ -25,13 +25,11 @@
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.seasar.dbflute</groupId>
+				<groupId>org.dbflute</groupId>
 				<artifactId>dbflute-maven-plugin</artifactId>
-				<version>1.0.2</version>
+				<version>1.1.0</version>
 				<configuration>
-					<dbfluteVersion>1.2.2</dbfluteVersion>
-					<rootPackage>org.codelibs.empros</rootPackage>
-					<dbPackage>org.codelibs.empros.db</dbPackage>
+					<dbfluteVersion>${dbflute.version}</dbfluteVersion>
 					<clientProject>empros</clientProject>
 					<dbfluteClientDir>${basedir}/dbflute_${database}</dbfluteClientDir>
 					<databaseUrl>${databaseUrl}</databaseUrl>
@@ -60,9 +58,9 @@
 
 		<!-- DBFlute -->
 		<dependency>
-			<groupId>org.seasar.dbflute</groupId>
+			<groupId>org.dbflute</groupId>
 			<artifactId>dbflute-runtime</artifactId>
-			<version>1.2.2</version>
+			<version>${dbflute.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-dbcp</groupId>

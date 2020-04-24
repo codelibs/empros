@@ -13,13 +13,18 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.codelibs</groupId>
+			<artifactId>elasticsearch-httpclient</artifactId>
+			<version>${elasticsearch.httpclient.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.codelibs</groupId>
 			<artifactId>empros-core</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.elasticsearch</groupId>
 			<artifactId>elasticsearch</artifactId>
-			<version>7.6.2</version>
+			<version>${elasticsearch.version}</version>
 		</dependency>
 	</dependencies>
 </project>
