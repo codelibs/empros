@@ -1,4 +1,4 @@
-Empros
+Empros[![Build Status](https://travis-ci.org/codelibs/empros.svg?branch=master)](https://travis-ci.org/codelibs/empros)
 ======
 
 ## Overview
