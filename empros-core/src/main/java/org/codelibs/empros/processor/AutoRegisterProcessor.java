@@ -17,11 +17,11 @@ package org.codelibs.empros.processor;
 
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
-import org.codelibs.core.CoreLibConstants;
 import org.codelibs.core.io.InputStreamUtil;
 import org.codelibs.core.lang.ClassUtil;
 import org.codelibs.core.net.URLUtil;
@@ -43,7 +43,7 @@ public class AutoRegisterProcessor extends ParallelProcessor {
     private static final Logger logger = LoggerFactory
             .getLogger(AutoRegisterProcessor.class);
 
-    protected List<ProcessorFactory> processorFactoryList = new ArrayList<ProcessorFactory>();
+    protected List<ProcessorFactory> processorFactoryList = new ArrayList<>();
 
     public AutoRegisterProcessor(final int threadPoolSize) {
         super(new ArrayList<EventProcessor>(), threadPoolSize);
@@ -62,7 +62,7 @@ public class AutoRegisterProcessor extends ParallelProcessor {
             try {
                 final String content = new String(
                         InputStreamUtil.getBytes(URLUtil.openStream(url)),
-                        CoreLibConstants.UTF_8);
+                        StandardCharsets.UTF_8);
                 for (final String value : content.split("\n")) {
                     if (org.codelibs.core.lang.StringUtil.isNotBlank(value)) {
                         final String factoryClassName = value.trim();
@@ -71,7 +71,7 @@ public class AutoRegisterProcessor extends ParallelProcessor {
                         }
                         final Class<ProcessorFactory> factoryClass = ClassUtil
                                 .forName(factoryClassName);
-                        final ProcessorFactory processorFactory = factoryClass
+                        final ProcessorFactory processorFactory = factoryClass.getDeclaredConstructor()
                                 .newInstance();
                         processorFactoryList.add(processorFactory);
                         nextProcessorList.add(processorFactory.create());

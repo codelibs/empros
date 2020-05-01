@@ -43,7 +43,7 @@ public class LoggingProcessor implements EventProcessor {
         if (logger.isInfoEnabled()) {
             final List<Event> eventList = ProcessorUtil
                     .getCurrentEventList(context);
-            logger.info("incoming event: {}", eventList.toString());
+            logger.info("incoming event: {}", eventList);
             context.addNumOfProcessedEvents(eventList.size());
         }
 

@@ -44,7 +44,7 @@ public class DatabaseStore implements DataStore {
     @Transactional
     public void store(final List<Event> eventList,
             final DataStoreListener listener) {
-        final List<PersistentEvent> pEventList = new ArrayList<PersistentEvent>(
+        final List<PersistentEvent> pEventList = new ArrayList<>(
                 eventList.size());
         try {
             for (final Event event : eventList) {

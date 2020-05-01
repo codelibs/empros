@@ -22,6 +22,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @Controller(value = "/")
@@ -30,7 +31,7 @@ public class HomeController {
     private static final Logger logger = LoggerFactory
             .getLogger(HomeController.class);
 
-    @RequestMapping(value = "/")
+    @RequestMapping(value = "/", method =  { RequestMethod.GET, RequestMethod.POST })
     public String index(final Model model) {
         if (logger.isInfoEnabled()) {
             logger.info("path: /");

@@ -118,8 +118,7 @@ public class ElasticSearchStore implements DataStore {
                 @Override
                 public void onResponse(final BulkResponse response) {
                     if (logger.isDebugEnabled()) {
-//                        logger.debug("Response: took: {}, header: {}", response
-//                                .getTook().toString(), bulkRequst.getHeaders());
+                        logger.debug("Response: took: {}", response.getTook().toString());
                         for (final BulkItemResponse item : response.getItems()) {
                             logger.debug(
                                     "Response Item: id: {}, index: {}, itemId: {}, opType: {}, type: {}, version: {}",

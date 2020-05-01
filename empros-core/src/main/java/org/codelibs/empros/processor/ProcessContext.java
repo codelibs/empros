@@ -41,9 +41,9 @@ public class ProcessContext implements Cloneable {
 
     private Object response;
 
-    private Set<EventProcessor> processorSet = new HashSet<EventProcessor>();
+    private Set<EventProcessor> processorSet = new HashSet<>();
 
-    private Queue<Throwable> failureQueue = new ConcurrentLinkedQueue<Throwable>();
+    private Queue<Throwable> failureQueue = new ConcurrentLinkedQueue<>();
 
     private ProcessListener listener;
 
@@ -140,7 +140,7 @@ public class ProcessContext implements Cloneable {
             // replace with the following values.
             context.processed = new AtomicLong(0);
             if (processingEventList != null) {
-                context.processingEventList = new ArrayList<Event>(
+                context.processingEventList = new ArrayList<>(
                         processingEventList.size());
                 Collections.copy(context.processingEventList,
                         processingEventList);

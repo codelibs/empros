@@ -94,9 +94,7 @@ public class H2ConfigServlet extends HttpServlet {
 
     @Override
     public void destroy() {
-        DisposableUtil.add(new Disposable() {
-            @Override
-            public void dispose() {
+        DisposableUtil.add( () -> {
                 if (server != null) {
                     try {
                         final Method stopMethod = serverClass.getMethod("stop",
@@ -108,7 +106,7 @@ public class H2ConfigServlet extends HttpServlet {
                     }
                 }
             }
-        });
+        );
     }
 
     private Object getH2Server(final String[] args)

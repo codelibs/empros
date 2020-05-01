@@ -37,17 +37,14 @@ public class ParallelProcessor extends DispatchProcessor {
             final int threadPoolSize) {
         super(processorList);
 
-        executorService = Executors.newFixedThreadPool(threadPoolSize,
-                new ThreadFactory() {
-                    @Override
-                    public Thread newThread(final Runnable r) {
+        executorService = Executors.newFixedThreadPool(threadPoolSize, (r -> {
                         final Thread thread = new Thread(r,
                                 "ParallelProcessor-"
                                         + System.currentTimeMillis());
                         thread.setDaemon(true);
                         return thread;
                     }
-                });
+        ));
     }
 
     public void destroy() {
@@ -73,9 +70,7 @@ public class ParallelProcessor extends DispatchProcessor {
             final ProcessorListener listener, final int size) {
         final AtomicInteger counter = new AtomicInteger(size);
         for (final EventProcessor processor : nextProcessorList) {
-            executorService.execute(new Runnable() {
-                @Override
-                public void run() {
+            executorService.execute( () -> {
                     final ProcessContext childContext = context.clone();
                     processor.process(childContext, new ProcessorListener() {
                         @Override
@@ -100,7 +95,7 @@ public class ParallelProcessor extends DispatchProcessor {
                         }
                     });
                 }
-            });
+            );
         }
     }
 

@@ -16,28 +16,21 @@
 package org.codelibs.empros.processor;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import javax.net.ssl.SSLContext;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.concurrent.FutureCallback;
-import org.apache.http.config.SocketConfig;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
-import org.apache.http.impl.nio.client.HttpAsyncClients;
 import org.apache.http.impl.nio.reactor.IOReactorConfig;
-import org.apache.http.params.CoreConnectionPNames;
-import org.apache.http.params.HttpParams;
 import org.codelibs.empros.event.Event;
 import org.codelibs.empros.exception.EmprosClientException;
 import org.codelibs.empros.exception.EmprosConfigException;
@@ -85,7 +78,7 @@ public class HttpProcessor implements EventProcessor {
             httpClient.close();
         } catch (final IOException e) {
             // ignore
-            // throw new EmprosClientException("Failed to close HttpClient", e);
+            throw new EmprosClientException("Failed to close HttpClient", e);
         }
     }
 
@@ -156,15 +149,9 @@ public class HttpProcessor implements EventProcessor {
 
     protected Map<String, List<Event>> aggregateEvents(
             final List<Event> eventList) {
-        final Map<String, List<Event>> eventMap = new HashMap<String, List<Event>>();
+        final Map<String, List<Event>> eventMap = new HashMap<>();
         for (final Event event : eventList) {
-            final String url = getUrl(event);
-            List<Event> list = eventMap.get(url);
-            if (list == null) {
-                list = new ArrayList<Event>();
-                eventMap.put(url, list);
-            }
-            list.add(event);
+            eventMap.computeIfAbsent(getUrl(event), key -> new ArrayList<Event>()).add(event);
         }
         return eventMap;
     }
