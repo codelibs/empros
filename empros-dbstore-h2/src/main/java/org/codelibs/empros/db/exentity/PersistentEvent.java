@@ -40,7 +40,7 @@ public class PersistentEvent extends BsPersistentEvent {
     }
 
     public PersistentEvent(final Event event) {
-        parseObject(org.seasar.util.lang.StringUtil.EMPTY, event);
+        parseObject(org.codelibs.core.lang.StringUtil.EMPTY, event);
         setCreatedBy(event.getCreatedBy());
         setCreatedTime(new Timestamp(event.getCreatedTime().getTime()));
     }

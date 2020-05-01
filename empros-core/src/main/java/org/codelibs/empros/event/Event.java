@@ -19,8 +19,8 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.seasar.util.lang.StringUtil;
-import org.seasar.util.security.MessageDigestUtil;
+import org.codelibs.core.lang.StringUtil;
+import org.codelibs.core.security.MessageDigestUtil;
 
 /**
  * An event data is represented as Event instance.

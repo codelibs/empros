@@ -303,9 +303,9 @@
 			<version>0.5.4</version>
 		</dependency>
 		<dependency>
-			<groupId>org.seasar.util</groupId>
-			<artifactId>s2util</artifactId>
-			<version>0.0.1</version>
+			<groupId>org.codelibs</groupId>
+			<artifactId>corelib</artifactId>
+			<version>0.5.4</version>
 		</dependency>
 
 		<!-- Test -->

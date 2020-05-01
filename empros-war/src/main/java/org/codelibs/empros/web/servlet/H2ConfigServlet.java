@@ -23,8 +23,8 @@ import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 
-import org.seasar.util.misc.Disposable;
-import org.seasar.util.misc.DisposableUtil;
+import org.codelibs.core.misc.Disposable;
+import org.codelibs.core.misc.DisposableUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -15,7 +15,7 @@
  */
 package org.codelibs.empros.exception;
 
-import org.seasar.util.exception.SRuntimeException;
+import org.codelibs.core.exception.ClRuntimeException;
 
 /**
  * EmprosRuntimeException is a base exception class on Empros.
@@ -23,7 +23,7 @@ import org.seasar.util.exception.SRuntimeException;
  * @author shinsuke
  *
  */
-public class EmprosRuntimeException extends SRuntimeException {
+public class EmprosRuntimeException extends ClRuntimeException {
 
     private static final long serialVersionUID = 1L;
 

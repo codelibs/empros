@@ -22,11 +22,11 @@ import java.util.Enumeration;
 import java.util.List;
 
 import org.codelibs.core.CoreLibConstants;
+import org.codelibs.core.io.InputStreamUtil;
+import org.codelibs.core.lang.ClassUtil;
+import org.codelibs.core.net.URLUtil;
 import org.codelibs.empros.exception.EmprosAutoRegisterException;
 import org.codelibs.empros.factory.ProcessorFactory;
-import org.seasar.util.io.InputStreamUtil;
-import org.seasar.util.lang.ClassUtil;
-import org.seasar.util.net.URLUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,7 +64,7 @@ public class AutoRegisterProcessor extends ParallelProcessor {
                         InputStreamUtil.getBytes(URLUtil.openStream(url)),
                         CoreLibConstants.UTF_8);
                 for (final String value : content.split("\n")) {
-                    if (org.seasar.util.lang.StringUtil.isNotBlank(value)) {
+                    if (org.codelibs.core.lang.StringUtil.isNotBlank(value)) {
                         final String factoryClassName = value.trim();
                         if (factoryClassName.charAt(0) == '#') {
                             continue;
