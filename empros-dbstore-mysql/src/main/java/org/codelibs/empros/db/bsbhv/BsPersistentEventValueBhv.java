@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 the CodeLibs Project and the Others.
+ * Copyright 2012-2020 CodeLibs Project and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,59 +17,58 @@ package org.codelibs.empros.db.bsbhv;
 
 import java.util.List;
 
-import org.codelibs.empros.db.bsentity.dbmeta.PersistentEventValueDbm;
-import org.codelibs.empros.db.cbean.PersistentEventValueCB;
-import org.codelibs.empros.db.exbhv.PersistentEventValueBhv;
-import org.codelibs.empros.db.exentity.PersistentEvent;
-import org.codelibs.empros.db.exentity.PersistentEventValue;
-import org.seasar.dbflute.Entity;
-import org.seasar.dbflute.bhv.AbstractBehaviorWritable;
-import org.seasar.dbflute.bhv.DeleteOption;
-import org.seasar.dbflute.bhv.InsertOption;
-import org.seasar.dbflute.bhv.QueryInsertSetupper;
-import org.seasar.dbflute.bhv.UpdateOption;
-import org.seasar.dbflute.cbean.ConditionBean;
-import org.seasar.dbflute.cbean.EntityRowHandler;
-import org.seasar.dbflute.cbean.ListResultBean;
-import org.seasar.dbflute.cbean.PagingResultBean;
-import org.seasar.dbflute.cbean.SpecifyQuery;
-import org.seasar.dbflute.dbmeta.DBMeta;
-import org.seasar.dbflute.outsidesql.executor.OutsideSqlBasicExecutor;
+import org.codelibs.empros.db.exbhv.*;
+import org.codelibs.empros.db.bsbhv.loader.*;
+import org.codelibs.empros.db.exentity.*;
+import org.codelibs.empros.db.bsentity.dbmeta.*;
+import org.codelibs.empros.db.cbean.*;
+import org.dbflute.*;
+import org.dbflute.bhv.*;
+import org.dbflute.bhv.core.BehaviorCommandInvoker;
+import org.dbflute.bhv.readable.*;
+import org.dbflute.bhv.writable.*;
+import org.dbflute.bhv.referrer.*;
+import org.dbflute.cbean.*;
+import org.dbflute.cbean.chelper.HpSLSFunction;
+import org.dbflute.cbean.result.*;
+import org.dbflute.exception.*;
+import org.dbflute.hook.CommonColumnAutoSetupper;
+import org.dbflute.optional.OptionalEntity;
+import org.dbflute.outsidesql.executor.*;
 
 /**
- * The behavior of PERSISTENT_EVENT_VALUE as TABLE. <br />
+ * The behavior of PERSISTENT_EVENT_VALUE as TABLE. <br>
  * <pre>
  * [primary key]
  *     ID
- * 
+ *
  * [column]
  *     ID, EVENT_ID, NAME, VALUE, CLASS_TYPE, VERSION_NO
- * 
+ *
  * [sequence]
  *     
- * 
+ *
  * [identity]
  *     ID
- * 
+ *
  * [version-no]
  *     VERSION_NO
- * 
+ *
  * [foreign table]
  *     PERSISTENT_EVENT
- * 
+ *
  * [referrer table]
  *     
- * 
+ *
  * [foreign property]
  *     persistentEvent
- * 
+ *
  * [referrer property]
  *     
  * </pre>
  * @author DBFlute(AutoGenerator)
  */
-public abstract class BsPersistentEventValueBhv extends
-        AbstractBehaviorWritable {
+public abstract class BsPersistentEventValueBhv extends AbstractBehaviorWritable<PersistentEventValue, PersistentEventValueCB> {
 
     // ===================================================================================
     //                                                                          Definition
@@ -78,239 +77,128 @@ public abstract class BsPersistentEventValueBhv extends
     /*df:endQueryPath*/
 
     // ===================================================================================
-    //                                                                          Table name
-    //                                                                          ==========
-    /** @return The name on database of table. (NotNull) */
-    @Override
-    public String getTableDbName() {
-        return "PERSISTENT_EVENT_VALUE";
-    }
-
-    // ===================================================================================
-    //                                                                              DBMeta
-    //                                                                              ======
-    /** @return The instance of DBMeta. (NotNull) */
-    @Override
-    public DBMeta getDBMeta() {
-        return PersistentEventValueDbm.getInstance();
-    }
-
-    /** @return The instance of DBMeta as my table type. (NotNull) */
-    public PersistentEventValueDbm getMyDBMeta() {
-        return PersistentEventValueDbm.getInstance();
-    }
+    //                                                                             DB Meta
+    //                                                                             =======
+    /** {@inheritDoc} */
+    public PersistentEventValueDbm asDBMeta() { return PersistentEventValueDbm.getInstance(); }
+    /** {@inheritDoc} */
+    public String asTableDbName() { return "PERSISTENT_EVENT_VALUE"; }
 
     // ===================================================================================
     //                                                                        New Instance
     //                                                                        ============
     /** {@inheritDoc} */
-    @Override
-    public Entity newEntity() {
-        return newMyEntity();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public ConditionBean newConditionBean() {
-        return newMyConditionBean();
-    }
-
-    /** @return The instance of new entity as my table type. (NotNull) */
-    public PersistentEventValue newMyEntity() {
-        return new PersistentEventValue();
-    }
-
-    /** @return The instance of new condition-bean as my table type. (NotNull) */
-    public PersistentEventValueCB newMyConditionBean() {
-        return new PersistentEventValueCB();
-    }
+    public PersistentEventValueCB newConditionBean() { return new PersistentEventValueCB(); }
 
     // ===================================================================================
     //                                                                        Count Select
     //                                                                        ============
     /**
-     * Select the count of uniquely-selected records by the condition-bean. {IgnorePagingCondition, IgnoreSpecifyColumn}<br />
+     * Select the count of uniquely-selected records by the condition-bean. {IgnorePagingCondition, IgnoreSpecifyColumn}<br>
      * SpecifyColumn is ignored but you can use it only to remove text type column for union's distinct.
      * <pre>
-     * PersistentEventValueCB cb = new PersistentEventValueCB();
-     * cb.query().setFoo...(value);
-     * int count = persistentEventValueBhv.<span style="color: #FD4747">selectCount</span>(cb);
-     * </pre>
-     * @param cb The condition-bean of PersistentEventValue. (NotNull)
-     * @return The selected count.
-     */
-    public int selectCount(final PersistentEventValueCB cb) {
-        return doSelectCountUniquely(cb);
-    }
-
-    protected int doSelectCountUniquely(final PersistentEventValueCB cb) { // called by selectCount(cb) 
-        assertCBStateValid(cb);
-        return delegateSelectCountUniquely(cb);
-    }
-
-    protected int doSelectCountPlainly(final PersistentEventValueCB cb) { // called by selectPage(cb)
-        assertCBStateValid(cb);
-        return delegateSelectCountPlainly(cb);
-    }
-
-    @Override
-    protected int doReadCount(final ConditionBean cb) {
-        return selectCount(downcast(cb));
-    }
-
-    // ===================================================================================
-    //                                                                       Cursor Select
-    //                                                                       =============
-    /**
-     * Select the cursor by the condition-bean.
-     * <pre>
-     * PersistentEventValueCB cb = new PersistentEventValueCB();
-     * cb.query().setFoo...(value);
-     * persistentEventValueBhv.<span style="color: #FD4747">selectCursor</span>(cb, new EntityRowHandler&lt;PersistentEventValue&gt;() {
-     *     public void handle(PersistentEventValue entity) {
-     *         ... = entity.getFoo...();
-     *     }
+     * <span style="color: #70226C">int</span> count = <span style="color: #0000C0">persistentEventValueBhv</span>.<span style="color: #CC4747">selectCount</span>(<span style="color: #553000">cb</span> <span style="color: #90226C; font-weight: bold"><span style="font-size: 120%">-</span>&gt;</span> {
+     *     <span style="color: #553000">cb</span>.query().set...
      * });
      * </pre>
-     * @param cb The condition-bean of PersistentEventValue. (NotNull)
-     * @param entityRowHandler The handler of entity row of PersistentEventValue. (NotNull)
+     * @param cbLambda The callback for condition-bean of PersistentEventValue. (NotNull)
+     * @return The count for the condition. (NotMinus)
      */
-    public void selectCursor(final PersistentEventValueCB cb,
-            final EntityRowHandler<PersistentEventValue> entityRowHandler) {
-        doSelectCursor(cb, entityRowHandler, PersistentEventValue.class);
-    }
-
-    protected <ENTITY extends PersistentEventValue> void doSelectCursor(
-            final PersistentEventValueCB cb,
-            final EntityRowHandler<ENTITY> entityRowHandler,
-            final Class<ENTITY> entityType) {
-        assertCBStateValid(cb);
-        assertObjectNotNull("entityRowHandler<PersistentEventValue>",
-                entityRowHandler);
-        assertObjectNotNull("entityType", entityType);
-        assertSpecifyDerivedReferrerEntityProperty(cb, entityType);
-        delegateSelectCursor(cb, entityRowHandler, entityType);
+    public int selectCount(CBCall<PersistentEventValueCB> cbLambda) {
+        return facadeSelectCount(createCB(cbLambda));
     }
 
     // ===================================================================================
     //                                                                       Entity Select
     //                                                                       =============
     /**
-     * Select the entity by the condition-bean.
+     * Select the entity by the condition-bean. <br>
+     * It returns not-null optional entity, so you should ... <br>
+     * <span style="color: #AD4747; font-size: 120%">If the data is always present as your business rule, alwaysPresent().</span> <br>
+     * <span style="color: #AD4747; font-size: 120%">If it might be no data, isPresent() and orElse(), ...</span>
      * <pre>
-     * PersistentEventValueCB cb = new PersistentEventValueCB();
-     * cb.query().setFoo...(value);
-     * PersistentEventValue persistentEventValue = persistentEventValueBhv.<span style="color: #FD4747">selectEntity</span>(cb);
-     * if (persistentEventValue != null) {
-     *     ... = persistentEventValue.get...();
-     * } else {
-     *     ...
-     * }
+     * <span style="color: #3F7E5E">// if the data always exists as your business rule</span>
+     * <span style="color: #0000C0">persistentEventValueBhv</span>.<span style="color: #CC4747">selectEntity</span>(<span style="color: #553000">cb</span> <span style="color: #90226C; font-weight: bold"><span style="font-size: 120%">-</span>&gt;</span> {
+     *     <span style="color: #553000">cb</span>.query().set...
+     * }).<span style="color: #CC4747">alwaysPresent</span>(<span style="color: #553000">persistentEventValue</span> <span style="color: #90226C; font-weight: bold"><span style="font-size: 120%">-</span>&gt;</span> {
+     *     <span style="color: #3F7E5E">// called if present, or exception</span>
+     *     ... = <span style="color: #553000">persistentEventValue</span>.get...
+     * });
+     *
+     * <span style="color: #3F7E5E">// if it might be no data, ...</span>
+     * <span style="color: #0000C0">persistentEventValueBhv</span>.<span style="color: #CC4747">selectEntity</span>(<span style="color: #553000">cb</span> <span style="color: #90226C; font-weight: bold"><span style="font-size: 120%">-</span>&gt;</span> {
+     *     <span style="color: #553000">cb</span>.query().set...
+     * }).<span style="color: #CC4747">ifPresent</span>(<span style="color: #553000">persistentEventValue</span> <span style="color: #90226C; font-weight: bold"><span style="font-size: 120%">-</span>&gt;</span> {
+     *     <span style="color: #3F7E5E">// called if present</span>
+     *     ... = <span style="color: #553000">persistentEventValue</span>.get...
+     * }).<span style="color: #994747">orElse</span>(() <span style="color: #90226C; font-weight: bold"><span style="font-size: 120%">-</span>&gt;</span> {
+     *     <span style="color: #3F7E5E">// called if not present</span>
+     * });
      * </pre>
-     * @param cb The condition-bean of PersistentEventValue. (NotNull)
-     * @return The selected entity. (NullAllowed: If the condition has no data, it returns null)
-     * @exception org.seasar.dbflute.exception.EntityDuplicatedException When the entity has been duplicated.
-     * @exception org.seasar.dbflute.exception.SelectEntityConditionNotFoundException When the condition for selecting an entity is not found.
+     * @param cbLambda The callback for condition-bean of PersistentEventValue. (NotNull)
+     * @return The optional entity selected by the condition. (NotNull: if no data, empty entity)
+     * @throws EntityAlreadyDeletedException When get(), required() of return value is called and the value is null, which means entity has already been deleted (not found).
+     * @throws EntityDuplicatedException When the entity has been duplicated.
+     * @throws SelectEntityConditionNotFoundException When the condition for selecting an entity is not found.
      */
-    public PersistentEventValue selectEntity(final PersistentEventValueCB cb) {
-        return doSelectEntity(cb, PersistentEventValue.class);
+    public OptionalEntity<PersistentEventValue> selectEntity(CBCall<PersistentEventValueCB> cbLambda) {
+        return facadeSelectEntity(createCB(cbLambda));
     }
 
-    protected <ENTITY extends PersistentEventValue> ENTITY doSelectEntity(
-            final PersistentEventValueCB cb, final Class<ENTITY> entityType) {
-        assertCBStateValid(cb);
-        return helpSelectEntityInternally(
-                cb,
-                new InternalSelectEntityCallback<ENTITY, PersistentEventValueCB>() {
-                    @Override
-                    public List<ENTITY> callbackSelectList(
-                            final PersistentEventValueCB cb) {
-                        return doSelectList(cb, entityType);
-                    }
-                });
+    protected OptionalEntity<PersistentEventValue> facadeSelectEntity(PersistentEventValueCB cb) {
+        return doSelectOptionalEntity(cb, typeOfSelectedEntity());
     }
 
-    @Override
-    protected Entity doReadEntity(final ConditionBean cb) {
-        return selectEntity(downcast(cb));
+    protected <ENTITY extends PersistentEventValue> OptionalEntity<ENTITY> doSelectOptionalEntity(PersistentEventValueCB cb, Class<? extends ENTITY> tp) {
+        return createOptionalEntity(doSelectEntity(cb, tp), cb);
     }
+
+    protected Entity doReadEntity(ConditionBean cb) { return facadeSelectEntity(downcast(cb)).orElse(null); }
 
     /**
-     * Select the entity by the condition-bean with deleted check.
+     * Select the entity by the condition-bean with deleted check. <br>
+     * <span style="color: #AD4747; font-size: 120%">If the data is always present as your business rule, this method is good.</span>
      * <pre>
-     * PersistentEventValueCB cb = new PersistentEventValueCB();
-     * cb.query().setFoo...(value);
-     * PersistentEventValue persistentEventValue = persistentEventValueBhv.<span style="color: #FD4747">selectEntityWithDeletedCheck</span>(cb);
-     * ... = persistentEventValue.get...(); <span style="color: #3F7E5E">// the entity always be not null</span>
+     * PersistentEventValue <span style="color: #553000">persistentEventValue</span> = <span style="color: #0000C0">persistentEventValueBhv</span>.<span style="color: #CC4747">selectEntityWithDeletedCheck</span>(cb <span style="color: #90226C; font-weight: bold"><span style="font-size: 120%">-</span>&gt;</span> cb.acceptPK(1));
+     * ... = <span style="color: #553000">persistentEventValue</span>.get...(); <span style="color: #3F7E5E">// the entity always be not null</span>
      * </pre>
-     * @param cb The condition-bean of PersistentEventValue. (NotNull)
-     * @return The selected entity. (NotNull)
-     * @exception org.seasar.dbflute.exception.EntityAlreadyDeletedException When the entity has already been deleted.
-     * @exception org.seasar.dbflute.exception.EntityDuplicatedException When the entity has been duplicated.
-     * @exception org.seasar.dbflute.exception.SelectEntityConditionNotFoundException When the condition for selecting an entity is not found.
+     * @param cbLambda The callback for condition-bean of PersistentEventValue. (NotNull)
+     * @return The entity selected by the condition. (NotNull: if no data, throws exception)
+     * @throws EntityAlreadyDeletedException When the entity has already been deleted. (not found)
+     * @throws EntityDuplicatedException When the entity has been duplicated.
+     * @throws SelectEntityConditionNotFoundException When the condition for selecting an entity is not found.
      */
-    public PersistentEventValue selectEntityWithDeletedCheck(
-            final PersistentEventValueCB cb) {
-        return doSelectEntityWithDeletedCheck(cb, PersistentEventValue.class);
-    }
-
-    protected <ENTITY extends PersistentEventValue> ENTITY doSelectEntityWithDeletedCheck(
-            final PersistentEventValueCB cb, final Class<ENTITY> entityType) {
-        assertCBStateValid(cb);
-        return helpSelectEntityWithDeletedCheckInternally(
-                cb,
-                new InternalSelectEntityWithDeletedCheckCallback<ENTITY, PersistentEventValueCB>() {
-                    @Override
-                    public List<ENTITY> callbackSelectList(
-                            final PersistentEventValueCB cb) {
-                        return doSelectList(cb, entityType);
-                    }
-                });
-    }
-
-    @Override
-    protected Entity doReadEntityWithDeletedCheck(final ConditionBean cb) {
-        return selectEntityWithDeletedCheck(downcast(cb));
+    public PersistentEventValue selectEntityWithDeletedCheck(CBCall<PersistentEventValueCB> cbLambda) {
+        return facadeSelectEntityWithDeletedCheck(createCB(cbLambda));
     }
 
     /**
      * Select the entity by the primary-key value.
-     * @param id The one of primary key. (NotNull)
-     * @return The selected entity. (NullAllowed: If the primary-key value has no data, it returns null)
-     * @exception org.seasar.dbflute.exception.EntityDuplicatedException When the entity has been duplicated.
-     * @exception org.seasar.dbflute.exception.SelectEntityConditionNotFoundException When the condition for selecting an entity is not found.
+     * @param id : PK, ID, NotNull, BIGINT(19). (NotNull)
+     * @return The optional entity selected by the PK. (NotNull: if no data, empty entity)
+     * @throws EntityAlreadyDeletedException When get(), required() of return value is called and the value is null, which means entity has already been deleted (not found).
+     * @throws EntityDuplicatedException When the entity has been duplicated.
+     * @throws SelectEntityConditionNotFoundException When the condition for selecting an entity is not found.
      */
-    public PersistentEventValue selectByPKValue(final Long id) {
-        return doSelectByPKValue(id, PersistentEventValue.class);
+    public OptionalEntity<PersistentEventValue> selectByPK(Long id) {
+        return facadeSelectByPK(id);
     }
 
-    protected <ENTITY extends PersistentEventValue> ENTITY doSelectByPKValue(
-            final Long id, final Class<ENTITY> entityType) {
-        return doSelectEntity(buildPKCB(id), entityType);
+    protected OptionalEntity<PersistentEventValue> facadeSelectByPK(Long id) {
+        return doSelectOptionalByPK(id, typeOfSelectedEntity());
     }
 
-    /**
-     * Select the entity by the primary-key value with deleted check.
-     * @param id The one of primary key. (NotNull)
-     * @return The selected entity. (NotNull)
-     * @exception org.seasar.dbflute.exception.EntityAlreadyDeletedException When the entity has already been deleted.
-     * @exception org.seasar.dbflute.exception.EntityDuplicatedException When the entity has been duplicated.
-     * @exception org.seasar.dbflute.exception.SelectEntityConditionNotFoundException When the condition for selecting an entity is not found.
-     */
-    public PersistentEventValue selectByPKValueWithDeletedCheck(final Long id) {
-        return doSelectByPKValueWithDeletedCheck(id, PersistentEventValue.class);
+    protected <ENTITY extends PersistentEventValue> ENTITY doSelectByPK(Long id, Class<? extends ENTITY> tp) {
+        return doSelectEntity(xprepareCBAsPK(id), tp);
     }
 
-    protected <ENTITY extends PersistentEventValue> ENTITY doSelectByPKValueWithDeletedCheck(
-            final Long id, final Class<ENTITY> entityType) {
-        return doSelectEntityWithDeletedCheck(buildPKCB(id), entityType);
+    protected <ENTITY extends PersistentEventValue> OptionalEntity<ENTITY> doSelectOptionalByPK(Long id, Class<? extends ENTITY> tp) {
+        return createOptionalEntity(doSelectByPK(id, tp), id);
     }
 
-    private PersistentEventValueCB buildPKCB(final Long id) {
+    protected PersistentEventValueCB xprepareCBAsPK(Long id) {
         assertObjectNotNull("id", id);
-        final PersistentEventValueCB cb = newMyConditionBean();
-        cb.query().setId_Equal(id);
-        return cb;
+        return newConditionBean().acceptPK(id);
     }
 
     // ===================================================================================
@@ -319,135 +207,91 @@ public abstract class BsPersistentEventValueBhv extends
     /**
      * Select the list as result bean.
      * <pre>
-     * PersistentEventValueCB cb = new PersistentEventValueCB();
-     * cb.query().setFoo...(value);
-     * cb.query().addOrderBy_Bar...();
-     * ListResultBean&lt;PersistentEventValue&gt; persistentEventValueList = persistentEventValueBhv.<span style="color: #FD4747">selectList</span>(cb);
-     * for (PersistentEventValue persistentEventValue : persistentEventValueList) {
-     *     ... = persistentEventValue.get...();
+     * ListResultBean&lt;PersistentEventValue&gt; <span style="color: #553000">persistentEventValueList</span> = <span style="color: #0000C0">persistentEventValueBhv</span>.<span style="color: #CC4747">selectList</span>(<span style="color: #553000">cb</span> <span style="color: #90226C; font-weight: bold"><span style="font-size: 120%">-</span>&gt;</span> {
+     *     <span style="color: #553000">cb</span>.query().set...;
+     *     <span style="color: #553000">cb</span>.query().addOrderBy...;
+     * });
+     * <span style="color: #70226C">for</span> (PersistentEventValue <span style="color: #553000">persistentEventValue</span> : <span style="color: #553000">persistentEventValueList</span>) {
+     *     ... = <span style="color: #553000">persistentEventValue</span>.get...;
      * }
      * </pre>
-     * @param cb The condition-bean of PersistentEventValue. (NotNull)
-     * @return The result bean of selected list. (NotNull)
-     * @exception org.seasar.dbflute.exception.DangerousResultSizeException When the result size is over the specified safety size.
+     * @param cbLambda The callback for condition-bean of PersistentEventValue. (NotNull)
+     * @return The result bean of selected list. (NotNull: if no data, returns empty list)
+     * @throws DangerousResultSizeException When the result size is over the specified safety size.
      */
-    public ListResultBean<PersistentEventValue> selectList(
-            final PersistentEventValueCB cb) {
-        return doSelectList(cb, PersistentEventValue.class);
-    }
-
-    protected <ENTITY extends PersistentEventValue> ListResultBean<ENTITY> doSelectList(
-            final PersistentEventValueCB cb, final Class<ENTITY> entityType) {
-        assertCBStateValid(cb);
-        assertObjectNotNull("entityType", entityType);
-        assertSpecifyDerivedReferrerEntityProperty(cb, entityType);
-        return helpSelectListInternally(
-                cb,
-                entityType,
-                new InternalSelectListCallback<ENTITY, PersistentEventValueCB>() {
-                    @Override
-                    public List<ENTITY> callbackSelectList(
-                            final PersistentEventValueCB cb,
-                            final Class<ENTITY> entityType) {
-                        return delegateSelectList(cb, entityType);
-                    }
-                });
+    public ListResultBean<PersistentEventValue> selectList(CBCall<PersistentEventValueCB> cbLambda) {
+        return facadeSelectList(createCB(cbLambda));
     }
 
     @Override
-    protected ListResultBean<? extends Entity> doReadList(final ConditionBean cb) {
-        return selectList(downcast(cb));
-    }
+    protected boolean isEntityDerivedMappable() { return true; }
 
     // ===================================================================================
     //                                                                         Page Select
     //                                                                         ===========
     /**
-     * Select the page as result bean. <br />
+     * Select the page as result bean. <br>
      * (both count-select and paging-select are executed)
      * <pre>
-     * PersistentEventValueCB cb = new PersistentEventValueCB();
-     * cb.query().setFoo...(value);
-     * cb.query().addOrderBy_Bar...();
-     * cb.<span style="color: #FD4747">paging</span>(20, 3); <span style="color: #3F7E5E">// 20 records per a page and current page number is 3</span>
-     * PagingResultBean&lt;PersistentEventValue&gt; page = persistentEventValueBhv.<span style="color: #FD4747">selectPage</span>(cb);
-     * int allRecordCount = page.getAllRecordCount();
-     * int allPageCount = page.getAllPageCount();
-     * boolean isExistPrePage = page.isExistPrePage();
-     * boolean isExistNextPage = page.isExistNextPage();
+     * PagingResultBean&lt;PersistentEventValue&gt; <span style="color: #553000">page</span> = <span style="color: #0000C0">persistentEventValueBhv</span>.<span style="color: #CC4747">selectPage</span>(<span style="color: #553000">cb</span> <span style="color: #90226C; font-weight: bold"><span style="font-size: 120%">-</span>&gt;</span> {
+     *     <span style="color: #553000">cb</span>.query().set...
+     *     <span style="color: #553000">cb</span>.query().addOrderBy...
+     *     <span style="color: #553000">cb</span>.<span style="color: #CC4747">paging</span>(20, 3); <span style="color: #3F7E5E">// 20 records per a page and current page number is 3</span>
+     * });
+     * <span style="color: #70226C">int</span> allRecordCount = <span style="color: #553000">page</span>.getAllRecordCount();
+     * <span style="color: #70226C">int</span> allPageCount = <span style="color: #553000">page</span>.getAllPageCount();
+     * <span style="color: #70226C">boolean</span> isExistPrePage = <span style="color: #553000">page</span>.isExistPrePage();
+     * <span style="color: #70226C">boolean</span> isExistNextPage = <span style="color: #553000">page</span>.isExistNextPage();
      * ...
-     * for (PersistentEventValue persistentEventValue : page) {
-     *     ... = persistentEventValue.get...();
+     * <span style="color: #70226C">for</span> (PersistentEventValue persistentEventValue : <span style="color: #553000">page</span>) {
+     *     ... = persistentEventValue.get...;
      * }
      * </pre>
-     * @param cb The condition-bean of PersistentEventValue. (NotNull)
-     * @return The result bean of selected page. (NotNull)
-     * @exception org.seasar.dbflute.exception.DangerousResultSizeException When the result size is over the specified safety size.
+     * @param cbLambda The callback for condition-bean of PersistentEventValue. (NotNull)
+     * @return The result bean of selected page. (NotNull: if no data, returns bean as empty list)
+     * @throws DangerousResultSizeException When the result size is over the specified safety size.
      */
-    public PagingResultBean<PersistentEventValue> selectPage(
-            final PersistentEventValueCB cb) {
-        return doSelectPage(cb, PersistentEventValue.class);
+    public PagingResultBean<PersistentEventValue> selectPage(CBCall<PersistentEventValueCB> cbLambda) {
+        return facadeSelectPage(createCB(cbLambda));
     }
 
-    protected <ENTITY extends PersistentEventValue> PagingResultBean<ENTITY> doSelectPage(
-            final PersistentEventValueCB cb, final Class<ENTITY> entityType) {
-        assertCBStateValid(cb);
-        assertObjectNotNull("entityType", entityType);
-        return helpSelectPageInternally(
-                cb,
-                entityType,
-                new InternalSelectPageCallback<ENTITY, PersistentEventValueCB>() {
-                    @Override
-                    public int callbackSelectCount(
-                            final PersistentEventValueCB cb) {
-                        return doSelectCountPlainly(cb);
-                    }
-
-                    @Override
-                    public List<ENTITY> callbackSelectList(
-                            final PersistentEventValueCB cb,
-                            final Class<ENTITY> entityType) {
-                        return doSelectList(cb, entityType);
-                    }
-                });
-    }
-
-    @Override
-    protected PagingResultBean<? extends Entity> doReadPage(
-            final ConditionBean cb) {
-        return selectPage(downcast(cb));
+    // ===================================================================================
+    //                                                                       Cursor Select
+    //                                                                       =============
+    /**
+     * Select the cursor by the condition-bean.
+     * <pre>
+     * <span style="color: #0000C0">persistentEventValueBhv</span>.<span style="color: #CC4747">selectCursor</span>(<span style="color: #553000">cb</span> <span style="color: #90226C; font-weight: bold"><span style="font-size: 120%">-</span>&gt;</span> {
+     *     <span style="color: #553000">cb</span>.query().set...
+     * }, <span style="color: #553000">member</span> <span style="color: #90226C; font-weight: bold"><span style="font-size: 120%">-</span>&gt;</span> {
+     *     ... = <span style="color: #553000">member</span>.getMemberName();
+     * });
+     * </pre>
+     * @param cbLambda The callback for condition-bean of PersistentEventValue. (NotNull)
+     * @param entityLambda The handler of entity row of PersistentEventValue. (NotNull)
+     */
+    public void selectCursor(CBCall<PersistentEventValueCB> cbLambda, EntityRowHandler<PersistentEventValue> entityLambda) {
+        facadeSelectCursor(createCB(cbLambda), entityLambda);
     }
 
     // ===================================================================================
     //                                                                       Scalar Select
     //                                                                       =============
     /**
-     * Select the scalar value derived by a function from uniquely-selected records. <br />
+     * Select the scalar value derived by a function from uniquely-selected records. <br>
      * You should call a function method after this method called like as follows:
      * <pre>
-     * persistentEventValueBhv.<span style="color: #FD4747">scalarSelect</span>(Date.class).max(new ScalarQuery() {
-     *     public void query(PersistentEventValueCB cb) {
-     *         cb.specify().<span style="color: #FD4747">columnFooDatetime()</span>; <span style="color: #3F7E5E">// required for a function</span>
-     *         cb.query().setBarName_PrefixSearch("S");
-     *     }
+     * <span style="color: #0000C0">persistentEventValueBhv</span>.<span style="color: #CC4747">selectScalar</span>(Date.class).max(<span style="color: #553000">cb</span> <span style="color: #90226C; font-weight: bold"><span style="font-size: 120%">-</span>&gt;</span> {
+     *     <span style="color: #553000">cb</span>.specify().<span style="color: #CC4747">column...</span>; <span style="color: #3F7E5E">// required for the function</span>
+     *     <span style="color: #553000">cb</span>.query().set...
      * });
      * </pre>
      * @param <RESULT> The type of result.
      * @param resultType The type of result. (NotNull)
-     * @return The scalar value derived by a function. (NullAllowed)
+     * @return The scalar function object to specify function for scalar value. (NotNull)
      */
-    public <RESULT> SLFunction<PersistentEventValueCB, RESULT> scalarSelect(
-            final Class<RESULT> resultType) {
-        return doScalarSelect(resultType, newMyConditionBean());
-    }
-
-    protected <RESULT, CB extends PersistentEventValueCB> SLFunction<CB, RESULT> doScalarSelect(
-            final Class<RESULT> resultType, final CB cb) {
-        assertObjectNotNull("resultType", resultType);
-        assertCBStateValid(cb);
-        cb.xsetupForScalarSelect();
-        cb.getSqlClause().disableSelectIndex(); // for when you use union
-        return new SLFunction<CB, RESULT>(cb, resultType);
+    public <RESULT> HpSLSFunction<PersistentEventValueCB, RESULT> selectScalar(Class<RESULT> resultType) {
+        return facadeScalarSelect(resultType);
     }
 
     // ===================================================================================
@@ -455,646 +299,350 @@ public abstract class BsPersistentEventValueBhv extends
     //                                                                            ========
     @Override
     protected Number doReadNextVal() {
-        final String msg = "This table is NOT related to sequence: "
-                + getTableDbName();
+        String msg = "This table is NOT related to sequence: " + asTableDbName();
         throw new UnsupportedOperationException(msg);
     }
 
     // ===================================================================================
-    //                                                                    Pull out Foreign
-    //                                                                    ================
+    //                                                                       Load Referrer
+    //                                                                       =============
+    /**
+     * Load referrer for the list by the referrer loader.
+     * <pre>
+     * List&lt;Member&gt; <span style="color: #553000">memberList</span> = <span style="color: #0000C0">memberBhv</span>.selectList(<span style="color: #553000">cb</span> <span style="color: #90226C; font-weight: bold"><span style="font-size: 120%">-</span>&gt;</span> {
+     *     <span style="color: #553000">cb</span>.query().set...
+     * });
+     * memberBhv.<span style="color: #CC4747">load</span>(<span style="color: #553000">memberList</span>, <span style="color: #553000">memberLoader</span> <span style="color: #90226C; font-weight: bold"><span style="font-size: 120%">-</span>&gt;</span> {
+     *     <span style="color: #553000">memberLoader</span>.<span style="color: #CC4747">loadPurchase</span>(<span style="color: #553000">purchaseCB</span> <span style="color: #90226C; font-weight: bold"><span style="font-size: 120%">-</span>&gt;</span> {
+     *         <span style="color: #553000">purchaseCB</span>.setupSelect...
+     *         <span style="color: #553000">purchaseCB</span>.query().set...
+     *         <span style="color: #553000">purchaseCB</span>.query().addOrderBy...
+     *     }); <span style="color: #3F7E5E">// you can also load nested referrer from here</span>
+     *     <span style="color: #3F7E5E">//}).withNestedReferrer(purchaseLoader -&gt; {</span>
+     *     <span style="color: #3F7E5E">//    purchaseLoader.loadPurchasePayment(...);</span>
+     *     <span style="color: #3F7E5E">//});</span>
+     *
+     *     <span style="color: #3F7E5E">// you can also pull out foreign table and load its referrer</span>
+     *     <span style="color: #3F7E5E">// (setupSelect of the foreign table should be called)</span>
+     *     <span style="color: #3F7E5E">//memberLoader.pulloutMemberStatus().loadMemberLogin(...)</span>
+     * });
+     * <span style="color: #70226C">for</span> (Member member : <span style="color: #553000">memberList</span>) {
+     *     List&lt;Purchase&gt; purchaseList = member.<span style="color: #CC4747">getPurchaseList()</span>;
+     *     <span style="color: #70226C">for</span> (Purchase purchase : purchaseList) {
+     *         ...
+     *     }
+     * }
+     * </pre>
+     * About internal policy, the value of primary key (and others too) is treated as case-insensitive. <br>
+     * The condition-bean, which the set-upper provides, has order by FK before callback.
+     * @param persistentEventValueList The entity list of persistentEventValue. (NotNull)
+     * @param loaderLambda The callback to handle the referrer loader for actually loading referrer. (NotNull)
+     */
+    public void load(List<PersistentEventValue> persistentEventValueList, ReferrerLoaderHandler<LoaderOfPersistentEventValue> loaderLambda) {
+        xassLRArg(persistentEventValueList, loaderLambda);
+        loaderLambda.handle(new LoaderOfPersistentEventValue().ready(persistentEventValueList, _behaviorSelector));
+    }
+
+    /**
+     * Load referrer for the entity by the referrer loader.
+     * <pre>
+     * Member <span style="color: #553000">member</span> = <span style="color: #0000C0">memberBhv</span>.selectEntityWithDeletedCheck(<span style="color: #553000">cb</span> <span style="color: #90226C; font-weight: bold"><span style="font-size: 120%">-</span>&gt;</span> <span style="color: #553000">cb</span>.acceptPK(1));
+     * <span style="color: #0000C0">memberBhv</span>.<span style="color: #CC4747">load</span>(<span style="color: #553000">member</span>, <span style="color: #553000">memberLoader</span> <span style="color: #90226C; font-weight: bold"><span style="font-size: 120%">-</span>&gt;</span> {
+     *     <span style="color: #553000">memberLoader</span>.<span style="color: #CC4747">loadPurchase</span>(<span style="color: #553000">purchaseCB</span> <span style="color: #90226C; font-weight: bold"><span style="font-size: 120%">-</span>&gt;</span> {
+     *         <span style="color: #553000">purchaseCB</span>.setupSelect...
+     *         <span style="color: #553000">purchaseCB</span>.query().set...
+     *         <span style="color: #553000">purchaseCB</span>.query().addOrderBy...
+     *     }); <span style="color: #3F7E5E">// you can also load nested referrer from here</span>
+     *     <span style="color: #3F7E5E">//}).withNestedReferrer(purchaseLoader -&gt; {</span>
+     *     <span style="color: #3F7E5E">//    purchaseLoader.loadPurchasePayment(...);</span>
+     *     <span style="color: #3F7E5E">//});</span>
+     *
+     *     <span style="color: #3F7E5E">// you can also pull out foreign table and load its referrer</span>
+     *     <span style="color: #3F7E5E">// (setupSelect of the foreign table should be called)</span>
+     *     <span style="color: #3F7E5E">//memberLoader.pulloutMemberStatus().loadMemberLogin(...)</span>
+     * });
+     * List&lt;Purchase&gt; purchaseList = <span style="color: #553000">member</span>.<span style="color: #CC4747">getPurchaseList()</span>;
+     * <span style="color: #70226C">for</span> (Purchase purchase : purchaseList) {
+     *     ...
+     * }
+     * </pre>
+     * About internal policy, the value of primary key (and others too) is treated as case-insensitive. <br>
+     * The condition-bean, which the set-upper provides, has order by FK before callback.
+     * @param persistentEventValue The entity of persistentEventValue. (NotNull)
+     * @param loaderLambda The callback to handle the referrer loader for actually loading referrer. (NotNull)
+     */
+    public void load(PersistentEventValue persistentEventValue, ReferrerLoaderHandler<LoaderOfPersistentEventValue> loaderLambda) {
+        xassLRArg(persistentEventValue, loaderLambda);
+        loaderLambda.handle(new LoaderOfPersistentEventValue().ready(xnewLRAryLs(persistentEventValue), _behaviorSelector));
+    }
+
+    // ===================================================================================
+    //                                                                   Pull out Relation
+    //                                                                   =================
     /**
      * Pull out the list of foreign table 'PersistentEvent'.
-     * @param persistentEventValueList The list of persistentEventValue. (NotNull)
-     * @return The list of foreign table. (NotNull)
+     * @param persistentEventValueList The list of persistentEventValue. (NotNull, EmptyAllowed)
+     * @return The list of foreign table. (NotNull, EmptyAllowed, NotNullElement)
      */
-    public List<PersistentEvent> pulloutPersistentEvent(
-            final List<PersistentEventValue> persistentEventValueList) {
-        return helpPulloutInternally(
-                persistentEventValueList,
-                new InternalPulloutCallback<PersistentEventValue, PersistentEvent>() {
-                    @Override
-                    public PersistentEvent getFr(final PersistentEventValue e) {
-                        return e.getPersistentEvent();
-                    }
+    public List<PersistentEvent> pulloutPersistentEvent(List<PersistentEventValue> persistentEventValueList)
+    { return helpPulloutInternally(persistentEventValueList, "persistentEvent"); }
 
-                    @Override
-                    public boolean hasRf() {
-                        return true;
-                    }
-
-                    @Override
-                    public void setRfLs(final PersistentEvent e,
-                            final List<PersistentEventValue> ls) {
-                        e.setPersistentEventValueList(ls);
-                    }
-                });
-    }
+    // ===================================================================================
+    //                                                                      Extract Column
+    //                                                                      ==============
+    /**
+     * Extract the value list of (single) primary key id.
+     * @param persistentEventValueList The list of persistentEventValue. (NotNull, EmptyAllowed)
+     * @return The list of the column value. (NotNull, EmptyAllowed, NotNullElement)
+     */
+    public List<Long> extractIdList(List<PersistentEventValue> persistentEventValueList)
+    { return helpExtractListInternally(persistentEventValueList, "id"); }
 
     // ===================================================================================
     //                                                                       Entity Update
     //                                                                       =============
     /**
-     * Insert the entity.
+     * Insert the entity modified-only. (DefaultConstraintsEnabled)
      * <pre>
-     * PersistentEventValue persistentEventValue = new PersistentEventValue();
+     * PersistentEventValue persistentEventValue = <span style="color: #70226C">new</span> PersistentEventValue();
      * <span style="color: #3F7E5E">// if auto-increment, you don't need to set the PK value</span>
      * persistentEventValue.setFoo...(value);
      * persistentEventValue.setBar...(value);
      * <span style="color: #3F7E5E">// you don't need to set values of common columns</span>
      * <span style="color: #3F7E5E">//persistentEventValue.setRegisterUser(value);</span>
      * <span style="color: #3F7E5E">//persistentEventValue.set...;</span>
-     * persistentEventValueBhv.<span style="color: #FD4747">insert</span>(persistentEventValue);
+     * <span style="color: #0000C0">persistentEventValueBhv</span>.<span style="color: #CC4747">insert</span>(persistentEventValue);
      * ... = persistentEventValue.getPK...(); <span style="color: #3F7E5E">// if auto-increment, you can get the value after</span>
      * </pre>
-     * @param persistentEventValue The entity of insert target. (NotNull)
-     * @exception org.seasar.dbflute.exception.EntityAlreadyExistsException When the entity already exists. (Unique Constraint Violation)
+     * <p>While, when the entity is created by select, all columns are registered.</p>
+     * @param persistentEventValue The entity of insert. (NotNull, PrimaryKeyNullAllowed: when auto-increment)
+     * @throws EntityAlreadyExistsException When the entity already exists. (unique constraint violation)
      */
-    public void insert(final PersistentEventValue persistentEventValue) {
+    public void insert(PersistentEventValue persistentEventValue) {
         doInsert(persistentEventValue, null);
     }
 
-    protected void doInsert(final PersistentEventValue persistentEventValue,
-            final InsertOption<PersistentEventValueCB> option) {
-        assertObjectNotNull("persistentEventValue", persistentEventValue);
-        prepareInsertOption(option);
-        delegateInsert(persistentEventValue, option);
-    }
-
-    protected void prepareInsertOption(
-            final InsertOption<PersistentEventValueCB> option) {
-        if (option == null) {
-            return;
-        }
-        assertInsertOptionStatus(option);
-    }
-
-    @Override
-    protected void doCreate(final Entity entity,
-            final InsertOption<? extends ConditionBean> option) {
-        if (option == null) {
-            insert(downcast(entity));
-        } else {
-            varyingInsert(downcast(entity), downcast(option));
-        }
-    }
-
     /**
-     * Update the entity modified-only. {UpdateCountZeroException, ExclusiveControl}
+     * Update the entity modified-only. (ZeroUpdateException, ExclusiveControl) <br>
+     * By PK as default, and also you can update by unique keys using entity's uniqueOf().
      * <pre>
-     * PersistentEventValue persistentEventValue = new PersistentEventValue();
+     * PersistentEventValue persistentEventValue = <span style="color: #70226C">new</span> PersistentEventValue();
      * persistentEventValue.setPK...(value); <span style="color: #3F7E5E">// required</span>
      * persistentEventValue.setFoo...(value); <span style="color: #3F7E5E">// you should set only modified columns</span>
      * <span style="color: #3F7E5E">// you don't need to set values of common columns</span>
      * <span style="color: #3F7E5E">//persistentEventValue.setRegisterUser(value);</span>
      * <span style="color: #3F7E5E">//persistentEventValue.set...;</span>
-     * <span style="color: #3F7E5E">// if exclusive control, the value of exclusive control column is required</span>
-     * persistentEventValue.<span style="color: #FD4747">setVersionNo</span>(value);
-     * try {
-     *     persistentEventValueBhv.<span style="color: #FD4747">update</span>(persistentEventValue);
-     * } catch (EntityAlreadyUpdatedException e) { <span style="color: #3F7E5E">// if concurrent update</span>
-     *     ...
-     * } 
+     * <span style="color: #3F7E5E">// if exclusive control, the value of concurrency column is required</span>
+     * persistentEventValue.<span style="color: #CC4747">setVersionNo</span>(value);
+     * <span style="color: #0000C0">persistentEventValueBhv</span>.<span style="color: #CC4747">update</span>(persistentEventValue);
      * </pre>
-     * @param persistentEventValue The entity of update target. (NotNull) {PrimaryKeyRequired, ConcurrencyColumnRequired}
-     * @exception org.seasar.dbflute.exception.EntityAlreadyUpdatedException When the entity has already been updated.
-     * @exception org.seasar.dbflute.exception.EntityDuplicatedException When the entity has been duplicated.
-     * @exception org.seasar.dbflute.exception.EntityAlreadyExistsException When the entity already exists. (Unique Constraint Violation)
+     * @param persistentEventValue The entity of update. (NotNull, PrimaryKeyNotNull, ConcurrencyColumnNotNull)
+     * @throws EntityAlreadyUpdatedException When the entity has already been updated.
+     * @throws EntityDuplicatedException When the entity has been duplicated.
+     * @throws EntityAlreadyExistsException When the entity already exists. (unique constraint violation)
      */
-    public void update(final PersistentEventValue persistentEventValue) {
+    public void update(PersistentEventValue persistentEventValue) {
         doUpdate(persistentEventValue, null);
     }
 
-    protected void doUpdate(final PersistentEventValue persistentEventValue,
-            final UpdateOption<PersistentEventValueCB> option) {
-        assertObjectNotNull("persistentEventValue", persistentEventValue);
-        prepareUpdateOption(option);
-        helpUpdateInternally(persistentEventValue,
-                new InternalUpdateCallback<PersistentEventValue>() {
-                    @Override
-                    public int callbackDelegateUpdate(
-                            final PersistentEventValue entity) {
-                        return delegateUpdate(entity, option);
-                    }
-                });
-    }
-
-    protected void prepareUpdateOption(
-            final UpdateOption<PersistentEventValueCB> option) {
-        if (option == null) {
-            return;
-        }
-        assertUpdateOptionStatus(option);
-        if (option.hasSelfSpecification()) {
-            option.resolveSelfSpecification(createCBForVaryingUpdate());
-        }
-        if (option.hasSpecifiedUpdateColumn()) {
-            option.resolveUpdateColumnSpecification(createCBForSpecifiedUpdate());
-        }
-    }
-
-    protected PersistentEventValueCB createCBForVaryingUpdate() {
-        final PersistentEventValueCB cb = newMyConditionBean();
-        cb.xsetupForVaryingUpdate();
-        return cb;
-    }
-
-    protected PersistentEventValueCB createCBForSpecifiedUpdate() {
-        final PersistentEventValueCB cb = newMyConditionBean();
-        cb.xsetupForSpecifiedUpdate();
-        return cb;
-    }
-
-    @Override
-    protected void doModify(final Entity entity,
-            final UpdateOption<? extends ConditionBean> option) {
-        if (option == null) {
-            update(downcast(entity));
-        } else {
-            varyingUpdate(downcast(entity), downcast(option));
-        }
-    }
-
     /**
-     * Update the entity non-strictly modified-only. {UpdateCountZeroException, NonExclusiveControl}
+     * Update the entity non-strictly modified-only. (ZeroUpdateException, NonExclusiveControl) <br>
+     * By PK as default, and also you can update by unique keys using entity's uniqueOf().
      * <pre>
-     * PersistentEventValue persistentEventValue = new PersistentEventValue();
+     * PersistentEventValue persistentEventValue = <span style="color: #70226C">new</span> PersistentEventValue();
      * persistentEventValue.setPK...(value); <span style="color: #3F7E5E">// required</span>
      * persistentEventValue.setFoo...(value); <span style="color: #3F7E5E">// you should set only modified columns</span>
      * <span style="color: #3F7E5E">// you don't need to set values of common columns</span>
      * <span style="color: #3F7E5E">//persistentEventValue.setRegisterUser(value);</span>
      * <span style="color: #3F7E5E">//persistentEventValue.set...;</span>
-     * <span style="color: #3F7E5E">// you don't need to set a value of exclusive control column</span>
+     * <span style="color: #3F7E5E">// you don't need to set a value of concurrency column</span>
      * <span style="color: #3F7E5E">// (auto-increment for version number is valid though non-exclusive control)</span>
      * <span style="color: #3F7E5E">//persistentEventValue.setVersionNo(value);</span>
-     * persistentEventValueBhv.<span style="color: #FD4747">updateNonstrict</span>(persistentEventValue);
+     * <span style="color: #0000C0">persistentEventValueBhv</span>.<span style="color: #CC4747">updateNonstrict</span>(persistentEventValue);
      * </pre>
-     * @param persistentEventValue The entity of update target. (NotNull) {PrimaryKeyRequired}
-     * @exception org.seasar.dbflute.exception.EntityAlreadyDeletedException When the entity has already been deleted.
-     * @exception org.seasar.dbflute.exception.EntityDuplicatedException When the entity has been duplicated.
-     * @exception org.seasar.dbflute.exception.EntityAlreadyExistsException When the entity already exists. (Unique Constraint Violation)
+     * @param persistentEventValue The entity of update. (NotNull, PrimaryKeyNotNull)
+     * @throws EntityAlreadyDeletedException When the entity has already been deleted. (not found)
+     * @throws EntityDuplicatedException When the entity has been duplicated.
+     * @throws EntityAlreadyExistsException When the entity already exists. (unique constraint violation)
      */
-    public void updateNonstrict(final PersistentEventValue persistentEventValue) {
+    public void updateNonstrict(PersistentEventValue persistentEventValue) {
         doUpdateNonstrict(persistentEventValue, null);
     }
 
-    protected void doUpdateNonstrict(
-            final PersistentEventValue persistentEventValue,
-            final UpdateOption<PersistentEventValueCB> option) {
-        assertObjectNotNull("persistentEventValue", persistentEventValue);
-        prepareUpdateOption(option);
-        helpUpdateNonstrictInternally(persistentEventValue,
-                new InternalUpdateNonstrictCallback<PersistentEventValue>() {
-                    @Override
-                    public int callbackDelegateUpdateNonstrict(
-                            final PersistentEventValue entity) {
-                        return delegateUpdateNonstrict(entity, option);
-                    }
-                });
-    }
-
-    @Override
-    protected void doModifyNonstrict(final Entity entity,
-            final UpdateOption<? extends ConditionBean> option) {
-        if (option == null) {
-            updateNonstrict(downcast(entity));
-        } else {
-            varyingUpdateNonstrict(downcast(entity), downcast(option));
-        }
-    }
-
     /**
-     * Insert or update the entity modified-only. {ExclusiveControl(when update)}
-     * @param persistentEventValue The entity of insert or update target. (NotNull)
-     * @exception org.seasar.dbflute.exception.EntityAlreadyUpdatedException When the entity has already been updated.
-     * @exception org.seasar.dbflute.exception.EntityDuplicatedException When the entity has been duplicated.
-     * @exception org.seasar.dbflute.exception.EntityAlreadyExistsException When the entity already exists. (Unique Constraint Violation)
+     * Insert or update the entity modified-only. (DefaultConstraintsEnabled, ExclusiveControl) <br>
+     * if (the entity has no PK) { insert() } else { update(), but no data, insert() } <br>
+     * <p><span style="color: #994747; font-size: 120%">Also you can update by unique keys using entity's uniqueOf().</span></p>
+     * @param persistentEventValue The entity of insert or update. (NotNull, ...depends on insert or update)
+     * @throws EntityAlreadyUpdatedException When the entity has already been updated.
+     * @throws EntityDuplicatedException When the entity has been duplicated.
+     * @throws EntityAlreadyExistsException When the entity already exists. (unique constraint violation)
      */
-    public void insertOrUpdate(final PersistentEventValue persistentEventValue) {
-        doInesrtOrUpdate(persistentEventValue, null, null);
-    }
-
-    protected void doInesrtOrUpdate(
-            final PersistentEventValue persistentEventValue,
-            final InsertOption<PersistentEventValueCB> insertOption,
-            final UpdateOption<PersistentEventValueCB> updateOption) {
-        helpInsertOrUpdateInternally(
-                persistentEventValue,
-                new InternalInsertOrUpdateCallback<PersistentEventValue, PersistentEventValueCB>() {
-                    @Override
-                    public void callbackInsert(final PersistentEventValue entity) {
-                        doInsert(entity, insertOption);
-                    }
-
-                    @Override
-                    public void callbackUpdate(final PersistentEventValue entity) {
-                        doUpdate(entity, updateOption);
-                    }
-
-                    @Override
-                    public PersistentEventValueCB callbackNewMyConditionBean() {
-                        return newMyConditionBean();
-                    }
-
-                    @Override
-                    public int callbackSelectCount(
-                            final PersistentEventValueCB cb) {
-                        return selectCount(cb);
-                    }
-                });
-    }
-
-    @Override
-    protected void doCreateOrModify(final Entity entity,
-            InsertOption<? extends ConditionBean> insertOption,
-            UpdateOption<? extends ConditionBean> updateOption) {
-        if (insertOption == null && updateOption == null) {
-            insertOrUpdate(downcast(entity));
-        } else {
-            insertOption = insertOption == null ? new InsertOption<PersistentEventValueCB>()
-                    : insertOption;
-            updateOption = updateOption == null ? new UpdateOption<PersistentEventValueCB>()
-                    : updateOption;
-            varyingInsertOrUpdate(downcast(entity), downcast(insertOption),
-                    downcast(updateOption));
-        }
+    public void insertOrUpdate(PersistentEventValue persistentEventValue) {
+        doInsertOrUpdate(persistentEventValue, null, null);
     }
 
     /**
-     * Insert or update the entity non-strictly modified-only. {NonExclusiveControl(when update)}
-     * @param persistentEventValue The entity of insert or update target. (NotNull)
-     * @exception org.seasar.dbflute.exception.EntityAlreadyDeletedException When the entity has already been deleted.
-     * @exception org.seasar.dbflute.exception.EntityDuplicatedException When the entity has been duplicated.
-     * @exception org.seasar.dbflute.exception.EntityAlreadyExistsException When the entity already exists. (Unique Constraint Violation)
+     * Insert or update the entity non-strictly modified-only. (DefaultConstraintsEnabled, NonExclusiveControl) <br>
+     * if (the entity has no PK) { insert() } else { update(), but no data, insert() }
+     * <p><span style="color: #994747; font-size: 120%">Also you can update by unique keys using entity's uniqueOf().</span></p>
+     * @param persistentEventValue The entity of insert or update. (NotNull, ...depends on insert or update)
+     * @throws EntityAlreadyDeletedException When the entity has already been deleted. (not found)
+     * @throws EntityDuplicatedException When the entity has been duplicated.
+     * @throws EntityAlreadyExistsException When the entity already exists. (unique constraint violation)
      */
-    public void insertOrUpdateNonstrict(
-            final PersistentEventValue persistentEventValue) {
-        doInesrtOrUpdateNonstrict(persistentEventValue, null, null);
-    }
-
-    protected void doInesrtOrUpdateNonstrict(
-            final PersistentEventValue persistentEventValue,
-            final InsertOption<PersistentEventValueCB> insertOption,
-            final UpdateOption<PersistentEventValueCB> updateOption) {
-        helpInsertOrUpdateInternally(
-                persistentEventValue,
-                new InternalInsertOrUpdateNonstrictCallback<PersistentEventValue>() {
-                    @Override
-                    public void callbackInsert(final PersistentEventValue entity) {
-                        doInsert(entity, insertOption);
-                    }
-
-                    @Override
-                    public void callbackUpdateNonstrict(
-                            final PersistentEventValue entity) {
-                        doUpdateNonstrict(entity, updateOption);
-                    }
-                });
-    }
-
-    @Override
-    protected void doCreateOrModifyNonstrict(final Entity entity,
-            InsertOption<? extends ConditionBean> insertOption,
-            UpdateOption<? extends ConditionBean> updateOption) {
-        if (insertOption == null && updateOption == null) {
-            insertOrUpdateNonstrict(downcast(entity));
-        } else {
-            insertOption = insertOption == null ? new InsertOption<PersistentEventValueCB>()
-                    : insertOption;
-            updateOption = updateOption == null ? new UpdateOption<PersistentEventValueCB>()
-                    : updateOption;
-            varyingInsertOrUpdateNonstrict(downcast(entity),
-                    downcast(insertOption), downcast(updateOption));
-        }
+    public void insertOrUpdateNonstrict(PersistentEventValue persistentEventValue) {
+        doInsertOrUpdateNonstrict(persistentEventValue, null, null);
     }
 
     /**
-     * Delete the entity. {UpdateCountZeroException, ExclusiveControl}
+     * Delete the entity. (ZeroUpdateException, ExclusiveControl) <br>
+     * By PK as default, and also you can delete by unique keys using entity's uniqueOf().
      * <pre>
-     * PersistentEventValue persistentEventValue = new PersistentEventValue();
+     * PersistentEventValue persistentEventValue = <span style="color: #70226C">new</span> PersistentEventValue();
      * persistentEventValue.setPK...(value); <span style="color: #3F7E5E">// required</span>
-     * <span style="color: #3F7E5E">// if exclusive control, the value of exclusive control column is required</span>
-     * persistentEventValue.<span style="color: #FD4747">setVersionNo</span>(value);
-     * try {
-     *     persistentEventValueBhv.<span style="color: #FD4747">delete</span>(persistentEventValue);
-     * } catch (EntityAlreadyUpdatedException e) { <span style="color: #3F7E5E">// if concurrent update</span>
+     * <span style="color: #3F7E5E">// if exclusive control, the value of concurrency column is required</span>
+     * persistentEventValue.<span style="color: #CC4747">setVersionNo</span>(value);
+     * <span style="color: #70226C">try</span> {
+     *     <span style="color: #0000C0">persistentEventValueBhv</span>.<span style="color: #CC4747">delete</span>(persistentEventValue);
+     * } <span style="color: #70226C">catch</span> (EntityAlreadyUpdatedException e) { <span style="color: #3F7E5E">// if concurrent update</span>
      *     ...
-     * } 
+     * }
      * </pre>
-     * @param persistentEventValue The entity of delete target. (NotNull) {PrimaryKeyRequired, ConcurrencyColumnRequired}
-     * @exception org.seasar.dbflute.exception.EntityAlreadyUpdatedException When the entity has already been updated.
-     * @exception org.seasar.dbflute.exception.EntityDuplicatedException When the entity has been duplicated.
+     * @param persistentEventValue The entity of delete. (NotNull, PrimaryKeyNotNull, ConcurrencyColumnNotNull)
+     * @throws EntityAlreadyUpdatedException When the entity has already been updated.
+     * @throws EntityDuplicatedException When the entity has been duplicated.
      */
-    public void delete(final PersistentEventValue persistentEventValue) {
+    public void delete(PersistentEventValue persistentEventValue) {
         doDelete(persistentEventValue, null);
     }
 
-    protected void doDelete(final PersistentEventValue persistentEventValue,
-            final DeleteOption<PersistentEventValueCB> option) {
-        assertObjectNotNull("persistentEventValue", persistentEventValue);
-        prepareDeleteOption(option);
-        helpDeleteInternally(persistentEventValue,
-                new InternalDeleteCallback<PersistentEventValue>() {
-                    @Override
-                    public int callbackDelegateDelete(
-                            final PersistentEventValue entity) {
-                        return delegateDelete(entity, option);
-                    }
-                });
-    }
-
-    protected void prepareDeleteOption(
-            final DeleteOption<PersistentEventValueCB> option) {
-        if (option == null) {
-            return;
-        }
-        assertDeleteOptionStatus(option);
-    }
-
-    @Override
-    protected void doRemove(final Entity entity,
-            final DeleteOption<? extends ConditionBean> option) {
-        if (option == null) {
-            delete(downcast(entity));
-        } else {
-            varyingDelete(downcast(entity), downcast(option));
-        }
-    }
-
     /**
-     * Delete the entity non-strictly. {UpdateCountZeroException, NonExclusiveControl}
+     * Delete the entity non-strictly. {ZeroUpdateException, NonExclusiveControl} <br>
+     * By PK as default, and also you can delete by unique keys using entity's uniqueOf().
      * <pre>
-     * PersistentEventValue persistentEventValue = new PersistentEventValue();
+     * PersistentEventValue persistentEventValue = <span style="color: #70226C">new</span> PersistentEventValue();
      * persistentEventValue.setPK...(value); <span style="color: #3F7E5E">// required</span>
-     * <span style="color: #3F7E5E">// you don't need to set a value of exclusive control column</span>
+     * <span style="color: #3F7E5E">// you don't need to set a value of concurrency column</span>
      * <span style="color: #3F7E5E">// (auto-increment for version number is valid though non-exclusive control)</span>
      * <span style="color: #3F7E5E">//persistentEventValue.setVersionNo(value);</span>
-     * persistentEventValueBhv.<span style="color: #FD4747">deleteNonstrict</span>(persistentEventValue);
+     * <span style="color: #0000C0">persistentEventValueBhv</span>.<span style="color: #CC4747">deleteNonstrict</span>(persistentEventValue);
      * </pre>
-     * @param persistentEventValue The entity of delete target. (NotNull) {PrimaryKeyRequired}
-     * @exception org.seasar.dbflute.exception.EntityAlreadyDeletedException When the entity has already been deleted.
-     * @exception org.seasar.dbflute.exception.EntityDuplicatedException When the entity has been duplicated.
+     * @param persistentEventValue The entity of delete. (NotNull, PrimaryKeyNotNull)
+     * @throws EntityAlreadyDeletedException When the entity has already been deleted. (not found)
+     * @throws EntityDuplicatedException When the entity has been duplicated.
      */
-    public void deleteNonstrict(final PersistentEventValue persistentEventValue) {
+    public void deleteNonstrict(PersistentEventValue persistentEventValue) {
         doDeleteNonstrict(persistentEventValue, null);
-    }
-
-    protected void doDeleteNonstrict(
-            final PersistentEventValue persistentEventValue,
-            final DeleteOption<PersistentEventValueCB> option) {
-        assertObjectNotNull("persistentEventValue", persistentEventValue);
-        prepareDeleteOption(option);
-        helpDeleteNonstrictInternally(persistentEventValue,
-                new InternalDeleteNonstrictCallback<PersistentEventValue>() {
-                    @Override
-                    public int callbackDelegateDeleteNonstrict(
-                            final PersistentEventValue entity) {
-                        return delegateDeleteNonstrict(entity, option);
-                    }
-                });
-    }
-
-    /**
-     * Delete the entity non-strictly ignoring deleted. {UpdateCountZeroException, NonExclusiveControl}
-     * <pre>
-     * PersistentEventValue persistentEventValue = new PersistentEventValue();
-     * persistentEventValue.setPK...(value); <span style="color: #3F7E5E">// required</span>
-     * <span style="color: #3F7E5E">// you don't need to set a value of exclusive control column</span>
-     * <span style="color: #3F7E5E">// (auto-increment for version number is valid though non-exclusive control)</span>
-     * <span style="color: #3F7E5E">//persistentEventValue.setVersionNo(value);</span>
-     * persistentEventValueBhv.<span style="color: #FD4747">deleteNonstrictIgnoreDeleted</span>(persistentEventValue);
-     * <span style="color: #3F7E5E">// if the target entity doesn't exist, no exception</span>
-     * </pre>
-     * @param persistentEventValue The entity of delete target. (NotNull) {PrimaryKeyRequired}
-     * @exception org.seasar.dbflute.exception.EntityDuplicatedException When the entity has been duplicated.
-     */
-    public void deleteNonstrictIgnoreDeleted(
-            final PersistentEventValue persistentEventValue) {
-        doDeleteNonstrictIgnoreDeleted(persistentEventValue, null);
-    }
-
-    protected void doDeleteNonstrictIgnoreDeleted(
-            final PersistentEventValue persistentEventValue,
-            final DeleteOption<PersistentEventValueCB> option) {
-        assertObjectNotNull("persistentEventValue", persistentEventValue);
-        prepareDeleteOption(option);
-        helpDeleteNonstrictIgnoreDeletedInternally(
-                persistentEventValue,
-                new InternalDeleteNonstrictIgnoreDeletedCallback<PersistentEventValue>() {
-                    @Override
-                    public int callbackDelegateDeleteNonstrict(
-                            final PersistentEventValue entity) {
-                        return delegateDeleteNonstrict(entity, option);
-                    }
-                });
-    }
-
-    @Override
-    protected void doRemoveNonstrict(final Entity entity,
-            final DeleteOption<? extends ConditionBean> option) {
-        if (option == null) {
-            deleteNonstrict(downcast(entity));
-        } else {
-            varyingDeleteNonstrict(downcast(entity), downcast(option));
-        }
     }
 
     // ===================================================================================
     //                                                                        Batch Update
     //                                                                        ============
     /**
-     * Batch-insert the list. <br />
-     * This method uses 'Batch Update' of java.sql.PreparedStatement. <br />
-     * All columns are insert target. (so default constraints are not available) <br />
-     * And if the table has an identity, entities after the process do not have incremented values.
-     * (When you use the (normal) insert(), an entity after the process has an incremented value)
-     * @param persistentEventValueList The list of the entity. (NotNull)
-     * @return The array of inserted count.
+     * Batch-insert the entity list modified-only of same-set columns. (DefaultConstraintsEnabled) <br>
+     * This method uses executeBatch() of java.sql.PreparedStatement. <br>
+     * <p><span style="color: #CC4747; font-size: 120%">The columns of least common multiple are registered like this:</span></p>
+     * <pre>
+     * <span style="color: #70226C">for</span> (... : ...) {
+     *     PersistentEventValue persistentEventValue = <span style="color: #70226C">new</span> PersistentEventValue();
+     *     persistentEventValue.setFooName("foo");
+     *     <span style="color: #70226C">if</span> (...) {
+     *         persistentEventValue.setFooPrice(123);
+     *     }
+     *     <span style="color: #3F7E5E">// FOO_NAME and FOO_PRICE (and record meta columns) are registered</span>
+     *     <span style="color: #3F7E5E">// FOO_PRICE not-called in any entities are registered as null without default value</span>
+     *     <span style="color: #3F7E5E">// columns not-called in all entities are registered as null or default value</span>
+     *     persistentEventValueList.add(persistentEventValue);
+     * }
+     * <span style="color: #0000C0">persistentEventValueBhv</span>.<span style="color: #CC4747">batchInsert</span>(persistentEventValueList);
+     * </pre>
+     * <p>While, when the entities are created by select, all columns are registered.</p>
+     * <p>And if the table has an identity, entities after the process don't have incremented values.
+     * (When you use the (normal) insert(), you can get the incremented value from your entity)</p>
+     * @param persistentEventValueList The list of the entity. (NotNull, EmptyAllowed, PrimaryKeyNullAllowed: when auto-increment)
+     * @return The array of inserted count. (NotNull, EmptyAllowed)
      */
-    public int[] batchInsert(
-            final List<PersistentEventValue> persistentEventValueList) {
+    public int[] batchInsert(List<PersistentEventValue> persistentEventValueList) {
         return doBatchInsert(persistentEventValueList, null);
     }
 
-    protected int[] doBatchInsert(
-            final List<PersistentEventValue> persistentEventValueList,
-            final InsertOption<PersistentEventValueCB> option) {
-        assertObjectNotNull("persistentEventValueList",
-                persistentEventValueList);
-        prepareInsertOption(option);
-        return delegateBatchInsert(persistentEventValueList, option);
-    }
-
-    @Override
-    protected int[] doLumpCreate(final List<Entity> ls,
-            final InsertOption<? extends ConditionBean> option) {
-        if (option == null) {
-            return batchInsert(downcast(ls));
-        } else {
-            return varyingBatchInsert(downcast(ls), downcast(option));
-        }
-    }
-
     /**
-     * Batch-update the list. <br />
-     * This method uses 'Batch Update' of java.sql.PreparedStatement. <br />
-     * All columns are update target. {NOT modified only}
-     * @param persistentEventValueList The list of the entity. (NotNull)
-     * @return The array of updated count.
-     * @exception org.seasar.dbflute.exception.BatchEntityAlreadyUpdatedException When the entity has already been updated. This exception extends EntityAlreadyUpdatedException.
+     * Batch-update the entity list modified-only of same-set columns. (ExclusiveControl) <br>
+     * This method uses executeBatch() of java.sql.PreparedStatement. <br>
+     * <span style="color: #CC4747; font-size: 120%">You should specify same-set columns to all entities like this:</span>
+     * <pre>
+     * for (... : ...) {
+     *     PersistentEventValue persistentEventValue = <span style="color: #70226C">new</span> PersistentEventValue();
+     *     persistentEventValue.setFooName("foo");
+     *     <span style="color: #70226C">if</span> (...) {
+     *         persistentEventValue.setFooPrice(123);
+     *     } <span style="color: #70226C">else</span> {
+     *         persistentEventValue.setFooPrice(null); <span style="color: #3F7E5E">// updated as null</span>
+     *         <span style="color: #3F7E5E">//persistentEventValue.setFooDate(...); // *not allowed, fragmented</span>
+     *     }
+     *     <span style="color: #3F7E5E">// FOO_NAME and FOO_PRICE (and record meta columns) are updated</span>
+     *     <span style="color: #3F7E5E">// (others are not updated: their values are kept)</span>
+     *     persistentEventValueList.add(persistentEventValue);
+     * }
+     * <span style="color: #0000C0">persistentEventValueBhv</span>.<span style="color: #CC4747">batchUpdate</span>(persistentEventValueList);
+     * </pre>
+     * @param persistentEventValueList The list of the entity. (NotNull, EmptyAllowed, PrimaryKeyNotNull, ConcurrencyColumnNotNull)
+     * @return The array of updated count. (NotNull, EmptyAllowed)
+     * @throws BatchEntityAlreadyUpdatedException When the entity has already been updated. This exception extends EntityAlreadyUpdatedException.
      */
-    public int[] batchUpdate(
-            final List<PersistentEventValue> persistentEventValueList) {
+    public int[] batchUpdate(List<PersistentEventValue> persistentEventValueList) {
         return doBatchUpdate(persistentEventValueList, null);
     }
 
-    protected int[] doBatchUpdate(
-            final List<PersistentEventValue> persistentEventValueList,
-            final UpdateOption<PersistentEventValueCB> option) {
-        assertObjectNotNull("persistentEventValueList",
-                persistentEventValueList);
-        prepareUpdateOption(option);
-        return delegateBatchUpdate(persistentEventValueList, option);
-    }
-
-    @Override
-    protected int[] doLumpModify(final List<Entity> ls,
-            final UpdateOption<? extends ConditionBean> option) {
-        if (option == null) {
-            return batchUpdate(downcast(ls));
-        } else {
-            return varyingBatchUpdate(downcast(ls), downcast(option));
-        }
-    }
-
     /**
-     * Batch-update the list. <br />
-     * This method uses 'Batch Update' of java.sql.PreparedStatement. <br />
-     * You can specify update columns used on set clause of update statement.
-     * However you do not need to specify common columns for update
-     * and an optimistick lock column because they are specified implicitly.
-     * @param persistentEventValueList The list of the entity. (NotNull)
-     * @param updateColumnSpec The specification of update columns. (NotNull)
-     * @return The array of updated count.
-     * @exception org.seasar.dbflute.exception.BatchEntityAlreadyUpdatedException When the entity has already been updated. This exception extends EntityAlreadyUpdatedException.
+     * Batch-update the entity list non-strictly modified-only of same-set columns. (NonExclusiveControl) <br>
+     * This method uses executeBatch() of java.sql.PreparedStatement. <br>
+     * <span style="color: #CC4747; font-size: 140%">You should specify same-set columns to all entities like this:</span>
+     * <pre>
+     * <span style="color: #70226C">for</span> (... : ...) {
+     *     PersistentEventValue persistentEventValue = <span style="color: #70226C">new</span> PersistentEventValue();
+     *     persistentEventValue.setFooName("foo");
+     *     <span style="color: #70226C">if</span> (...) {
+     *         persistentEventValue.setFooPrice(123);
+     *     } <span style="color: #70226C">else</span> {
+     *         persistentEventValue.setFooPrice(null); <span style="color: #3F7E5E">// updated as null</span>
+     *         <span style="color: #3F7E5E">//persistentEventValue.setFooDate(...); // *not allowed, fragmented</span>
+     *     }
+     *     <span style="color: #3F7E5E">// FOO_NAME and FOO_PRICE (and record meta columns) are updated</span>
+     *     <span style="color: #3F7E5E">// (others are not updated: their values are kept)</span>
+     *     persistentEventValueList.add(persistentEventValue);
+     * }
+     * <span style="color: #0000C0">persistentEventValueBhv</span>.<span style="color: #CC4747">batchUpdate</span>(persistentEventValueList);
+     * </pre>
+     * @param persistentEventValueList The list of the entity. (NotNull, EmptyAllowed, PrimaryKeyNotNull)
+     * @return The array of updated count. (NotNull, EmptyAllowed)
+     * @throws EntityAlreadyDeletedException When the entity has already been deleted. (not found)
      */
-    public int[] batchUpdate(
-            final List<PersistentEventValue> persistentEventValueList,
-            final SpecifyQuery<PersistentEventValueCB> updateColumnSpec) {
-        return doBatchUpdate(persistentEventValueList,
-                createSpecifiedUpdateOption(updateColumnSpec));
-    }
-
-    /**
-     * Batch-update the list non-strictly. <br />
-     * This method uses 'Batch Update' of java.sql.PreparedStatement. <br />
-     * All columns are update target. {NOT modified only}
-     * @param persistentEventValueList The list of the entity. (NotNull)
-     * @return The array of updated count.
-     * @exception org.seasar.dbflute.exception.EntityAlreadyDeletedException When the entity has already been deleted.
-     */
-    public int[] batchUpdateNonstrict(
-            final List<PersistentEventValue> persistentEventValueList) {
+    public int[] batchUpdateNonstrict(List<PersistentEventValue> persistentEventValueList) {
         return doBatchUpdateNonstrict(persistentEventValueList, null);
     }
 
-    protected int[] doBatchUpdateNonstrict(
-            final List<PersistentEventValue> persistentEventValueList,
-            final UpdateOption<PersistentEventValueCB> option) {
-        assertObjectNotNull("persistentEventValueList",
-                persistentEventValueList);
-        prepareUpdateOption(option);
-        return delegateBatchUpdateNonstrict(persistentEventValueList, option);
-    }
-
     /**
-     * Batch-update the list non-strictly. <br />
-     * This method uses 'Batch Update' of java.sql.PreparedStatement. <br />
-     * You can specify update columns used on set clause of update statement.
-     * However you do not need to specify common columns for update
-     * and an optimistick lock column because they are specified implicitly.
-     * @param persistentEventValueList The list of the entity. (NotNull)
-     * @param updateColumnSpec The specification of update columns. (NotNull)
-     * @return The array of updated count.
-     * @exception org.seasar.dbflute.exception.EntityAlreadyDeletedException When the entity has already been deleted.
+     * Batch-delete the entity list. (ExclusiveControl) <br>
+     * This method uses executeBatch() of java.sql.PreparedStatement.
+     * @param persistentEventValueList The list of the entity. (NotNull, EmptyAllowed, PrimaryKeyNotNull)
+     * @return The array of deleted count. (NotNull, EmptyAllowed)
+     * @throws BatchEntityAlreadyUpdatedException When the entity has already been updated. This exception extends EntityAlreadyUpdatedException.
      */
-    public int[] batchUpdateNonstrict(
-            final List<PersistentEventValue> persistentEventValueList,
-            final SpecifyQuery<PersistentEventValueCB> updateColumnSpec) {
-        return doBatchUpdateNonstrict(persistentEventValueList,
-                createSpecifiedUpdateOption(updateColumnSpec));
-    }
-
-    @Override
-    protected int[] doLumpModifyNonstrict(final List<Entity> ls,
-            final UpdateOption<? extends ConditionBean> option) {
-        if (option == null) {
-            return batchUpdateNonstrict(downcast(ls));
-        } else {
-            return varyingBatchUpdateNonstrict(downcast(ls), downcast(option));
-        }
-    }
-
-    /**
-     * Batch-delete the list. <br />
-     * This method uses 'Batch Update' of java.sql.PreparedStatement.
-     * @param persistentEventValueList The list of the entity. (NotNull)
-     * @return The array of deleted count.
-     * @exception org.seasar.dbflute.exception.BatchEntityAlreadyUpdatedException When the entity has already been updated. This exception extends EntityAlreadyUpdatedException.
-     */
-    public int[] batchDelete(
-            final List<PersistentEventValue> persistentEventValueList) {
+    public int[] batchDelete(List<PersistentEventValue> persistentEventValueList) {
         return doBatchDelete(persistentEventValueList, null);
     }
 
-    protected int[] doBatchDelete(
-            final List<PersistentEventValue> persistentEventValueList,
-            final DeleteOption<PersistentEventValueCB> option) {
-        assertObjectNotNull("persistentEventValueList",
-                persistentEventValueList);
-        prepareDeleteOption(option);
-        return delegateBatchDelete(persistentEventValueList, option);
-    }
-
-    @Override
-    protected int[] doLumpRemove(final List<Entity> ls,
-            final DeleteOption<? extends ConditionBean> option) {
-        if (option == null) {
-            return batchDelete(downcast(ls));
-        } else {
-            return varyingBatchDelete(downcast(ls), downcast(option));
-        }
-    }
-
     /**
-     * Batch-delete the list non-strictly. <br />
-     * This method uses 'Batch Update' of java.sql.PreparedStatement.
-     * @param persistentEventValueList The list of the entity. (NotNull)
-     * @return The array of deleted count.
-     * @exception org.seasar.dbflute.exception.EntityAlreadyDeletedException When the entity has already been deleted.
+     * Batch-delete the entity list non-strictly. {NonExclusiveControl} <br>
+     * This method uses executeBatch() of java.sql.PreparedStatement.
+     * @param persistentEventValueList The list of the entity. (NotNull, EmptyAllowed, PrimaryKeyNotNull)
+     * @return The array of deleted count. (NotNull, EmptyAllowed)
+     * @throws EntityAlreadyDeletedException When the entity has already been deleted. (not found)
      */
-    public int[] batchDeleteNonstrict(
-            final List<PersistentEventValue> persistentEventValueList) {
+    public int[] batchDeleteNonstrict(List<PersistentEventValue> persistentEventValueList) {
         return doBatchDeleteNonstrict(persistentEventValueList, null);
-    }
-
-    protected int[] doBatchDeleteNonstrict(
-            final List<PersistentEventValue> persistentEventValueList,
-            final DeleteOption<PersistentEventValueCB> option) {
-        assertObjectNotNull("persistentEventValueList",
-                persistentEventValueList);
-        prepareDeleteOption(option);
-        return delegateBatchDeleteNonstrict(persistentEventValueList, option);
-    }
-
-    @Override
-    protected int[] doLumpRemoveNonstrict(final List<Entity> ls,
-            final DeleteOption<? extends ConditionBean> option) {
-        if (option == null) {
-            return batchDeleteNonstrict(downcast(ls));
-        } else {
-            return varyingBatchDeleteNonstrict(downcast(ls), downcast(option));
-        }
     }
 
     // ===================================================================================
@@ -1103,11 +651,11 @@ public abstract class BsPersistentEventValueBhv extends
     /**
      * Insert the several entities by query (modified-only for fixed value).
      * <pre>
-     * persistentEventValueBhv.<span style="color: #FD4747">queryInsert</span>(new QueryInsertSetupper&lt;PersistentEventValue, PersistentEventValueCB&gt;() {
-     *     public ConditionBean setup(persistentEventValue entity, PersistentEventValueCB intoCB) {
+     * <span style="color: #0000C0">persistentEventValueBhv</span>.<span style="color: #CC4747">queryInsert</span>(new QueryInsertSetupper&lt;PersistentEventValue, PersistentEventValueCB&gt;() {
+     *     public ConditionBean setup(PersistentEventValue entity, PersistentEventValueCB intoCB) {
      *         FooCB cb = FooCB();
      *         cb.setupSelect_Bar();
-     * 
+     *
      *         <span style="color: #3F7E5E">// mapping</span>
      *         intoCB.specify().columnMyName().mappedFrom(cb.specify().columnFooName());
      *         intoCB.specify().columnMyCount().mappedFrom(cb.specify().columnFooCount());
@@ -1116,128 +664,59 @@ public abstract class BsPersistentEventValueBhv extends
      *         <span style="color: #3F7E5E">// you don't need to set values of common columns</span>
      *         <span style="color: #3F7E5E">//entity.setRegisterUser(value);</span>
      *         <span style="color: #3F7E5E">//entity.set...;</span>
-     *         <span style="color: #3F7E5E">// you don't need to set a value of exclusive control column</span>
+     *         <span style="color: #3F7E5E">// you don't need to set a value of concurrency column</span>
      *         <span style="color: #3F7E5E">//entity.setVersionNo(value);</span>
-     * 
+     *
      *         return cb;
      *     }
      * });
      * </pre>
-     * @param setupper The setup-per of query-insert. (NotNull)
+     * @param manyArgLambda The callback to set up query-insert. (NotNull)
      * @return The inserted count.
      */
-    public int queryInsert(
-            final QueryInsertSetupper<PersistentEventValue, PersistentEventValueCB> setupper) {
-        return doQueryInsert(setupper, null);
-    }
-
-    protected int doQueryInsert(
-            final QueryInsertSetupper<PersistentEventValue, PersistentEventValueCB> setupper,
-            final InsertOption<PersistentEventValueCB> option) {
-        assertObjectNotNull("setupper", setupper);
-        prepareInsertOption(option);
-        final PersistentEventValue entity = new PersistentEventValue();
-        final PersistentEventValueCB intoCB = createCBForQueryInsert();
-        final ConditionBean resourceCB = setupper.setup(entity, intoCB);
-        return delegateQueryInsert(entity, intoCB, resourceCB, option);
-    }
-
-    protected PersistentEventValueCB createCBForQueryInsert() {
-        final PersistentEventValueCB cb = newMyConditionBean();
-        cb.xsetupForQueryInsert();
-        return cb;
-    }
-
-    @Override
-    protected int doRangeCreate(
-            final QueryInsertSetupper<? extends Entity, ? extends ConditionBean> setupper,
-            final InsertOption<? extends ConditionBean> option) {
-        if (option == null) {
-            return queryInsert(downcast(setupper));
-        } else {
-            return varyingQueryInsert(downcast(setupper), downcast(option));
-        }
+    public int queryInsert(QueryInsertSetupper<PersistentEventValue, PersistentEventValueCB> manyArgLambda) {
+        return doQueryInsert(manyArgLambda, null);
     }
 
     /**
-     * Update the several entities by query non-strictly modified-only. {NonExclusiveControl}
+     * Update the several entities by query non-strictly modified-only. (NonExclusiveControl)
      * <pre>
-     * PersistentEventValue persistentEventValue = new PersistentEventValue();
+     * PersistentEventValue persistentEventValue = <span style="color: #70226C">new</span> PersistentEventValue();
      * <span style="color: #3F7E5E">// you don't need to set PK value</span>
      * <span style="color: #3F7E5E">//persistentEventValue.setPK...(value);</span>
      * persistentEventValue.setFoo...(value); <span style="color: #3F7E5E">// you should set only modified columns</span>
      * <span style="color: #3F7E5E">// you don't need to set values of common columns</span>
      * <span style="color: #3F7E5E">//persistentEventValue.setRegisterUser(value);</span>
      * <span style="color: #3F7E5E">//persistentEventValue.set...;</span>
-     * <span style="color: #3F7E5E">// you don't need to set a value of exclusive control column</span>
+     * <span style="color: #3F7E5E">// you don't need to set a value of concurrency column</span>
      * <span style="color: #3F7E5E">// (auto-increment for version number is valid though non-exclusive control)</span>
      * <span style="color: #3F7E5E">//persistentEventValue.setVersionNo(value);</span>
-     * PersistentEventValueCB cb = new PersistentEventValueCB();
-     * cb.query().setFoo...(value);
-     * persistentEventValueBhv.<span style="color: #FD4747">queryUpdate</span>(persistentEventValue, cb);
+     * <span style="color: #0000C0">persistentEventValueBhv</span>.<span style="color: #CC4747">queryUpdate</span>(persistentEventValue, <span style="color: #553000">cb</span> <span style="color: #90226C; font-weight: bold"><span style="font-size: 120%">-</span>&gt;</span> {
+     *     <span style="color: #553000">cb</span>.query().setFoo...
+     * });
      * </pre>
      * @param persistentEventValue The entity that contains update values. (NotNull, PrimaryKeyNullAllowed)
-     * @param cb The condition-bean of PersistentEventValue. (NotNull)
+     * @param cbLambda The callback for condition-bean of PersistentEventValue. (NotNull)
      * @return The updated count.
-     * @exception org.seasar.dbflute.exception.NonQueryUpdateNotAllowedException When the query has no condition.
+     * @throws NonQueryUpdateNotAllowedException When the query has no condition.
      */
-    public int queryUpdate(final PersistentEventValue persistentEventValue,
-            final PersistentEventValueCB cb) {
-        return doQueryUpdate(persistentEventValue, cb, null);
-    }
-
-    protected int doQueryUpdate(
-            final PersistentEventValue persistentEventValue,
-            final PersistentEventValueCB cb,
-            final UpdateOption<PersistentEventValueCB> option) {
-        assertObjectNotNull("persistentEventValue", persistentEventValue);
-        assertCBStateValid(cb);
-        prepareUpdateOption(option);
-        return delegateQueryUpdate(persistentEventValue, cb, option);
-    }
-
-    @Override
-    protected int doRangeModify(final Entity entity, final ConditionBean cb,
-            final UpdateOption<? extends ConditionBean> option) {
-        if (option == null) {
-            return queryUpdate(downcast(entity), (PersistentEventValueCB) cb);
-        } else {
-            return varyingQueryUpdate(downcast(entity),
-                    (PersistentEventValueCB) cb, downcast(option));
-        }
+    public int queryUpdate(PersistentEventValue persistentEventValue, CBCall<PersistentEventValueCB> cbLambda) {
+        return doQueryUpdate(persistentEventValue, createCB(cbLambda), null);
     }
 
     /**
-     * Delete the several entities by query. {NonExclusiveControl}
+     * Delete the several entities by query. (NonExclusiveControl)
      * <pre>
-     * PersistentEventValueCB cb = new PersistentEventValueCB();
-     * cb.query().setFoo...(value);
-     * persistentEventValueBhv.<span style="color: #FD4747">queryDelete</span>(persistentEventValue, cb);
+     * <span style="color: #0000C0">persistentEventValueBhv</span>.<span style="color: #CC4747">queryDelete</span>(persistentEventValue, <span style="color: #553000">cb</span> <span style="color: #90226C; font-weight: bold"><span style="font-size: 120%">-</span>&gt;</span> {
+     *     <span style="color: #553000">cb</span>.query().setFoo...
+     * });
      * </pre>
-     * @param cb The condition-bean of PersistentEventValue. (NotNull)
+     * @param cbLambda The callback for condition-bean of PersistentEventValue. (NotNull)
      * @return The deleted count.
-     * @exception org.seasar.dbflute.exception.NonQueryDeleteNotAllowedException When the query has no condition.
+     * @throws NonQueryDeleteNotAllowedException When the query has no condition.
      */
-    public int queryDelete(final PersistentEventValueCB cb) {
-        return doQueryDelete(cb, null);
-    }
-
-    protected int doQueryDelete(final PersistentEventValueCB cb,
-            final DeleteOption<PersistentEventValueCB> option) {
-        assertCBStateValid(cb);
-        prepareDeleteOption(option);
-        return delegateQueryDelete(cb, option);
-    }
-
-    @Override
-    protected int doRangeRemove(final ConditionBean cb,
-            final DeleteOption<? extends ConditionBean> option) {
-        if (option == null) {
-            return queryDelete((PersistentEventValueCB) cb);
-        } else {
-            return varyingQueryDelete((PersistentEventValueCB) cb,
-                    downcast(option));
-        }
+    public int queryDelete(CBCall<PersistentEventValueCB> cbLambda) {
+        return doQueryDelete(createCB(cbLambda), null);
     }
 
     // ===================================================================================
@@ -1247,558 +726,336 @@ public abstract class BsPersistentEventValueBhv extends
     //                                         Entity Update
     //                                         -------------
     /**
-     * Insert the entity with varying requests. <br />
-     * For example, disableCommonColumnAutoSetup(), disablePrimaryKeyIdentity(). <br />
+     * Insert the entity with varying requests. <br>
+     * For example, disableCommonColumnAutoSetup(), disablePrimaryKeyIdentity(). <br>
      * Other specifications are same as insert(entity).
      * <pre>
-     * PersistentEventValue persistentEventValue = new PersistentEventValue();
+     * PersistentEventValue persistentEventValue = <span style="color: #70226C">new</span> PersistentEventValue();
      * <span style="color: #3F7E5E">// if auto-increment, you don't need to set the PK value</span>
      * persistentEventValue.setFoo...(value);
      * persistentEventValue.setBar...(value);
-     * InsertOption<PersistentEventValueCB> option = new InsertOption<PersistentEventValueCB>();
-     * <span style="color: #3F7E5E">// you can insert by your values for common columns</span>
-     * option.disableCommonColumnAutoSetup();
-     * persistentEventValueBhv.<span style="color: #FD4747">varyingInsert</span>(persistentEventValue, option);
+     * <span style="color: #0000C0">persistentEventValueBhv</span>.<span style="color: #CC4747">varyingInsert</span>(persistentEventValue, <span style="color: #553000">op</span> <span style="color: #90226C; font-weight: bold"><span style="font-size: 120%">-</span>&gt;</span> {
+     *     <span style="color: #3F7E5E">// you can insert by your values for common columns</span>
+     *     <span style="color: #553000">op</span>.disableCommonColumnAutoSetup();
+     * });
      * ... = persistentEventValue.getPK...(); <span style="color: #3F7E5E">// if auto-increment, you can get the value after</span>
      * </pre>
-     * @param persistentEventValue The entity of insert target. (NotNull)
-     * @param option The option of insert for varying requests. (NotNull)
-     * @exception org.seasar.dbflute.exception.EntityAlreadyExistsException When the entity already exists. (Unique Constraint Violation)
+     * @param persistentEventValue The entity of insert. (NotNull, PrimaryKeyNullAllowed: when auto-increment)
+     * @param opLambda The callback for option of insert for varying requests. (NotNull)
+     * @throws EntityAlreadyExistsException When the entity already exists. (unique constraint violation)
      */
-    public void varyingInsert(final PersistentEventValue persistentEventValue,
-            final InsertOption<PersistentEventValueCB> option) {
-        assertInsertOptionNotNull(option);
-        doInsert(persistentEventValue, option);
+    public void varyingInsert(PersistentEventValue persistentEventValue, WritableOptionCall<PersistentEventValueCB, InsertOption<PersistentEventValueCB>> opLambda) {
+        doInsert(persistentEventValue, createInsertOption(opLambda));
     }
 
     /**
-     * Update the entity with varying requests modified-only. {UpdateCountZeroException, ExclusiveControl} <br />
-     * For example, self(selfCalculationSpecification), specify(updateColumnSpecification), disableCommonColumnAutoSetup(). <br />
+     * Update the entity with varying requests modified-only. (ZeroUpdateException, ExclusiveControl) <br>
+     * For example, self(selfCalculationSpecification), specify(updateColumnSpecification), disableCommonColumnAutoSetup(). <br>
      * Other specifications are same as update(entity).
      * <pre>
-     * PersistentEventValue persistentEventValue = new PersistentEventValue();
+     * PersistentEventValue persistentEventValue = <span style="color: #70226C">new</span> PersistentEventValue();
      * persistentEventValue.setPK...(value); <span style="color: #3F7E5E">// required</span>
      * persistentEventValue.setOther...(value); <span style="color: #3F7E5E">// you should set only modified columns</span>
-     * <span style="color: #3F7E5E">// if exclusive control, the value of exclusive control column is required</span>
-     * persistentEventValue.<span style="color: #FD4747">setVersionNo</span>(value);
-     * try {
-     *     <span style="color: #3F7E5E">// you can update by self calculation values</span>
-     *     UpdateOption&lt;PersistentEventValueCB&gt; option = new UpdateOption&lt;PersistentEventValueCB&gt;();
-     *     option.self(new SpecifyQuery&lt;PersistentEventValueCB&gt;() {
-     *         public void specify(PersistentEventValueCB cb) {
-     *             cb.specify().<span style="color: #FD4747">columnXxxCount()</span>;
-     *         }
+     * <span style="color: #3F7E5E">// if exclusive control, the value of concurrency column is required</span>
+     * persistentEventValue.<span style="color: #CC4747">setVersionNo</span>(value);
+     * <span style="color: #3F7E5E">// you can update by self calculation values</span>
+     * <span style="color: #0000C0">persistentEventValueBhv</span>.<span style="color: #CC4747">varyingUpdate</span>(persistentEventValue, <span style="color: #553000">op</span> <span style="color: #90226C; font-weight: bold"><span style="font-size: 120%">-</span>&gt;</span> {
+     *     <span style="color: #553000">op</span>.self(<span style="color: #553000">cb</span> <span style="color: #90226C; font-weight: bold"><span style="font-size: 120%">-</span>&gt;</span> {
+     *         <span style="color: #553000">cb</span>.specify().<span style="color: #CC4747">columnXxxCount()</span>;
      *     }).plus(1); <span style="color: #3F7E5E">// XXX_COUNT = XXX_COUNT + 1</span>
-     *     persistentEventValueBhv.<span style="color: #FD4747">varyingUpdate</span>(persistentEventValue, option);
-     * } catch (EntityAlreadyUpdatedException e) { <span style="color: #3F7E5E">// if concurrent update</span>
-     *     ...
-     * }
+     * });
      * </pre>
-     * @param persistentEventValue The entity of update target. (NotNull) {PrimaryKeyRequired, ConcurrencyColumnRequired}
-     * @param option The option of update for varying requests. (NotNull)
-     * @exception org.seasar.dbflute.exception.EntityAlreadyUpdatedException When the entity has already been updated.
-     * @exception org.seasar.dbflute.exception.EntityDuplicatedException When the entity has been duplicated.
-     * @exception org.seasar.dbflute.exception.EntityAlreadyExistsException When the entity already exists. (Unique Constraint Violation)
+     * @param persistentEventValue The entity of update. (NotNull, PrimaryKeyNotNull, ConcurrencyColumnNotNull)
+     * @param opLambda The callback for option of update for varying requests. (NotNull)
+     * @throws EntityAlreadyUpdatedException When the entity has already been updated.
+     * @throws EntityDuplicatedException When the entity has been duplicated.
+     * @throws EntityAlreadyExistsException When the entity already exists. (unique constraint violation)
      */
-    public void varyingUpdate(final PersistentEventValue persistentEventValue,
-            final UpdateOption<PersistentEventValueCB> option) {
-        assertUpdateOptionNotNull(option);
-        doUpdate(persistentEventValue, option);
+    public void varyingUpdate(PersistentEventValue persistentEventValue, WritableOptionCall<PersistentEventValueCB, UpdateOption<PersistentEventValueCB>> opLambda) {
+        doUpdate(persistentEventValue, createUpdateOption(opLambda));
     }
 
     /**
-     * Update the entity with varying requests non-strictly modified-only. {UpdateCountZeroException, NonExclusiveControl} <br />
-     * For example, self(selfCalculationSpecification), specify(updateColumnSpecification), disableCommonColumnAutoSetup(). <br />
+     * Update the entity with varying requests non-strictly modified-only. (ZeroUpdateException, NonExclusiveControl) <br>
+     * For example, self(selfCalculationSpecification), specify(updateColumnSpecification), disableCommonColumnAutoSetup(). <br>
      * Other specifications are same as updateNonstrict(entity).
      * <pre>
      * <span style="color: #3F7E5E">// ex) you can update by self calculation values</span>
-     * PersistentEventValue persistentEventValue = new PersistentEventValue();
+     * PersistentEventValue persistentEventValue = <span style="color: #70226C">new</span> PersistentEventValue();
      * persistentEventValue.setPK...(value); <span style="color: #3F7E5E">// required</span>
      * persistentEventValue.setOther...(value); <span style="color: #3F7E5E">// you should set only modified columns</span>
-     * <span style="color: #3F7E5E">// you don't need to set a value of exclusive control column</span>
+     * <span style="color: #3F7E5E">// you don't need to set a value of concurrency column</span>
      * <span style="color: #3F7E5E">// (auto-increment for version number is valid though non-exclusive control)</span>
      * <span style="color: #3F7E5E">//persistentEventValue.setVersionNo(value);</span>
-     * UpdateOption&lt;PersistentEventValueCB&gt; option = new UpdateOption&lt;PersistentEventValueCB&gt;();
-     * option.self(new SpecifyQuery&lt;PersistentEventValueCB&gt;() {
-     *     public void specify(PersistentEventValueCB cb) {
-     *         cb.specify().<span style="color: #FD4747">columnFooCount()</span>;
-     *     }
-     * }).plus(1); <span style="color: #3F7E5E">// FOO_COUNT = FOO_COUNT + 1</span>
-     * persistentEventValueBhv.<span style="color: #FD4747">varyingUpdateNonstrict</span>(persistentEventValue, option);
+     * <span style="color: #0000C0">persistentEventValueBhv</span>.<span style="color: #CC4747">varyingUpdateNonstrict</span>(persistentEventValue, <span style="color: #553000">op</span> <span style="color: #90226C; font-weight: bold"><span style="font-size: 120%">-</span>&gt;</span> {
+     *     <span style="color: #553000">op</span>.self(<span style="color: #553000">cb</span> <span style="color: #90226C; font-weight: bold"><span style="font-size: 120%">-</span>&gt;</span> {
+     *         <span style="color: #553000">cb</span>.specify().<span style="color: #CC4747">columnXxxCount()</span>;
+     *     }).plus(1); <span style="color: #3F7E5E">// XXX_COUNT = XXX_COUNT + 1</span>
+     * });
      * </pre>
-     * @param persistentEventValue The entity of update target. (NotNull) {PrimaryKeyRequired}
-     * @param option The option of update for varying requests. (NotNull)
-     * @exception org.seasar.dbflute.exception.EntityAlreadyDeletedException When the entity has already been deleted.
-     * @exception org.seasar.dbflute.exception.EntityDuplicatedException When the entity has been duplicated.
-     * @exception org.seasar.dbflute.exception.EntityAlreadyExistsException When the entity already exists. (Unique Constraint Violation)
+     * @param persistentEventValue The entity of update. (NotNull, PrimaryKeyNotNull)
+     * @param opLambda The callback for option of update for varying requests. (NotNull)
+     * @throws EntityAlreadyDeletedException When the entity has already been deleted. (not found)
+     * @throws EntityDuplicatedException When the entity has been duplicated.
+     * @throws EntityAlreadyExistsException When the entity already exists. (unique constraint violation)
      */
-    public void varyingUpdateNonstrict(
-            final PersistentEventValue persistentEventValue,
-            final UpdateOption<PersistentEventValueCB> option) {
-        assertUpdateOptionNotNull(option);
-        doUpdateNonstrict(persistentEventValue, option);
+    public void varyingUpdateNonstrict(PersistentEventValue persistentEventValue, WritableOptionCall<PersistentEventValueCB, UpdateOption<PersistentEventValueCB>> opLambda) {
+        doUpdateNonstrict(persistentEventValue, createUpdateOption(opLambda));
     }
 
     /**
-     * Insert or update the entity with varying requests. {ExclusiveControl(when update)}<br />
+     * Insert or update the entity with varying requests. (ExclusiveControl: when update) <br>
      * Other specifications are same as insertOrUpdate(entity).
-     * @param persistentEventValue The entity of insert or update target. (NotNull)
-     * @param insertOption The option of insert for varying requests. (NotNull)
-     * @param updateOption The option of update for varying requests. (NotNull)
-     * @exception org.seasar.dbflute.exception.EntityAlreadyUpdatedException When the entity has already been updated.
-     * @exception org.seasar.dbflute.exception.EntityDuplicatedException When the entity has been duplicated.
-     * @exception org.seasar.dbflute.exception.EntityAlreadyExistsException When the entity already exists. (Unique Constraint Violation)
+     * @param persistentEventValue The entity of insert or update. (NotNull)
+     * @param insertOpLambda The callback for option of insert for varying requests. (NotNull)
+     * @param updateOpLambda The callback for option of update for varying requests. (NotNull)
+     * @throws EntityAlreadyUpdatedException When the entity has already been updated.
+     * @throws EntityDuplicatedException When the entity has been duplicated.
+     * @throws EntityAlreadyExistsException When the entity already exists. (unique constraint violation)
      */
-    public void varyingInsertOrUpdate(
-            final PersistentEventValue persistentEventValue,
-            final InsertOption<PersistentEventValueCB> insertOption,
-            final UpdateOption<PersistentEventValueCB> updateOption) {
-        assertInsertOptionNotNull(insertOption);
-        assertUpdateOptionNotNull(updateOption);
-        doInesrtOrUpdate(persistentEventValue, insertOption, updateOption);
+    public void varyingInsertOrUpdate(PersistentEventValue persistentEventValue, WritableOptionCall<PersistentEventValueCB, InsertOption<PersistentEventValueCB>> insertOpLambda, WritableOptionCall<PersistentEventValueCB, UpdateOption<PersistentEventValueCB>> updateOpLambda) {
+        doInsertOrUpdate(persistentEventValue, createInsertOption(insertOpLambda), createUpdateOption(updateOpLambda));
     }
 
     /**
-     * Insert or update the entity with varying requests non-strictly. {NonExclusiveControl(when update)}<br />
+     * Insert or update the entity with varying requests non-strictly. (NonExclusiveControl: when update) <br>
      * Other specifications are same as insertOrUpdateNonstrict(entity).
-     * @param persistentEventValue The entity of insert or update target. (NotNull)
-     * @param insertOption The option of insert for varying requests. (NotNull)
-     * @param updateOption The option of update for varying requests. (NotNull)
-     * @exception org.seasar.dbflute.exception.EntityAlreadyDeletedException When the entity has already been deleted.
-     * @exception org.seasar.dbflute.exception.EntityDuplicatedException When the entity has been duplicated.
-     * @exception org.seasar.dbflute.exception.EntityAlreadyExistsException When the entity already exists. (Unique Constraint Violation)
+     * @param persistentEventValue The entity of insert or update. (NotNull)
+     * @param insertOpLambda The callback for option of insert for varying requests. (NotNull)
+     * @param updateOpLambda The callback for option of update for varying requests. (NotNull)
+     * @throws EntityAlreadyDeletedException When the entity has already been deleted. (not found)
+     * @throws EntityDuplicatedException When the entity has been duplicated.
+     * @throws EntityAlreadyExistsException When the entity already exists. (unique constraint violation)
      */
-    public void varyingInsertOrUpdateNonstrict(
-            final PersistentEventValue persistentEventValue,
-            final InsertOption<PersistentEventValueCB> insertOption,
-            final UpdateOption<PersistentEventValueCB> updateOption) {
-        assertInsertOptionNotNull(insertOption);
-        assertUpdateOptionNotNull(updateOption);
-        doInesrtOrUpdateNonstrict(persistentEventValue, insertOption,
-                updateOption);
+    public void varyingInsertOrUpdateNonstrict(PersistentEventValue persistentEventValue, WritableOptionCall<PersistentEventValueCB, InsertOption<PersistentEventValueCB>> insertOpLambda, WritableOptionCall<PersistentEventValueCB, UpdateOption<PersistentEventValueCB>> updateOpLambda) {
+        doInsertOrUpdateNonstrict(persistentEventValue, createInsertOption(insertOpLambda), createUpdateOption(updateOpLambda));
     }
 
     /**
-     * Delete the entity with varying requests. {UpdateCountZeroException, ExclusiveControl} <br />
-     * Now a valid option does not exist. <br />
+     * Delete the entity with varying requests. (ZeroUpdateException, ExclusiveControl) <br>
+     * Now a valid option does not exist. <br>
      * Other specifications are same as delete(entity).
-     * @param persistentEventValue The entity of delete target. (NotNull) {PrimaryKeyRequired, ConcurrencyColumnRequired}
-     * @param option The option of update for varying requests. (NotNull)
-     * @exception org.seasar.dbflute.exception.EntityAlreadyUpdatedException When the entity has already been updated.
-     * @exception org.seasar.dbflute.exception.EntityDuplicatedException When the entity has been duplicated.
+     * @param persistentEventValue The entity of delete. (NotNull, PrimaryKeyNotNull, ConcurrencyColumnNotNull)
+     * @param opLambda The callback for option of delete for varying requests. (NotNull)
+     * @throws EntityAlreadyUpdatedException When the entity has already been updated.
+     * @throws EntityDuplicatedException When the entity has been duplicated.
      */
-    public void varyingDelete(final PersistentEventValue persistentEventValue,
-            final DeleteOption<PersistentEventValueCB> option) {
-        assertDeleteOptionNotNull(option);
-        doDelete(persistentEventValue, option);
+    public void varyingDelete(PersistentEventValue persistentEventValue, WritableOptionCall<PersistentEventValueCB, DeleteOption<PersistentEventValueCB>> opLambda) {
+        doDelete(persistentEventValue, createDeleteOption(opLambda));
     }
 
     /**
-     * Delete the entity with varying requests non-strictly. {UpdateCountZeroException, NonExclusiveControl} <br />
-     * Now a valid option does not exist. <br />
+     * Delete the entity with varying requests non-strictly. (ZeroUpdateException, NonExclusiveControl) <br>
+     * Now a valid option does not exist. <br>
      * Other specifications are same as deleteNonstrict(entity).
-     * @param persistentEventValue The entity of delete target. (NotNull) {PrimaryKeyRequired, ConcurrencyColumnRequired}
-     * @param option The option of update for varying requests. (NotNull)
-     * @exception org.seasar.dbflute.exception.EntityAlreadyDeletedException When the entity has already been deleted.
-     * @exception org.seasar.dbflute.exception.EntityDuplicatedException When the entity has been duplicated.
+     * @param persistentEventValue The entity of delete. (NotNull, PrimaryKeyNotNull, ConcurrencyColumnNotNull)
+     * @param opLambda The callback for option of delete for varying requests. (NotNull)
+     * @throws EntityAlreadyDeletedException When the entity has already been deleted. (not found)
+     * @throws EntityDuplicatedException When the entity has been duplicated.
      */
-    public void varyingDeleteNonstrict(
-            final PersistentEventValue persistentEventValue,
-            final DeleteOption<PersistentEventValueCB> option) {
-        assertDeleteOptionNotNull(option);
-        doDeleteNonstrict(persistentEventValue, option);
+    public void varyingDeleteNonstrict(PersistentEventValue persistentEventValue, WritableOptionCall<PersistentEventValueCB, DeleteOption<PersistentEventValueCB>> opLambda) {
+        doDeleteNonstrict(persistentEventValue, createDeleteOption(opLambda));
     }
 
     // -----------------------------------------------------
     //                                          Batch Update
     //                                          ------------
     /**
-     * Batch-insert the list with varying requests. <br />
+     * Batch-insert the list with varying requests. <br>
      * For example, disableCommonColumnAutoSetup()
-     * , disablePrimaryKeyIdentity(), limitBatchInsertLogging(). <br />
+     * , disablePrimaryKeyIdentity(), limitBatchInsertLogging(). <br>
      * Other specifications are same as batchInsert(entityList).
-     * @param persistentEventValueList The list of the entity. (NotNull)
-     * @param option The option of insert for varying requests. (NotNull)
-     * @return The array of inserted count.
+     * @param persistentEventValueList The list of the entity. (NotNull, EmptyAllowed, PrimaryKeyNotNull)
+     * @param opLambda The callback for option of insert for varying requests. (NotNull)
+     * @return The array of updated count. (NotNull, EmptyAllowed)
      */
-    public int[] varyingBatchInsert(
-            final List<PersistentEventValue> persistentEventValueList,
-            final InsertOption<PersistentEventValueCB> option) {
-        assertInsertOptionNotNull(option);
-        return doBatchInsert(persistentEventValueList, option);
+    public int[] varyingBatchInsert(List<PersistentEventValue> persistentEventValueList, WritableOptionCall<PersistentEventValueCB, InsertOption<PersistentEventValueCB>> opLambda) {
+        return doBatchInsert(persistentEventValueList, createInsertOption(opLambda));
     }
 
     /**
-     * Batch-update the list with varying requests. <br />
+     * Batch-update the list with varying requests. <br>
      * For example, self(selfCalculationSpecification), specify(updateColumnSpecification)
-     * , disableCommonColumnAutoSetup(), limitBatchUpdateLogging(). <br />
+     * , disableCommonColumnAutoSetup(), limitBatchUpdateLogging(). <br>
      * Other specifications are same as batchUpdate(entityList).
-     * @param persistentEventValueList The list of the entity. (NotNull)
-     * @param option The option of update for varying requests. (NotNull)
-     * @return The array of updated count.
+     * @param persistentEventValueList The list of the entity. (NotNull, EmptyAllowed, PrimaryKeyNotNull)
+     * @param opLambda The callback for option of update for varying requests. (NotNull)
+     * @return The array of updated count. (NotNull, EmptyAllowed)
      */
-    public int[] varyingBatchUpdate(
-            final List<PersistentEventValue> persistentEventValueList,
-            final UpdateOption<PersistentEventValueCB> option) {
-        assertUpdateOptionNotNull(option);
-        return doBatchUpdate(persistentEventValueList, option);
+    public int[] varyingBatchUpdate(List<PersistentEventValue> persistentEventValueList, WritableOptionCall<PersistentEventValueCB, UpdateOption<PersistentEventValueCB>> opLambda) {
+        return doBatchUpdate(persistentEventValueList, createUpdateOption(opLambda));
     }
 
     /**
-     * Batch-update the list with varying requests non-strictly. <br />
+     * Batch-update the list with varying requests non-strictly. <br>
      * For example, self(selfCalculationSpecification), specify(updateColumnSpecification)
-     * , disableCommonColumnAutoSetup(), limitBatchUpdateLogging(). <br />
+     * , disableCommonColumnAutoSetup(), limitBatchUpdateLogging(). <br>
      * Other specifications are same as batchUpdateNonstrict(entityList).
-     * @param persistentEventValueList The list of the entity. (NotNull)
-     * @param option The option of update for varying requests. (NotNull)
-     * @return The array of updated count.
+     * @param persistentEventValueList The list of the entity. (NotNull, EmptyAllowed, PrimaryKeyNotNull)
+     * @param opLambda The callback for option of update for varying requests. (NotNull)
+     * @return The array of updated count. (NotNull, EmptyAllowed)
      */
-    public int[] varyingBatchUpdateNonstrict(
-            final List<PersistentEventValue> persistentEventValueList,
-            final UpdateOption<PersistentEventValueCB> option) {
-        assertUpdateOptionNotNull(option);
-        return doBatchUpdateNonstrict(persistentEventValueList, option);
+    public int[] varyingBatchUpdateNonstrict(List<PersistentEventValue> persistentEventValueList, WritableOptionCall<PersistentEventValueCB, UpdateOption<PersistentEventValueCB>> opLambda) {
+        return doBatchUpdateNonstrict(persistentEventValueList, createUpdateOption(opLambda));
     }
 
     /**
-     * Batch-delete the list with varying requests. <br />
-     * For example, limitBatchDeleteLogging(). <br />
+     * Batch-delete the list with varying requests. <br>
+     * For example, limitBatchDeleteLogging(). <br>
      * Other specifications are same as batchDelete(entityList).
-     * @param persistentEventValueList The list of the entity. (NotNull)
-     * @param option The option of delete for varying requests. (NotNull)
-     * @return The array of deleted count.
+     * @param persistentEventValueList The list of the entity. (NotNull, EmptyAllowed, PrimaryKeyNotNull)
+     * @param opLambda The callback for option of delete for varying requests. (NotNull)
+     * @return The array of deleted count. (NotNull, EmptyAllowed)
      */
-    public int[] varyingBatchDelete(
-            final List<PersistentEventValue> persistentEventValueList,
-            final DeleteOption<PersistentEventValueCB> option) {
-        assertDeleteOptionNotNull(option);
-        return doBatchDelete(persistentEventValueList, option);
+    public int[] varyingBatchDelete(List<PersistentEventValue> persistentEventValueList, WritableOptionCall<PersistentEventValueCB, DeleteOption<PersistentEventValueCB>> opLambda) {
+        return doBatchDelete(persistentEventValueList, createDeleteOption(opLambda));
     }
 
     /**
-     * Batch-delete the list with varying requests non-strictly. <br />
-     * For example, limitBatchDeleteLogging(). <br />
+     * Batch-delete the list with varying requests non-strictly. <br>
+     * For example, limitBatchDeleteLogging(). <br>
      * Other specifications are same as batchDeleteNonstrict(entityList).
-     * @param persistentEventValueList The list of the entity. (NotNull)
-     * @param option The option of delete for varying requests. (NotNull)
-     * @return The array of deleted count.
+     * @param persistentEventValueList The list of the entity. (NotNull, EmptyAllowed, PrimaryKeyNotNull)
+     * @param opLambda The callback for option of delete for varying requests. (NotNull)
+     * @return The array of deleted count. (NotNull, EmptyAllowed)
      */
-    public int[] varyingBatchDeleteNonstrict(
-            final List<PersistentEventValue> persistentEventValueList,
-            final DeleteOption<PersistentEventValueCB> option) {
-        assertDeleteOptionNotNull(option);
-        return doBatchDeleteNonstrict(persistentEventValueList, option);
+    public int[] varyingBatchDeleteNonstrict(List<PersistentEventValue> persistentEventValueList, WritableOptionCall<PersistentEventValueCB, DeleteOption<PersistentEventValueCB>> opLambda) {
+        return doBatchDeleteNonstrict(persistentEventValueList, createDeleteOption(opLambda));
     }
 
     // -----------------------------------------------------
     //                                          Query Update
     //                                          ------------
     /**
-     * Insert the several entities by query with varying requests (modified-only for fixed value). <br />
-     * For example, disableCommonColumnAutoSetup(), disablePrimaryKeyIdentity(). <br />
-     * Other specifications are same as queryInsert(entity, setupper). 
-     * @param setupper The setup-per of query-insert. (NotNull)
-     * @param option The option of insert for varying requests. (NotNull)
+     * Insert the several entities by query with varying requests (modified-only for fixed value). <br>
+     * For example, disableCommonColumnAutoSetup(), disablePrimaryKeyIdentity(). <br>
+     * Other specifications are same as queryInsert(entity, setupper).
+     * @param manyArgLambda The set-upper of query-insert. (NotNull)
+     * @param opLambda The callback for option of insert for varying requests. (NotNull)
      * @return The inserted count.
      */
-    public int varyingQueryInsert(
-            final QueryInsertSetupper<PersistentEventValue, PersistentEventValueCB> setupper,
-            final InsertOption<PersistentEventValueCB> option) {
-        assertInsertOptionNotNull(option);
-        return doQueryInsert(setupper, option);
+    public int varyingQueryInsert(QueryInsertSetupper<PersistentEventValue, PersistentEventValueCB> manyArgLambda, WritableOptionCall<PersistentEventValueCB, InsertOption<PersistentEventValueCB>> opLambda) {
+        return doQueryInsert(manyArgLambda, createInsertOption(opLambda));
     }
 
     /**
-     * Update the several entities by query with varying requests non-strictly modified-only. {NonExclusiveControl} <br />
+     * Update the several entities by query with varying requests non-strictly modified-only. {NonExclusiveControl} <br>
      * For example, self(selfCalculationSpecification), specify(updateColumnSpecification)
-     * , disableCommonColumnAutoSetup(), allowNonQueryUpdate(). <br />
-     * Other specifications are same as queryUpdate(entity, cb). 
+     * , disableCommonColumnAutoSetup(), allowNonQueryUpdate(). <br>
+     * Other specifications are same as queryUpdate(entity, cb).
      * <pre>
      * <span style="color: #3F7E5E">// ex) you can update by self calculation values</span>
-     * PersistentEventValue persistentEventValue = new PersistentEventValue();
+     * PersistentEventValue persistentEventValue = <span style="color: #70226C">new</span> PersistentEventValue();
      * <span style="color: #3F7E5E">// you don't need to set PK value</span>
      * <span style="color: #3F7E5E">//persistentEventValue.setPK...(value);</span>
      * persistentEventValue.setOther...(value); <span style="color: #3F7E5E">// you should set only modified columns</span>
-     * <span style="color: #3F7E5E">// you don't need to set a value of exclusive control column</span>
+     * <span style="color: #3F7E5E">// you don't need to set a value of concurrency column</span>
      * <span style="color: #3F7E5E">// (auto-increment for version number is valid though non-exclusive control)</span>
      * <span style="color: #3F7E5E">//persistentEventValue.setVersionNo(value);</span>
-     * PersistentEventValueCB cb = new PersistentEventValueCB();
-     * cb.query().setFoo...(value);
-     * UpdateOption&lt;PersistentEventValueCB&gt; option = new UpdateOption&lt;PersistentEventValueCB&gt;();
-     * option.self(new SpecifyQuery&lt;PersistentEventValueCB&gt;() {
-     *     public void specify(PersistentEventValueCB cb) {
-     *         cb.specify().<span style="color: #FD4747">columnFooCount()</span>;
-     *     }
-     * }).plus(1); <span style="color: #3F7E5E">// FOO_COUNT = FOO_COUNT + 1</span>
-     * persistentEventValueBhv.<span style="color: #FD4747">varyingQueryUpdate</span>(persistentEventValue, cb, option);
+     * <span style="color: #0000C0">persistentEventValueBhv</span>.<span style="color: #CC4747">varyingQueryUpdate</span>(persistentEventValue, <span style="color: #553000">cb</span> <span style="color: #90226C; font-weight: bold"><span style="font-size: 120%">-</span>&gt;</span> {
+     *     <span style="color: #553000">cb</span>.query().setFoo...
+     * }, <span style="color: #553000">op</span> <span style="color: #90226C; font-weight: bold"><span style="font-size: 120%">-</span>&gt;</span> {
+     *     <span style="color: #553000">op</span>.self(<span style="color: #553000">colCB</span> <span style="color: #90226C; font-weight: bold"><span style="font-size: 120%">-</span>&gt;</span> {
+     *         <span style="color: #553000">colCB</span>.specify().<span style="color: #CC4747">columnFooCount()</span>;
+     *     }).plus(1); <span style="color: #3F7E5E">// FOO_COUNT = FOO_COUNT + 1</span>
+     * });
      * </pre>
      * @param persistentEventValue The entity that contains update values. (NotNull) {PrimaryKeyNotRequired}
-     * @param cb The condition-bean of PersistentEventValue. (NotNull)
-     * @param option The option of update for varying requests. (NotNull)
+     * @param cbLambda The callback for condition-bean of PersistentEventValue. (NotNull)
+     * @param opLambda The callback for option of update for varying requests. (NotNull)
      * @return The updated count.
-     * @exception org.seasar.dbflute.exception.NonQueryUpdateNotAllowedException When the query has no condition (if not allowed).
+     * @throws NonQueryUpdateNotAllowedException When the query has no condition (if not allowed).
      */
-    public int varyingQueryUpdate(
-            final PersistentEventValue persistentEventValue,
-            final PersistentEventValueCB cb,
-            final UpdateOption<PersistentEventValueCB> option) {
-        assertUpdateOptionNotNull(option);
-        return doQueryUpdate(persistentEventValue, cb, option);
+    public int varyingQueryUpdate(PersistentEventValue persistentEventValue, CBCall<PersistentEventValueCB> cbLambda, WritableOptionCall<PersistentEventValueCB, UpdateOption<PersistentEventValueCB>> opLambda) {
+        return doQueryUpdate(persistentEventValue, createCB(cbLambda), createUpdateOption(opLambda));
     }
 
     /**
-     * Delete the several entities by query with varying requests non-strictly. <br />
-     * For example, allowNonQueryDelete(). <br />
-     * Other specifications are same as batchUpdateNonstrict(entityList).
-     * @param cb The condition-bean of PersistentEventValue. (NotNull)
-     * @param option The option of delete for varying requests. (NotNull)
+     * Delete the several entities by query with varying requests non-strictly. <br>
+     * For example, allowNonQueryDelete(). <br>
+     * Other specifications are same as queryDelete(cb).
+     * <pre>
+     * <span style="color: #0000C0">persistentEventValueBhv</span>.<span style="color: #CC4747">queryDelete</span>(persistentEventValue, <span style="color: #553000">cb</span> <span style="color: #90226C; font-weight: bold"><span style="font-size: 120%">-</span>&gt;</span> {
+     *     <span style="color: #553000">cb</span>.query().setFoo...
+     * }, <span style="color: #553000">op</span> <span style="color: #90226C; font-weight: bold"><span style="font-size: 120%">-</span>&gt;</span> {
+     *     <span style="color: #553000">op</span>...
+     * });
+     * </pre>
+     * @param cbLambda The callback for condition-bean of PersistentEventValue. (NotNull)
+     * @param opLambda The callback for option of delete for varying requests. (NotNull)
      * @return The deleted count.
-     * @exception org.seasar.dbflute.exception.NonQueryDeleteNotAllowedException When the query has no condition (if not allowed).
+     * @throws NonQueryDeleteNotAllowedException When the query has no condition (if not allowed).
      */
-    public int varyingQueryDelete(final PersistentEventValueCB cb,
-            final DeleteOption<PersistentEventValueCB> option) {
-        assertDeleteOptionNotNull(option);
-        return doQueryDelete(cb, option);
+    public int varyingQueryDelete(CBCall<PersistentEventValueCB> cbLambda, WritableOptionCall<PersistentEventValueCB, DeleteOption<PersistentEventValueCB>> opLambda) {
+        return doQueryDelete(createCB(cbLambda), createDeleteOption(opLambda));
     }
 
     // ===================================================================================
     //                                                                          OutsideSql
     //                                                                          ==========
     /**
-     * Prepare the basic executor of outside-SQL to execute it. <br />
-     * The invoker of behavior command should be not null when you call this method.
+     * Prepare the all facade executor of outside-SQL to execute it.
      * <pre>
-     * You can use the methods for outside-SQL are as follows:
-     * {Basic}
-     *   o selectList()
-     *   o execute()
-     *   o call()
-     * 
-     * {Entity}
-     *   o entityHandling().selectEntity()
-     *   o entityHandling().selectEntityWithDeletedCheck()
-     * 
-     * {Paging}
-     *   o autoPaging().selectList()
-     *   o autoPaging().selectPage()
-     *   o manualPaging().selectList()
-     *   o manualPaging().selectPage()
-     * 
-     * {Cursor}
-     *   o cursorHandling().selectCursor()
-     * 
-     * {Option}
-     *   o dynamicBinding().selectList()
-     *   o removeBlockComment().selectList()
-     *   o removeLineComment().selectList()
-     *   o formatSql().selectList()
+     * <span style="color: #3F7E5E">// main style</span>
+     * persistentEventValueBhv.outideSql().selectEntity(pmb); <span style="color: #3F7E5E">// optional</span>
+     * persistentEventValueBhv.outideSql().selectList(pmb); <span style="color: #3F7E5E">// ListResultBean</span>
+     * persistentEventValueBhv.outideSql().selectPage(pmb); <span style="color: #3F7E5E">// PagingResultBean</span>
+     * persistentEventValueBhv.outideSql().selectPagedListOnly(pmb); <span style="color: #3F7E5E">// ListResultBean</span>
+     * persistentEventValueBhv.outideSql().selectCursor(pmb, handler); <span style="color: #3F7E5E">// (by handler)</span>
+     * persistentEventValueBhv.outideSql().execute(pmb); <span style="color: #3F7E5E">// int (updated count)</span>
+     * persistentEventValueBhv.outideSql().call(pmb); <span style="color: #3F7E5E">// void (pmb has OUT parameters)</span>
+     *
+     * <span style="color: #3F7E5E">// traditional style</span>
+     * persistentEventValueBhv.outideSql().traditionalStyle().selectEntity(path, pmb, entityType);
+     * persistentEventValueBhv.outideSql().traditionalStyle().selectList(path, pmb, entityType);
+     * persistentEventValueBhv.outideSql().traditionalStyle().selectPage(path, pmb, entityType);
+     * persistentEventValueBhv.outideSql().traditionalStyle().selectPagedListOnly(path, pmb, entityType);
+     * persistentEventValueBhv.outideSql().traditionalStyle().selectCursor(path, pmb, handler);
+     * persistentEventValueBhv.outideSql().traditionalStyle().execute(path, pmb);
+     *
+     * <span style="color: #3F7E5E">// options</span>
+     * persistentEventValueBhv.outideSql().removeBlockComment().selectList()
+     * persistentEventValueBhv.outideSql().removeLineComment().selectList()
+     * persistentEventValueBhv.outideSql().formatSql().selectList()
      * </pre>
-     * @return The basic executor of outside-SQL. (NotNull) 
+     * <p>The invoker of behavior command should be not null when you call this method.</p>
+     * @return The new-created all facade executor of outside-SQL. (NotNull)
      */
-    public OutsideSqlBasicExecutor<PersistentEventValueBhv> outsideSql() {
+    public OutsideSqlAllFacadeExecutor<PersistentEventValueBhv> outsideSql() {
         return doOutsideSql();
-    }
-
-    // ===================================================================================
-    //                                                                     Delegate Method
-    //                                                                     ===============
-    // [Behavior Command]
-    // -----------------------------------------------------
-    //                                                Select
-    //                                                ------
-    protected int delegateSelectCountUniquely(final PersistentEventValueCB cb) {
-        return invoke(createSelectCountCBCommand(cb, true));
-    }
-
-    protected int delegateSelectCountPlainly(final PersistentEventValueCB cb) {
-        return invoke(createSelectCountCBCommand(cb, false));
-    }
-
-    protected <ENTITY extends PersistentEventValue> void delegateSelectCursor(
-            final PersistentEventValueCB cb,
-            final EntityRowHandler<ENTITY> erh, final Class<ENTITY> et) {
-        invoke(createSelectCursorCBCommand(cb, erh, et));
-    }
-
-    protected <ENTITY extends PersistentEventValue> List<ENTITY> delegateSelectList(
-            final PersistentEventValueCB cb, final Class<ENTITY> et) {
-        return invoke(createSelectListCBCommand(cb, et));
-    }
-
-    // -----------------------------------------------------
-    //                                                Update
-    //                                                ------
-    protected int delegateInsert(final PersistentEventValue e,
-            final InsertOption<PersistentEventValueCB> op) {
-        if (!processBeforeInsert(e, op)) {
-            return 0;
-        }
-        return invoke(createInsertEntityCommand(e, op));
-    }
-
-    protected int delegateUpdate(final PersistentEventValue e,
-            final UpdateOption<PersistentEventValueCB> op) {
-        if (!processBeforeUpdate(e, op)) {
-            return 0;
-        }
-        return invoke(createUpdateEntityCommand(e, op));
-    }
-
-    protected int delegateUpdateNonstrict(final PersistentEventValue e,
-            final UpdateOption<PersistentEventValueCB> op) {
-        if (!processBeforeUpdate(e, op)) {
-            return 0;
-        }
-        return invoke(createUpdateNonstrictEntityCommand(e, op));
-    }
-
-    protected int delegateDelete(final PersistentEventValue e,
-            final DeleteOption<PersistentEventValueCB> op) {
-        if (!processBeforeDelete(e, op)) {
-            return 0;
-        }
-        return invoke(createDeleteEntityCommand(e, op));
-    }
-
-    protected int delegateDeleteNonstrict(final PersistentEventValue e,
-            final DeleteOption<PersistentEventValueCB> op) {
-        if (!processBeforeDelete(e, op)) {
-            return 0;
-        }
-        return invoke(createDeleteNonstrictEntityCommand(e, op));
-    }
-
-    protected int[] delegateBatchInsert(final List<PersistentEventValue> ls,
-            final InsertOption<PersistentEventValueCB> op) {
-        if (ls.isEmpty()) {
-            return new int[] {};
-        }
-        return invoke(createBatchInsertCommand(processBatchInternally(ls, op),
-                op));
-    }
-
-    protected int[] delegateBatchUpdate(final List<PersistentEventValue> ls,
-            final UpdateOption<PersistentEventValueCB> op) {
-        if (ls.isEmpty()) {
-            return new int[] {};
-        }
-        return invoke(createBatchUpdateCommand(
-                processBatchInternally(ls, op, false), op));
-    }
-
-    protected int[] delegateBatchUpdateNonstrict(
-            final List<PersistentEventValue> ls,
-            final UpdateOption<PersistentEventValueCB> op) {
-        if (ls.isEmpty()) {
-            return new int[] {};
-        }
-        return invoke(createBatchUpdateNonstrictCommand(
-                processBatchInternally(ls, op, true), op));
-    }
-
-    protected int[] delegateBatchDelete(final List<PersistentEventValue> ls,
-            final DeleteOption<PersistentEventValueCB> op) {
-        if (ls.isEmpty()) {
-            return new int[] {};
-        }
-        return invoke(createBatchDeleteCommand(
-                processBatchInternally(ls, op, false), op));
-    }
-
-    protected int[] delegateBatchDeleteNonstrict(
-            final List<PersistentEventValue> ls,
-            final DeleteOption<PersistentEventValueCB> op) {
-        if (ls.isEmpty()) {
-            return new int[] {};
-        }
-        return invoke(createBatchDeleteNonstrictCommand(
-                processBatchInternally(ls, op, true), op));
-    }
-
-    protected int delegateQueryInsert(final PersistentEventValue e,
-            final PersistentEventValueCB inCB, final ConditionBean resCB,
-            final InsertOption<PersistentEventValueCB> op) {
-        if (!processBeforeQueryInsert(e, inCB, resCB, op)) {
-            return 0;
-        }
-        return invoke(createQueryInsertCBCommand(e, inCB, resCB, op));
-    }
-
-    protected int delegateQueryUpdate(final PersistentEventValue e,
-            final PersistentEventValueCB cb,
-            final UpdateOption<PersistentEventValueCB> op) {
-        if (!processBeforeQueryUpdate(e, cb, op)) {
-            return 0;
-        }
-        return invoke(createQueryUpdateCBCommand(e, cb, op));
-    }
-
-    protected int delegateQueryDelete(final PersistentEventValueCB cb,
-            final DeleteOption<PersistentEventValueCB> op) {
-        if (!processBeforeQueryDelete(cb, op)) {
-            return 0;
-        }
-        return invoke(createQueryDeleteCBCommand(cb, op));
     }
 
     // ===================================================================================
     //                                                                Optimistic Lock Info
     //                                                                ====================
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    protected boolean hasVersionNoValue(final Entity entity) {
-        return !(downcast(entity).getVersionNo() + "").equals("null");// For primitive type
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected boolean hasUpdateDateValue(final Entity entity) {
-        return false;
-    }
+    protected boolean hasVersionNoValue(Entity et) { return downcast(et).getVersionNo() != null; }
 
     // ===================================================================================
-    //                                                                     Downcast Helper
-    //                                                                     ===============
-    protected PersistentEventValue downcast(final Entity entity) {
-        return helpEntityDowncastInternally(entity, PersistentEventValue.class);
+    //                                                                         Type Helper
+    //                                                                         ===========
+    protected Class<? extends PersistentEventValue> typeOfSelectedEntity() { return PersistentEventValue.class; }
+    protected Class<PersistentEventValue> typeOfHandlingEntity() { return PersistentEventValue.class; }
+    protected Class<PersistentEventValueCB> typeOfHandlingConditionBean() { return PersistentEventValueCB.class; }
+
+    // ===================================================================================
+    //                                                                            Accessor
+    //                                                                            ========
+    @Override
+    @javax.annotation.Resource(name="behaviorCommandInvoker")
+    public void setBehaviorCommandInvoker(BehaviorCommandInvoker behaviorCommandInvoker) {
+        super.setBehaviorCommandInvoker(behaviorCommandInvoker);
     }
 
-    protected PersistentEventValueCB downcast(final ConditionBean cb) {
-        return helpConditionBeanDowncastInternally(cb,
-                PersistentEventValueCB.class);
+    @Override
+    @javax.annotation.Resource(name="behaviorSelector")
+    public void setBehaviorSelector(BehaviorSelector behaviorSelector) {
+        super.setBehaviorSelector(behaviorSelector);
     }
 
-    @SuppressWarnings("unchecked")
-    protected List<PersistentEventValue> downcast(
-            final List<? extends Entity> entityList) {
-        return (List<PersistentEventValue>) entityList;
-    }
-
-    @SuppressWarnings("unchecked")
-    protected InsertOption<PersistentEventValueCB> downcast(
-            final InsertOption<? extends ConditionBean> option) {
-        return (InsertOption<PersistentEventValueCB>) option;
-    }
-
-    @SuppressWarnings("unchecked")
-    protected UpdateOption<PersistentEventValueCB> downcast(
-            final UpdateOption<? extends ConditionBean> option) {
-        return (UpdateOption<PersistentEventValueCB>) option;
-    }
-
-    @SuppressWarnings("unchecked")
-    protected DeleteOption<PersistentEventValueCB> downcast(
-            final DeleteOption<? extends ConditionBean> option) {
-        return (DeleteOption<PersistentEventValueCB>) option;
-    }
-
-    @SuppressWarnings("unchecked")
-    protected QueryInsertSetupper<PersistentEventValue, PersistentEventValueCB> downcast(
-            final QueryInsertSetupper<? extends Entity, ? extends ConditionBean> option) {
-        return (QueryInsertSetupper<PersistentEventValue, PersistentEventValueCB>) option;
+    @Override
+    @javax.annotation.Resource(name="commonColumnAutoSetupper")
+    public void setCommonColumnAutoSetupper(CommonColumnAutoSetupper commonColumnAutoSetupper) {
+        super.setCommonColumnAutoSetupper(commonColumnAutoSetupper);
     }
 }

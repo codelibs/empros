@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 the CodeLibs Project and the Others.
+ * Copyright 2012-2020 CodeLibs Project and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,875 +16,905 @@
 package org.codelibs.empros.db.cbean.cq.bs;
 
 import java.util.Collection;
+import java.util.Date;
 
 import org.codelibs.empros.db.allcommon.DBMetaInstanceHandler;
-import org.codelibs.empros.db.cbean.PersistentEventCB;
 import org.codelibs.empros.db.cbean.PersistentEventValueCB;
-import org.codelibs.empros.db.cbean.cq.PersistentEventCQ;
 import org.codelibs.empros.db.cbean.cq.PersistentEventValueCQ;
-import org.seasar.dbflute.cbean.AbstractConditionQuery;
-import org.seasar.dbflute.cbean.ConditionQuery;
-import org.seasar.dbflute.cbean.SubQuery;
-import org.seasar.dbflute.cbean.chelper.HpQDRFunction;
-import org.seasar.dbflute.cbean.chelper.HpQDRSetupper;
-import org.seasar.dbflute.cbean.chelper.HpSSQFunction;
-import org.seasar.dbflute.cbean.chelper.HpSSQOption;
-import org.seasar.dbflute.cbean.chelper.HpSSQSetupper;
-import org.seasar.dbflute.cbean.ckey.ConditionKey;
-import org.seasar.dbflute.cbean.coption.DerivedReferrerOption;
-import org.seasar.dbflute.cbean.coption.LikeSearchOption;
-import org.seasar.dbflute.cbean.coption.RangeOfOption;
-import org.seasar.dbflute.cbean.cvalue.ConditionValue;
-import org.seasar.dbflute.cbean.sqlclause.SqlClause;
-import org.seasar.dbflute.dbmeta.DBMetaProvider;
+import org.dbflute.cbean.AbstractConditionQuery;
+import org.dbflute.cbean.ConditionBean;
+import org.dbflute.cbean.ConditionQuery;
+import org.dbflute.cbean.chelper.HpQDRFunction;
+import org.dbflute.cbean.chelper.HpSLCCustomized;
+import org.dbflute.cbean.chelper.HpSLCFunction;
+import org.dbflute.cbean.chelper.HpSLCSetupper;
+import org.dbflute.cbean.ckey.ConditionKey;
+import org.dbflute.cbean.coption.*;
+import org.dbflute.cbean.cvalue.ConditionValue;
+import org.dbflute.cbean.ordering.ManualOrderOptionCall;
+import org.dbflute.cbean.scoping.SubQuery;
+import org.dbflute.cbean.sqlclause.SqlClause;
+import org.dbflute.dbmeta.DBMetaProvider;
 
 /**
  * The abstract condition-query of PERSISTENT_EVENT_VALUE.
  * @author DBFlute(AutoGenerator)
  */
-public abstract class AbstractBsPersistentEventValueCQ extends
-        AbstractConditionQuery {
+public abstract class AbstractBsPersistentEventValueCQ extends AbstractConditionQuery {
 
     // ===================================================================================
     //                                                                         Constructor
     //                                                                         ===========
-    public AbstractBsPersistentEventValueCQ(final ConditionQuery childQuery,
-            final SqlClause sqlClause, final String aliasName,
-            final int nestLevel) {
-        super(childQuery, sqlClause, aliasName, nestLevel);
+    public AbstractBsPersistentEventValueCQ(ConditionQuery referrerQuery, SqlClause sqlClause, String aliasName, int nestLevel) {
+        super(referrerQuery, sqlClause, aliasName, nestLevel);
     }
 
     // ===================================================================================
-    //                                                                     DBMeta Provider
-    //                                                                     ===============
+    //                                                                             DB Meta
+    //                                                                             =======
     @Override
     protected DBMetaProvider xgetDBMetaProvider() {
         return DBMetaInstanceHandler.getProvider();
     }
 
-    // ===================================================================================
-    //                                                                          Table Name
-    //                                                                          ==========
-    @Override
-    public String getTableDbName() {
+    public String asTableDbName() {
         return "PERSISTENT_EVENT_VALUE";
     }
 
     // ===================================================================================
     //                                                                               Query
     //                                                                               =====
-
     /**
-     * Equal(=). And NullIgnored, OnlyOnceRegistered. <br />
+     * Equal(=). And NullIgnored, OnlyOnceRegistered. <br>
      * ID: {PK, ID, NotNull, BIGINT(19)}
-     * @param id The value of id as equal.
+     * @param id The value of id as equal. (basically NotNull: error as default, or no condition as option)
      */
-    public void setId_Equal(final Long id) {
+    public void setId_Equal(Long id) {
         doSetId_Equal(id);
     }
 
-    protected void doSetId_Equal(final Long id) {
+    protected void doSetId_Equal(Long id) {
         regId(CK_EQ, id);
     }
 
     /**
-     * NotEqual(&lt;&gt;). And NullIgnored, OnlyOnceRegistered. <br />
+     * NotEqual(&lt;&gt;). And NullIgnored, OnlyOnceRegistered. <br>
      * ID: {PK, ID, NotNull, BIGINT(19)}
-     * @param id The value of id as notEqual.
+     * @param id The value of id as notEqual. (basically NotNull: error as default, or no condition as option)
      */
-    public void setId_NotEqual(final Long id) {
+    public void setId_NotEqual(Long id) {
         doSetId_NotEqual(id);
     }
 
-    protected void doSetId_NotEqual(final Long id) {
+    protected void doSetId_NotEqual(Long id) {
         regId(CK_NES, id);
     }
 
     /**
-     * GreaterThan(&gt;). And NullIgnored, OnlyOnceRegistered. <br />
+     * GreaterThan(&gt;). And NullIgnored, OnlyOnceRegistered. <br>
      * ID: {PK, ID, NotNull, BIGINT(19)}
-     * @param id The value of id as greaterThan.
+     * @param id The value of id as greaterThan. (basically NotNull: error as default, or no condition as option)
      */
-    public void setId_GreaterThan(final Long id) {
+    public void setId_GreaterThan(Long id) {
         regId(CK_GT, id);
     }
 
     /**
-     * LessThan(&lt;). And NullIgnored, OnlyOnceRegistered. <br />
+     * LessThan(&lt;). And NullIgnored, OnlyOnceRegistered. <br>
      * ID: {PK, ID, NotNull, BIGINT(19)}
-     * @param id The value of id as lessThan.
+     * @param id The value of id as lessThan. (basically NotNull: error as default, or no condition as option)
      */
-    public void setId_LessThan(final Long id) {
+    public void setId_LessThan(Long id) {
         regId(CK_LT, id);
     }
 
     /**
-     * GreaterEqual(&gt;=). And NullIgnored, OnlyOnceRegistered. <br />
+     * GreaterEqual(&gt;=). And NullIgnored, OnlyOnceRegistered. <br>
      * ID: {PK, ID, NotNull, BIGINT(19)}
-     * @param id The value of id as greaterEqual.
+     * @param id The value of id as greaterEqual. (basically NotNull: error as default, or no condition as option)
      */
-    public void setId_GreaterEqual(final Long id) {
+    public void setId_GreaterEqual(Long id) {
         regId(CK_GE, id);
     }
 
     /**
-     * LessEqual(&lt;=). And NullIgnored, OnlyOnceRegistered. <br />
+     * LessEqual(&lt;=). And NullIgnored, OnlyOnceRegistered. <br>
      * ID: {PK, ID, NotNull, BIGINT(19)}
-     * @param id The value of id as lessEqual.
+     * @param id The value of id as lessEqual. (basically NotNull: error as default, or no condition as option)
      */
-    public void setId_LessEqual(final Long id) {
+    public void setId_LessEqual(Long id) {
         regId(CK_LE, id);
     }
 
     /**
-     * RangeOf with various options. (versatile) <br />
-     * {(default) minNumber &lt;= column &lt;= maxNumber} <br />
-     * And NullIgnored, OnlyOnceRegistered. <br />
+     * RangeOf with various options. (versatile) <br>
+     * {(default) minNumber &lt;= column &lt;= maxNumber} <br>
+     * And NullIgnored, OnlyOnceRegistered. <br>
      * ID: {PK, ID, NotNull, BIGINT(19)}
-     * @param minNumber The min number of id. (NullAllowed)
-     * @param maxNumber The max number of id. (NullAllowed)
-     * @param rangeOfOption The option of range-of. (NotNull)
+     * @param minNumber The min number of id. (basically NotNull: if op.allowOneSide(), null allowed)
+     * @param maxNumber The max number of id. (basically NotNull: if op.allowOneSide(), null allowed)
+     * @param opLambda The callback for option of range-of. (NotNull)
      */
-    public void setId_RangeOf(final Long minNumber, final Long maxNumber,
-            final RangeOfOption rangeOfOption) {
-        regROO(minNumber, maxNumber, getCValueId(), "ID", rangeOfOption);
+    public void setId_RangeOf(Long minNumber, Long maxNumber, ConditionOptionCall<RangeOfOption> opLambda) {
+        setId_RangeOf(minNumber, maxNumber, xcROOP(opLambda));
     }
 
     /**
-     * InScope {in (1, 2)}. And NullIgnored, NullElementIgnored, SeveralRegistered. <br />
+     * RangeOf with various options. (versatile) <br>
+     * {(default) minNumber &lt;= column &lt;= maxNumber} <br>
+     * And NullIgnored, OnlyOnceRegistered. <br>
      * ID: {PK, ID, NotNull, BIGINT(19)}
-     * @param idList The collection of id as inScope.
+     * @param minNumber The min number of id. (basically NotNull: if op.allowOneSide(), null allowed)
+     * @param maxNumber The max number of id. (basically NotNull: if op.allowOneSide(), null allowed)
+     * @param rangeOfOption The option of range-of. (NotNull)
      */
-    public void setId_InScope(final Collection<Long> idList) {
+    protected void setId_RangeOf(Long minNumber, Long maxNumber, RangeOfOption rangeOfOption) {
+        regROO(minNumber, maxNumber, xgetCValueId(), "ID", rangeOfOption);
+    }
+
+    /**
+     * InScope {in (1, 2)}. And NullIgnored, NullElementIgnored, SeveralRegistered. <br>
+     * ID: {PK, ID, NotNull, BIGINT(19)}
+     * @param idList The collection of id as inScope. (basically NotNull, NotEmpty: error as default, or no condition as option)
+     */
+    public void setId_InScope(Collection<Long> idList) {
         doSetId_InScope(idList);
     }
 
-    protected void doSetId_InScope(final Collection<Long> idList) {
-        regINS(CK_INS, cTL(idList), getCValueId(), "ID");
+    protected void doSetId_InScope(Collection<Long> idList) {
+        regINS(CK_INS, cTL(idList), xgetCValueId(), "ID");
     }
 
     /**
-     * NotInScope {not in (1, 2)}. And NullIgnored, NullElementIgnored, SeveralRegistered. <br />
+     * NotInScope {not in (1, 2)}. And NullIgnored, NullElementIgnored, SeveralRegistered. <br>
      * ID: {PK, ID, NotNull, BIGINT(19)}
-     * @param idList The collection of id as notInScope.
+     * @param idList The collection of id as notInScope. (basically NotNull, NotEmpty: error as default, or no condition as option)
      */
-    public void setId_NotInScope(final Collection<Long> idList) {
+    public void setId_NotInScope(Collection<Long> idList) {
         doSetId_NotInScope(idList);
     }
 
-    protected void doSetId_NotInScope(final Collection<Long> idList) {
-        regINS(CK_NINS, cTL(idList), getCValueId(), "ID");
+    protected void doSetId_NotInScope(Collection<Long> idList) {
+        regINS(CK_NINS, cTL(idList), xgetCValueId(), "ID");
     }
 
     /**
-     * IsNull {is null}. And OnlyOnceRegistered. <br />
+     * IsNull {is null}. And OnlyOnceRegistered. <br>
      * ID: {PK, ID, NotNull, BIGINT(19)}
      */
-    public void setId_IsNull() {
-        regId(CK_ISN, DOBJ);
-    }
+    public void setId_IsNull() { regId(CK_ISN, DOBJ); }
 
     /**
-     * IsNotNull {is not null}. And OnlyOnceRegistered. <br />
+     * IsNotNull {is not null}. And OnlyOnceRegistered. <br>
      * ID: {PK, ID, NotNull, BIGINT(19)}
      */
-    public void setId_IsNotNull() {
-        regId(CK_ISNN, DOBJ);
-    }
+    public void setId_IsNotNull() { regId(CK_ISNN, DOBJ); }
 
-    protected void regId(final ConditionKey k, final Object v) {
-        regQ(k, v, getCValueId(), "ID");
-    }
-
-    abstract protected ConditionValue getCValueId();
+    protected void regId(ConditionKey ky, Object vl) { regQ(ky, vl, xgetCValueId(), "ID"); }
+    protected abstract ConditionValue xgetCValueId();
 
     /**
-     * Equal(=). And NullIgnored, OnlyOnceRegistered. <br />
+     * Equal(=). And NullIgnored, OnlyOnceRegistered. <br>
      * EVENT_ID: {IX, NotNull, BIGINT(19), FK to PERSISTENT_EVENT}
-     * @param eventId The value of eventId as equal.
+     * @param eventId The value of eventId as equal. (basically NotNull: error as default, or no condition as option)
      */
-    public void setEventId_Equal(final Long eventId) {
+    public void setEventId_Equal(Long eventId) {
         doSetEventId_Equal(eventId);
     }
 
-    protected void doSetEventId_Equal(final Long eventId) {
+    protected void doSetEventId_Equal(Long eventId) {
         regEventId(CK_EQ, eventId);
     }
 
     /**
-     * NotEqual(&lt;&gt;). And NullIgnored, OnlyOnceRegistered. <br />
+     * NotEqual(&lt;&gt;). And NullIgnored, OnlyOnceRegistered. <br>
      * EVENT_ID: {IX, NotNull, BIGINT(19), FK to PERSISTENT_EVENT}
-     * @param eventId The value of eventId as notEqual.
+     * @param eventId The value of eventId as notEqual. (basically NotNull: error as default, or no condition as option)
      */
-    public void setEventId_NotEqual(final Long eventId) {
+    public void setEventId_NotEqual(Long eventId) {
         doSetEventId_NotEqual(eventId);
     }
 
-    protected void doSetEventId_NotEqual(final Long eventId) {
+    protected void doSetEventId_NotEqual(Long eventId) {
         regEventId(CK_NES, eventId);
     }
 
     /**
-     * GreaterThan(&gt;). And NullIgnored, OnlyOnceRegistered. <br />
+     * GreaterThan(&gt;). And NullIgnored, OnlyOnceRegistered. <br>
      * EVENT_ID: {IX, NotNull, BIGINT(19), FK to PERSISTENT_EVENT}
-     * @param eventId The value of eventId as greaterThan.
+     * @param eventId The value of eventId as greaterThan. (basically NotNull: error as default, or no condition as option)
      */
-    public void setEventId_GreaterThan(final Long eventId) {
+    public void setEventId_GreaterThan(Long eventId) {
         regEventId(CK_GT, eventId);
     }
 
     /**
-     * LessThan(&lt;). And NullIgnored, OnlyOnceRegistered. <br />
+     * LessThan(&lt;). And NullIgnored, OnlyOnceRegistered. <br>
      * EVENT_ID: {IX, NotNull, BIGINT(19), FK to PERSISTENT_EVENT}
-     * @param eventId The value of eventId as lessThan.
+     * @param eventId The value of eventId as lessThan. (basically NotNull: error as default, or no condition as option)
      */
-    public void setEventId_LessThan(final Long eventId) {
+    public void setEventId_LessThan(Long eventId) {
         regEventId(CK_LT, eventId);
     }
 
     /**
-     * GreaterEqual(&gt;=). And NullIgnored, OnlyOnceRegistered. <br />
+     * GreaterEqual(&gt;=). And NullIgnored, OnlyOnceRegistered. <br>
      * EVENT_ID: {IX, NotNull, BIGINT(19), FK to PERSISTENT_EVENT}
-     * @param eventId The value of eventId as greaterEqual.
+     * @param eventId The value of eventId as greaterEqual. (basically NotNull: error as default, or no condition as option)
      */
-    public void setEventId_GreaterEqual(final Long eventId) {
+    public void setEventId_GreaterEqual(Long eventId) {
         regEventId(CK_GE, eventId);
     }
 
     /**
-     * LessEqual(&lt;=). And NullIgnored, OnlyOnceRegistered. <br />
+     * LessEqual(&lt;=). And NullIgnored, OnlyOnceRegistered. <br>
      * EVENT_ID: {IX, NotNull, BIGINT(19), FK to PERSISTENT_EVENT}
-     * @param eventId The value of eventId as lessEqual.
+     * @param eventId The value of eventId as lessEqual. (basically NotNull: error as default, or no condition as option)
      */
-    public void setEventId_LessEqual(final Long eventId) {
+    public void setEventId_LessEqual(Long eventId) {
         regEventId(CK_LE, eventId);
     }
 
     /**
-     * RangeOf with various options. (versatile) <br />
-     * {(default) minNumber &lt;= column &lt;= maxNumber} <br />
-     * And NullIgnored, OnlyOnceRegistered. <br />
+     * RangeOf with various options. (versatile) <br>
+     * {(default) minNumber &lt;= column &lt;= maxNumber} <br>
+     * And NullIgnored, OnlyOnceRegistered. <br>
      * EVENT_ID: {IX, NotNull, BIGINT(19), FK to PERSISTENT_EVENT}
-     * @param minNumber The min number of eventId. (NullAllowed)
-     * @param maxNumber The max number of eventId. (NullAllowed)
-     * @param rangeOfOption The option of range-of. (NotNull)
+     * @param minNumber The min number of eventId. (basically NotNull: if op.allowOneSide(), null allowed)
+     * @param maxNumber The max number of eventId. (basically NotNull: if op.allowOneSide(), null allowed)
+     * @param opLambda The callback for option of range-of. (NotNull)
      */
-    public void setEventId_RangeOf(final Long minNumber, final Long maxNumber,
-            final RangeOfOption rangeOfOption) {
-        regROO(minNumber, maxNumber, getCValueEventId(), "EVENT_ID",
-                rangeOfOption);
+    public void setEventId_RangeOf(Long minNumber, Long maxNumber, ConditionOptionCall<RangeOfOption> opLambda) {
+        setEventId_RangeOf(minNumber, maxNumber, xcROOP(opLambda));
     }
 
     /**
-     * InScope {in (1, 2)}. And NullIgnored, NullElementIgnored, SeveralRegistered. <br />
+     * RangeOf with various options. (versatile) <br>
+     * {(default) minNumber &lt;= column &lt;= maxNumber} <br>
+     * And NullIgnored, OnlyOnceRegistered. <br>
      * EVENT_ID: {IX, NotNull, BIGINT(19), FK to PERSISTENT_EVENT}
-     * @param eventIdList The collection of eventId as inScope.
+     * @param minNumber The min number of eventId. (basically NotNull: if op.allowOneSide(), null allowed)
+     * @param maxNumber The max number of eventId. (basically NotNull: if op.allowOneSide(), null allowed)
+     * @param rangeOfOption The option of range-of. (NotNull)
      */
-    public void setEventId_InScope(final Collection<Long> eventIdList) {
+    protected void setEventId_RangeOf(Long minNumber, Long maxNumber, RangeOfOption rangeOfOption) {
+        regROO(minNumber, maxNumber, xgetCValueEventId(), "EVENT_ID", rangeOfOption);
+    }
+
+    /**
+     * InScope {in (1, 2)}. And NullIgnored, NullElementIgnored, SeveralRegistered. <br>
+     * EVENT_ID: {IX, NotNull, BIGINT(19), FK to PERSISTENT_EVENT}
+     * @param eventIdList The collection of eventId as inScope. (basically NotNull, NotEmpty: error as default, or no condition as option)
+     */
+    public void setEventId_InScope(Collection<Long> eventIdList) {
         doSetEventId_InScope(eventIdList);
     }
 
-    protected void doSetEventId_InScope(final Collection<Long> eventIdList) {
-        regINS(CK_INS, cTL(eventIdList), getCValueEventId(), "EVENT_ID");
+    protected void doSetEventId_InScope(Collection<Long> eventIdList) {
+        regINS(CK_INS, cTL(eventIdList), xgetCValueEventId(), "EVENT_ID");
     }
 
     /**
-     * NotInScope {not in (1, 2)}. And NullIgnored, NullElementIgnored, SeveralRegistered. <br />
+     * NotInScope {not in (1, 2)}. And NullIgnored, NullElementIgnored, SeveralRegistered. <br>
      * EVENT_ID: {IX, NotNull, BIGINT(19), FK to PERSISTENT_EVENT}
-     * @param eventIdList The collection of eventId as notInScope.
+     * @param eventIdList The collection of eventId as notInScope. (basically NotNull, NotEmpty: error as default, or no condition as option)
      */
-    public void setEventId_NotInScope(final Collection<Long> eventIdList) {
+    public void setEventId_NotInScope(Collection<Long> eventIdList) {
         doSetEventId_NotInScope(eventIdList);
     }
 
-    protected void doSetEventId_NotInScope(final Collection<Long> eventIdList) {
-        regINS(CK_NINS, cTL(eventIdList), getCValueEventId(), "EVENT_ID");
+    protected void doSetEventId_NotInScope(Collection<Long> eventIdList) {
+        regINS(CK_NINS, cTL(eventIdList), xgetCValueEventId(), "EVENT_ID");
     }
+
+    protected void regEventId(ConditionKey ky, Object vl) { regQ(ky, vl, xgetCValueEventId(), "EVENT_ID"); }
+    protected abstract ConditionValue xgetCValueEventId();
 
     /**
-     * Set up InScopeRelation (sub-query). <br />
-     * {in (select EVENT_ID from PERSISTENT_EVENT where ...)} <br />
-     * PERSISTENT_EVENT by my EVENT_ID, named 'persistentEvent'.
-     * @param subQuery The sub-query of PersistentEvent for 'in-scope'. (NotNull)
-     */
-    public void inScopePersistentEvent(
-            final SubQuery<PersistentEventCB> subQuery) {
-        assertObjectNotNull("subQuery<PersistentEventCB>", subQuery);
-        final PersistentEventCB cb = new PersistentEventCB();
-        cb.xsetupForInScopeRelation(this);
-        subQuery.query(cb);
-        final String subQueryPropertyName = keepEventId_InScopeRelation_PersistentEvent(cb
-                .query()); // for saving query-value.
-        registerInScopeRelation(cb.query(), "EVENT_ID", "ID",
-                subQueryPropertyName, "persistentEvent");
-    }
-
-    public abstract String keepEventId_InScopeRelation_PersistentEvent(
-            PersistentEventCQ subQuery);
-
-    /**
-     * Set up NotInScopeRelation (sub-query). <br />
-     * {not in (select EVENT_ID from PERSISTENT_EVENT where ...)} <br />
-     * PERSISTENT_EVENT by my EVENT_ID, named 'persistentEvent'.
-     * @param subQuery The sub-query of PersistentEvent for 'not in-scope'. (NotNull)
-     */
-    public void notInScopePersistentEvent(
-            final SubQuery<PersistentEventCB> subQuery) {
-        assertObjectNotNull("subQuery<PersistentEventCB>", subQuery);
-        final PersistentEventCB cb = new PersistentEventCB();
-        cb.xsetupForInScopeRelation(this);
-        subQuery.query(cb);
-        final String subQueryPropertyName = keepEventId_NotInScopeRelation_PersistentEvent(cb
-                .query()); // for saving query-value.
-        registerNotInScopeRelation(cb.query(), "EVENT_ID", "ID",
-                subQueryPropertyName, "persistentEvent");
-    }
-
-    public abstract String keepEventId_NotInScopeRelation_PersistentEvent(
-            PersistentEventCQ subQuery);
-
-    protected void regEventId(final ConditionKey k, final Object v) {
-        regQ(k, v, getCValueEventId(), "EVENT_ID");
-    }
-
-    abstract protected ConditionValue getCValueEventId();
-
-    /**
-     * Equal(=). And NullOrEmptyIgnored, OnlyOnceRegistered. <br />
+     * Equal(=). And NullOrEmptyIgnored, OnlyOnceRegistered. <br>
      * NAME: {NotNull, VARCHAR(4000)}
-     * @param name The value of name as equal.
+     * @param name The value of name as equal. (basically NotNull, NotEmpty: error as default, or no condition as option)
      */
-    public void setName_Equal(final String name) {
+    public void setName_Equal(String name) {
         doSetName_Equal(fRES(name));
     }
 
-    protected void doSetName_Equal(final String name) {
+    protected void doSetName_Equal(String name) {
         regName(CK_EQ, name);
     }
 
     /**
-     * NotEqual(&lt;&gt;). And NullOrEmptyIgnored, OnlyOnceRegistered. <br />
+     * NotEqual(&lt;&gt;). And NullOrEmptyIgnored, OnlyOnceRegistered. <br>
      * NAME: {NotNull, VARCHAR(4000)}
-     * @param name The value of name as notEqual.
+     * @param name The value of name as notEqual. (basically NotNull, NotEmpty: error as default, or no condition as option)
      */
-    public void setName_NotEqual(final String name) {
+    public void setName_NotEqual(String name) {
         doSetName_NotEqual(fRES(name));
     }
 
-    protected void doSetName_NotEqual(final String name) {
+    protected void doSetName_NotEqual(String name) {
         regName(CK_NES, name);
     }
 
     /**
-     * GreaterThan(&gt;). And NullOrEmptyIgnored, OnlyOnceRegistered. <br />
+     * GreaterThan(&gt;). And NullOrEmptyIgnored, OnlyOnceRegistered. <br>
      * NAME: {NotNull, VARCHAR(4000)}
-     * @param name The value of name as greaterThan.
+     * @param name The value of name as greaterThan. (basically NotNull, NotEmpty: error as default, or no condition as option)
      */
-    public void setName_GreaterThan(final String name) {
+    public void setName_GreaterThan(String name) {
         regName(CK_GT, fRES(name));
     }
 
     /**
-     * LessThan(&lt;). And NullOrEmptyIgnored, OnlyOnceRegistered. <br />
+     * LessThan(&lt;). And NullOrEmptyIgnored, OnlyOnceRegistered. <br>
      * NAME: {NotNull, VARCHAR(4000)}
-     * @param name The value of name as lessThan.
+     * @param name The value of name as lessThan. (basically NotNull, NotEmpty: error as default, or no condition as option)
      */
-    public void setName_LessThan(final String name) {
+    public void setName_LessThan(String name) {
         regName(CK_LT, fRES(name));
     }
 
     /**
-     * GreaterEqual(&gt;=). And NullOrEmptyIgnored, OnlyOnceRegistered. <br />
+     * GreaterEqual(&gt;=). And NullOrEmptyIgnored, OnlyOnceRegistered. <br>
      * NAME: {NotNull, VARCHAR(4000)}
-     * @param name The value of name as greaterEqual.
+     * @param name The value of name as greaterEqual. (basically NotNull, NotEmpty: error as default, or no condition as option)
      */
-    public void setName_GreaterEqual(final String name) {
+    public void setName_GreaterEqual(String name) {
         regName(CK_GE, fRES(name));
     }
 
     /**
-     * LessEqual(&lt;=). And NullOrEmptyIgnored, OnlyOnceRegistered. <br />
+     * LessEqual(&lt;=). And NullOrEmptyIgnored, OnlyOnceRegistered. <br>
      * NAME: {NotNull, VARCHAR(4000)}
-     * @param name The value of name as lessEqual.
+     * @param name The value of name as lessEqual. (basically NotNull, NotEmpty: error as default, or no condition as option)
      */
-    public void setName_LessEqual(final String name) {
+    public void setName_LessEqual(String name) {
         regName(CK_LE, fRES(name));
     }
 
     /**
-     * InScope {in ('a', 'b')}. And NullOrEmptyIgnored, NullOrEmptyElementIgnored, SeveralRegistered. <br />
+     * InScope {in ('a', 'b')}. And NullOrEmptyIgnored, NullOrEmptyElementIgnored, SeveralRegistered. <br>
      * NAME: {NotNull, VARCHAR(4000)}
-     * @param nameList The collection of name as inScope.
+     * @param nameList The collection of name as inScope. (basically NotNull, NotEmpty: error as default, or no condition as option)
      */
-    public void setName_InScope(final Collection<String> nameList) {
+    public void setName_InScope(Collection<String> nameList) {
         doSetName_InScope(nameList);
     }
 
-    public void doSetName_InScope(final Collection<String> nameList) {
-        regINS(CK_INS, cTL(nameList), getCValueName(), "NAME");
+    protected void doSetName_InScope(Collection<String> nameList) {
+        regINS(CK_INS, cTL(nameList), xgetCValueName(), "NAME");
     }
 
     /**
-     * NotInScope {not in ('a', 'b')}. And NullOrEmptyIgnored, NullOrEmptyElementIgnored, SeveralRegistered. <br />
+     * NotInScope {not in ('a', 'b')}. And NullOrEmptyIgnored, NullOrEmptyElementIgnored, SeveralRegistered. <br>
      * NAME: {NotNull, VARCHAR(4000)}
-     * @param nameList The collection of name as notInScope.
+     * @param nameList The collection of name as notInScope. (basically NotNull, NotEmpty: error as default, or no condition as option)
      */
-    public void setName_NotInScope(final Collection<String> nameList) {
+    public void setName_NotInScope(Collection<String> nameList) {
         doSetName_NotInScope(nameList);
     }
 
-    public void doSetName_NotInScope(final Collection<String> nameList) {
-        regINS(CK_NINS, cTL(nameList), getCValueName(), "NAME");
+    protected void doSetName_NotInScope(Collection<String> nameList) {
+        regINS(CK_NINS, cTL(nameList), xgetCValueName(), "NAME");
     }
 
     /**
-     * PrefixSearch {like 'xxx%' escape ...}. And NullOrEmptyIgnored, SeveralRegistered. <br />
-     * NAME: {NotNull, VARCHAR(4000)}
-     * @param name The value of name as prefixSearch.
+     * LikeSearch with various options. (versatile) {like '%xxx%' escape ...}. And NullOrEmptyIgnored, SeveralRegistered. <br>
+     * NAME: {NotNull, VARCHAR(4000)} <br>
+     * <pre>e.g. setName_LikeSearch("xxx", op <span style="color: #90226C; font-weight: bold"><span style="font-size: 120%">-</span>&gt;</span> op.<span style="color: #CC4747">likeContain()</span>);</pre>
+     * @param name The value of name as likeSearch. (basically NotNull, NotEmpty: error as default, or no condition as option)
+     * @param opLambda The callback for option of like-search. (NotNull)
      */
-    public void setName_PrefixSearch(final String name) {
-        setName_LikeSearch(name, cLSOP());
+    public void setName_LikeSearch(String name, ConditionOptionCall<LikeSearchOption> opLambda) {
+        setName_LikeSearch(name, xcLSOP(opLambda));
     }
 
     /**
-     * LikeSearch with various options. (versatile) {like '%xxx%' escape ...} <br />
-     * And NullOrEmptyIgnored, SeveralRegistered. <br />
-     * NAME: {NotNull, VARCHAR(4000)}
-     * @param name The value of name as likeSearch.
+     * LikeSearch with various options. (versatile) {like '%xxx%' escape ...}. And NullOrEmptyIgnored, SeveralRegistered. <br>
+     * NAME: {NotNull, VARCHAR(4000)} <br>
+     * <pre>e.g. setName_LikeSearch("xxx", new <span style="color: #CC4747">LikeSearchOption</span>().likeContain());</pre>
+     * @param name The value of name as likeSearch. (basically NotNull, NotEmpty: error as default, or no condition as option)
      * @param likeSearchOption The option of like-search. (NotNull)
      */
-    public void setName_LikeSearch(final String name,
-            final LikeSearchOption likeSearchOption) {
-        regLSQ(CK_LS, fRES(name), getCValueName(), "NAME", likeSearchOption);
+    protected void setName_LikeSearch(String name, LikeSearchOption likeSearchOption) {
+        regLSQ(CK_LS, fRES(name), xgetCValueName(), "NAME", likeSearchOption);
     }
 
     /**
-     * NotLikeSearch with various options. (versatile) {not like 'xxx%' escape ...} <br />
-     * And NullOrEmptyIgnored, SeveralRegistered. <br />
+     * NotLikeSearch with various options. (versatile) {not like 'xxx%' escape ...} <br>
+     * And NullOrEmptyIgnored, SeveralRegistered. <br>
      * NAME: {NotNull, VARCHAR(4000)}
-     * @param name The value of name as notLikeSearch.
+     * @param name The value of name as notLikeSearch. (basically NotNull, NotEmpty: error as default, or no condition as option)
+     * @param opLambda The callback for option of like-search. (NotNull)
+     */
+    public void setName_NotLikeSearch(String name, ConditionOptionCall<LikeSearchOption> opLambda) {
+        setName_NotLikeSearch(name, xcLSOP(opLambda));
+    }
+
+    /**
+     * NotLikeSearch with various options. (versatile) {not like 'xxx%' escape ...} <br>
+     * And NullOrEmptyIgnored, SeveralRegistered. <br>
+     * NAME: {NotNull, VARCHAR(4000)}
+     * @param name The value of name as notLikeSearch. (basically NotNull, NotEmpty: error as default, or no condition as option)
      * @param likeSearchOption The option of not-like-search. (NotNull)
      */
-    public void setName_NotLikeSearch(final String name,
-            final LikeSearchOption likeSearchOption) {
-        regLSQ(CK_NLS, fRES(name), getCValueName(), "NAME", likeSearchOption);
+    protected void setName_NotLikeSearch(String name, LikeSearchOption likeSearchOption) {
+        regLSQ(CK_NLS, fRES(name), xgetCValueName(), "NAME", likeSearchOption);
     }
 
-    protected void regName(final ConditionKey k, final Object v) {
-        regQ(k, v, getCValueName(), "NAME");
-    }
-
-    abstract protected ConditionValue getCValueName();
+    protected void regName(ConditionKey ky, Object vl) { regQ(ky, vl, xgetCValueName(), "NAME"); }
+    protected abstract ConditionValue xgetCValueName();
 
     /**
-     * Equal(=). And NullOrEmptyIgnored, OnlyOnceRegistered. <br />
+     * Equal(=). And NullOrEmptyIgnored, OnlyOnceRegistered. <br>
      * VALUE: {NotNull, VARCHAR(4000)}
-     * @param value The value of value as equal.
+     * @param value The value of value as equal. (basically NotNull, NotEmpty: error as default, or no condition as option)
      */
-    public void setValue_Equal(final String value) {
+    public void setValue_Equal(String value) {
         doSetValue_Equal(fRES(value));
     }
 
-    protected void doSetValue_Equal(final String value) {
+    protected void doSetValue_Equal(String value) {
         regValue(CK_EQ, value);
     }
 
     /**
-     * NotEqual(&lt;&gt;). And NullOrEmptyIgnored, OnlyOnceRegistered. <br />
+     * NotEqual(&lt;&gt;). And NullOrEmptyIgnored, OnlyOnceRegistered. <br>
      * VALUE: {NotNull, VARCHAR(4000)}
-     * @param value The value of value as notEqual.
+     * @param value The value of value as notEqual. (basically NotNull, NotEmpty: error as default, or no condition as option)
      */
-    public void setValue_NotEqual(final String value) {
+    public void setValue_NotEqual(String value) {
         doSetValue_NotEqual(fRES(value));
     }
 
-    protected void doSetValue_NotEqual(final String value) {
+    protected void doSetValue_NotEqual(String value) {
         regValue(CK_NES, value);
     }
 
     /**
-     * GreaterThan(&gt;). And NullOrEmptyIgnored, OnlyOnceRegistered. <br />
+     * GreaterThan(&gt;). And NullOrEmptyIgnored, OnlyOnceRegistered. <br>
      * VALUE: {NotNull, VARCHAR(4000)}
-     * @param value The value of value as greaterThan.
+     * @param value The value of value as greaterThan. (basically NotNull, NotEmpty: error as default, or no condition as option)
      */
-    public void setValue_GreaterThan(final String value) {
+    public void setValue_GreaterThan(String value) {
         regValue(CK_GT, fRES(value));
     }
 
     /**
-     * LessThan(&lt;). And NullOrEmptyIgnored, OnlyOnceRegistered. <br />
+     * LessThan(&lt;). And NullOrEmptyIgnored, OnlyOnceRegistered. <br>
      * VALUE: {NotNull, VARCHAR(4000)}
-     * @param value The value of value as lessThan.
+     * @param value The value of value as lessThan. (basically NotNull, NotEmpty: error as default, or no condition as option)
      */
-    public void setValue_LessThan(final String value) {
+    public void setValue_LessThan(String value) {
         regValue(CK_LT, fRES(value));
     }
 
     /**
-     * GreaterEqual(&gt;=). And NullOrEmptyIgnored, OnlyOnceRegistered. <br />
+     * GreaterEqual(&gt;=). And NullOrEmptyIgnored, OnlyOnceRegistered. <br>
      * VALUE: {NotNull, VARCHAR(4000)}
-     * @param value The value of value as greaterEqual.
+     * @param value The value of value as greaterEqual. (basically NotNull, NotEmpty: error as default, or no condition as option)
      */
-    public void setValue_GreaterEqual(final String value) {
+    public void setValue_GreaterEqual(String value) {
         regValue(CK_GE, fRES(value));
     }
 
     /**
-     * LessEqual(&lt;=). And NullOrEmptyIgnored, OnlyOnceRegistered. <br />
+     * LessEqual(&lt;=). And NullOrEmptyIgnored, OnlyOnceRegistered. <br>
      * VALUE: {NotNull, VARCHAR(4000)}
-     * @param value The value of value as lessEqual.
+     * @param value The value of value as lessEqual. (basically NotNull, NotEmpty: error as default, or no condition as option)
      */
-    public void setValue_LessEqual(final String value) {
+    public void setValue_LessEqual(String value) {
         regValue(CK_LE, fRES(value));
     }
 
     /**
-     * InScope {in ('a', 'b')}. And NullOrEmptyIgnored, NullOrEmptyElementIgnored, SeveralRegistered. <br />
+     * InScope {in ('a', 'b')}. And NullOrEmptyIgnored, NullOrEmptyElementIgnored, SeveralRegistered. <br>
      * VALUE: {NotNull, VARCHAR(4000)}
-     * @param valueList The collection of value as inScope.
+     * @param valueList The collection of value as inScope. (basically NotNull, NotEmpty: error as default, or no condition as option)
      */
-    public void setValue_InScope(final Collection<String> valueList) {
+    public void setValue_InScope(Collection<String> valueList) {
         doSetValue_InScope(valueList);
     }
 
-    public void doSetValue_InScope(final Collection<String> valueList) {
-        regINS(CK_INS, cTL(valueList), getCValueValue(), "VALUE");
+    protected void doSetValue_InScope(Collection<String> valueList) {
+        regINS(CK_INS, cTL(valueList), xgetCValueValue(), "VALUE");
     }
 
     /**
-     * NotInScope {not in ('a', 'b')}. And NullOrEmptyIgnored, NullOrEmptyElementIgnored, SeveralRegistered. <br />
+     * NotInScope {not in ('a', 'b')}. And NullOrEmptyIgnored, NullOrEmptyElementIgnored, SeveralRegistered. <br>
      * VALUE: {NotNull, VARCHAR(4000)}
-     * @param valueList The collection of value as notInScope.
+     * @param valueList The collection of value as notInScope. (basically NotNull, NotEmpty: error as default, or no condition as option)
      */
-    public void setValue_NotInScope(final Collection<String> valueList) {
+    public void setValue_NotInScope(Collection<String> valueList) {
         doSetValue_NotInScope(valueList);
     }
 
-    public void doSetValue_NotInScope(final Collection<String> valueList) {
-        regINS(CK_NINS, cTL(valueList), getCValueValue(), "VALUE");
+    protected void doSetValue_NotInScope(Collection<String> valueList) {
+        regINS(CK_NINS, cTL(valueList), xgetCValueValue(), "VALUE");
     }
 
     /**
-     * PrefixSearch {like 'xxx%' escape ...}. And NullOrEmptyIgnored, SeveralRegistered. <br />
-     * VALUE: {NotNull, VARCHAR(4000)}
-     * @param value The value of value as prefixSearch.
+     * LikeSearch with various options. (versatile) {like '%xxx%' escape ...}. And NullOrEmptyIgnored, SeveralRegistered. <br>
+     * VALUE: {NotNull, VARCHAR(4000)} <br>
+     * <pre>e.g. setValue_LikeSearch("xxx", op <span style="color: #90226C; font-weight: bold"><span style="font-size: 120%">-</span>&gt;</span> op.<span style="color: #CC4747">likeContain()</span>);</pre>
+     * @param value The value of value as likeSearch. (basically NotNull, NotEmpty: error as default, or no condition as option)
+     * @param opLambda The callback for option of like-search. (NotNull)
      */
-    public void setValue_PrefixSearch(final String value) {
-        setValue_LikeSearch(value, cLSOP());
+    public void setValue_LikeSearch(String value, ConditionOptionCall<LikeSearchOption> opLambda) {
+        setValue_LikeSearch(value, xcLSOP(opLambda));
     }
 
     /**
-     * LikeSearch with various options. (versatile) {like '%xxx%' escape ...} <br />
-     * And NullOrEmptyIgnored, SeveralRegistered. <br />
-     * VALUE: {NotNull, VARCHAR(4000)}
-     * @param value The value of value as likeSearch.
+     * LikeSearch with various options. (versatile) {like '%xxx%' escape ...}. And NullOrEmptyIgnored, SeveralRegistered. <br>
+     * VALUE: {NotNull, VARCHAR(4000)} <br>
+     * <pre>e.g. setValue_LikeSearch("xxx", new <span style="color: #CC4747">LikeSearchOption</span>().likeContain());</pre>
+     * @param value The value of value as likeSearch. (basically NotNull, NotEmpty: error as default, or no condition as option)
      * @param likeSearchOption The option of like-search. (NotNull)
      */
-    public void setValue_LikeSearch(final String value,
-            final LikeSearchOption likeSearchOption) {
-        regLSQ(CK_LS, fRES(value), getCValueValue(), "VALUE", likeSearchOption);
+    protected void setValue_LikeSearch(String value, LikeSearchOption likeSearchOption) {
+        regLSQ(CK_LS, fRES(value), xgetCValueValue(), "VALUE", likeSearchOption);
     }
 
     /**
-     * NotLikeSearch with various options. (versatile) {not like 'xxx%' escape ...} <br />
-     * And NullOrEmptyIgnored, SeveralRegistered. <br />
+     * NotLikeSearch with various options. (versatile) {not like 'xxx%' escape ...} <br>
+     * And NullOrEmptyIgnored, SeveralRegistered. <br>
      * VALUE: {NotNull, VARCHAR(4000)}
-     * @param value The value of value as notLikeSearch.
+     * @param value The value of value as notLikeSearch. (basically NotNull, NotEmpty: error as default, or no condition as option)
+     * @param opLambda The callback for option of like-search. (NotNull)
+     */
+    public void setValue_NotLikeSearch(String value, ConditionOptionCall<LikeSearchOption> opLambda) {
+        setValue_NotLikeSearch(value, xcLSOP(opLambda));
+    }
+
+    /**
+     * NotLikeSearch with various options. (versatile) {not like 'xxx%' escape ...} <br>
+     * And NullOrEmptyIgnored, SeveralRegistered. <br>
+     * VALUE: {NotNull, VARCHAR(4000)}
+     * @param value The value of value as notLikeSearch. (basically NotNull, NotEmpty: error as default, or no condition as option)
      * @param likeSearchOption The option of not-like-search. (NotNull)
      */
-    public void setValue_NotLikeSearch(final String value,
-            final LikeSearchOption likeSearchOption) {
-        regLSQ(CK_NLS, fRES(value), getCValueValue(), "VALUE", likeSearchOption);
+    protected void setValue_NotLikeSearch(String value, LikeSearchOption likeSearchOption) {
+        regLSQ(CK_NLS, fRES(value), xgetCValueValue(), "VALUE", likeSearchOption);
     }
 
-    protected void regValue(final ConditionKey k, final Object v) {
-        regQ(k, v, getCValueValue(), "VALUE");
-    }
-
-    abstract protected ConditionValue getCValueValue();
+    protected void regValue(ConditionKey ky, Object vl) { regQ(ky, vl, xgetCValueValue(), "VALUE"); }
+    protected abstract ConditionValue xgetCValueValue();
 
     /**
-     * Equal(=). And NullOrEmptyIgnored, OnlyOnceRegistered. <br />
+     * Equal(=). And NullOrEmptyIgnored, OnlyOnceRegistered. <br>
      * CLASS_TYPE: {NotNull, VARCHAR(255)}
-     * @param classType The value of classType as equal.
+     * @param classType The value of classType as equal. (basically NotNull, NotEmpty: error as default, or no condition as option)
      */
-    public void setClassType_Equal(final String classType) {
+    public void setClassType_Equal(String classType) {
         doSetClassType_Equal(fRES(classType));
     }
 
-    protected void doSetClassType_Equal(final String classType) {
+    protected void doSetClassType_Equal(String classType) {
         regClassType(CK_EQ, classType);
     }
 
     /**
-     * NotEqual(&lt;&gt;). And NullOrEmptyIgnored, OnlyOnceRegistered. <br />
+     * NotEqual(&lt;&gt;). And NullOrEmptyIgnored, OnlyOnceRegistered. <br>
      * CLASS_TYPE: {NotNull, VARCHAR(255)}
-     * @param classType The value of classType as notEqual.
+     * @param classType The value of classType as notEqual. (basically NotNull, NotEmpty: error as default, or no condition as option)
      */
-    public void setClassType_NotEqual(final String classType) {
+    public void setClassType_NotEqual(String classType) {
         doSetClassType_NotEqual(fRES(classType));
     }
 
-    protected void doSetClassType_NotEqual(final String classType) {
+    protected void doSetClassType_NotEqual(String classType) {
         regClassType(CK_NES, classType);
     }
 
     /**
-     * GreaterThan(&gt;). And NullOrEmptyIgnored, OnlyOnceRegistered. <br />
+     * GreaterThan(&gt;). And NullOrEmptyIgnored, OnlyOnceRegistered. <br>
      * CLASS_TYPE: {NotNull, VARCHAR(255)}
-     * @param classType The value of classType as greaterThan.
+     * @param classType The value of classType as greaterThan. (basically NotNull, NotEmpty: error as default, or no condition as option)
      */
-    public void setClassType_GreaterThan(final String classType) {
+    public void setClassType_GreaterThan(String classType) {
         regClassType(CK_GT, fRES(classType));
     }
 
     /**
-     * LessThan(&lt;). And NullOrEmptyIgnored, OnlyOnceRegistered. <br />
+     * LessThan(&lt;). And NullOrEmptyIgnored, OnlyOnceRegistered. <br>
      * CLASS_TYPE: {NotNull, VARCHAR(255)}
-     * @param classType The value of classType as lessThan.
+     * @param classType The value of classType as lessThan. (basically NotNull, NotEmpty: error as default, or no condition as option)
      */
-    public void setClassType_LessThan(final String classType) {
+    public void setClassType_LessThan(String classType) {
         regClassType(CK_LT, fRES(classType));
     }
 
     /**
-     * GreaterEqual(&gt;=). And NullOrEmptyIgnored, OnlyOnceRegistered. <br />
+     * GreaterEqual(&gt;=). And NullOrEmptyIgnored, OnlyOnceRegistered. <br>
      * CLASS_TYPE: {NotNull, VARCHAR(255)}
-     * @param classType The value of classType as greaterEqual.
+     * @param classType The value of classType as greaterEqual. (basically NotNull, NotEmpty: error as default, or no condition as option)
      */
-    public void setClassType_GreaterEqual(final String classType) {
+    public void setClassType_GreaterEqual(String classType) {
         regClassType(CK_GE, fRES(classType));
     }
 
     /**
-     * LessEqual(&lt;=). And NullOrEmptyIgnored, OnlyOnceRegistered. <br />
+     * LessEqual(&lt;=). And NullOrEmptyIgnored, OnlyOnceRegistered. <br>
      * CLASS_TYPE: {NotNull, VARCHAR(255)}
-     * @param classType The value of classType as lessEqual.
+     * @param classType The value of classType as lessEqual. (basically NotNull, NotEmpty: error as default, or no condition as option)
      */
-    public void setClassType_LessEqual(final String classType) {
+    public void setClassType_LessEqual(String classType) {
         regClassType(CK_LE, fRES(classType));
     }
 
     /**
-     * InScope {in ('a', 'b')}. And NullOrEmptyIgnored, NullOrEmptyElementIgnored, SeveralRegistered. <br />
+     * InScope {in ('a', 'b')}. And NullOrEmptyIgnored, NullOrEmptyElementIgnored, SeveralRegistered. <br>
      * CLASS_TYPE: {NotNull, VARCHAR(255)}
-     * @param classTypeList The collection of classType as inScope.
+     * @param classTypeList The collection of classType as inScope. (basically NotNull, NotEmpty: error as default, or no condition as option)
      */
-    public void setClassType_InScope(final Collection<String> classTypeList) {
+    public void setClassType_InScope(Collection<String> classTypeList) {
         doSetClassType_InScope(classTypeList);
     }
 
-    public void doSetClassType_InScope(final Collection<String> classTypeList) {
-        regINS(CK_INS, cTL(classTypeList), getCValueClassType(), "CLASS_TYPE");
+    protected void doSetClassType_InScope(Collection<String> classTypeList) {
+        regINS(CK_INS, cTL(classTypeList), xgetCValueClassType(), "CLASS_TYPE");
     }
 
     /**
-     * NotInScope {not in ('a', 'b')}. And NullOrEmptyIgnored, NullOrEmptyElementIgnored, SeveralRegistered. <br />
+     * NotInScope {not in ('a', 'b')}. And NullOrEmptyIgnored, NullOrEmptyElementIgnored, SeveralRegistered. <br>
      * CLASS_TYPE: {NotNull, VARCHAR(255)}
-     * @param classTypeList The collection of classType as notInScope.
+     * @param classTypeList The collection of classType as notInScope. (basically NotNull, NotEmpty: error as default, or no condition as option)
      */
-    public void setClassType_NotInScope(final Collection<String> classTypeList) {
+    public void setClassType_NotInScope(Collection<String> classTypeList) {
         doSetClassType_NotInScope(classTypeList);
     }
 
-    public void doSetClassType_NotInScope(final Collection<String> classTypeList) {
-        regINS(CK_NINS, cTL(classTypeList), getCValueClassType(), "CLASS_TYPE");
+    protected void doSetClassType_NotInScope(Collection<String> classTypeList) {
+        regINS(CK_NINS, cTL(classTypeList), xgetCValueClassType(), "CLASS_TYPE");
     }
 
     /**
-     * PrefixSearch {like 'xxx%' escape ...}. And NullOrEmptyIgnored, SeveralRegistered. <br />
-     * CLASS_TYPE: {NotNull, VARCHAR(255)}
-     * @param classType The value of classType as prefixSearch.
+     * LikeSearch with various options. (versatile) {like '%xxx%' escape ...}. And NullOrEmptyIgnored, SeveralRegistered. <br>
+     * CLASS_TYPE: {NotNull, VARCHAR(255)} <br>
+     * <pre>e.g. setClassType_LikeSearch("xxx", op <span style="color: #90226C; font-weight: bold"><span style="font-size: 120%">-</span>&gt;</span> op.<span style="color: #CC4747">likeContain()</span>);</pre>
+     * @param classType The value of classType as likeSearch. (basically NotNull, NotEmpty: error as default, or no condition as option)
+     * @param opLambda The callback for option of like-search. (NotNull)
      */
-    public void setClassType_PrefixSearch(final String classType) {
-        setClassType_LikeSearch(classType, cLSOP());
+    public void setClassType_LikeSearch(String classType, ConditionOptionCall<LikeSearchOption> opLambda) {
+        setClassType_LikeSearch(classType, xcLSOP(opLambda));
     }
 
     /**
-     * LikeSearch with various options. (versatile) {like '%xxx%' escape ...} <br />
-     * And NullOrEmptyIgnored, SeveralRegistered. <br />
-     * CLASS_TYPE: {NotNull, VARCHAR(255)}
-     * @param classType The value of classType as likeSearch.
+     * LikeSearch with various options. (versatile) {like '%xxx%' escape ...}. And NullOrEmptyIgnored, SeveralRegistered. <br>
+     * CLASS_TYPE: {NotNull, VARCHAR(255)} <br>
+     * <pre>e.g. setClassType_LikeSearch("xxx", new <span style="color: #CC4747">LikeSearchOption</span>().likeContain());</pre>
+     * @param classType The value of classType as likeSearch. (basically NotNull, NotEmpty: error as default, or no condition as option)
      * @param likeSearchOption The option of like-search. (NotNull)
      */
-    public void setClassType_LikeSearch(final String classType,
-            final LikeSearchOption likeSearchOption) {
-        regLSQ(CK_LS, fRES(classType), getCValueClassType(), "CLASS_TYPE",
-                likeSearchOption);
+    protected void setClassType_LikeSearch(String classType, LikeSearchOption likeSearchOption) {
+        regLSQ(CK_LS, fRES(classType), xgetCValueClassType(), "CLASS_TYPE", likeSearchOption);
     }
 
     /**
-     * NotLikeSearch with various options. (versatile) {not like 'xxx%' escape ...} <br />
-     * And NullOrEmptyIgnored, SeveralRegistered. <br />
+     * NotLikeSearch with various options. (versatile) {not like 'xxx%' escape ...} <br>
+     * And NullOrEmptyIgnored, SeveralRegistered. <br>
      * CLASS_TYPE: {NotNull, VARCHAR(255)}
-     * @param classType The value of classType as notLikeSearch.
+     * @param classType The value of classType as notLikeSearch. (basically NotNull, NotEmpty: error as default, or no condition as option)
+     * @param opLambda The callback for option of like-search. (NotNull)
+     */
+    public void setClassType_NotLikeSearch(String classType, ConditionOptionCall<LikeSearchOption> opLambda) {
+        setClassType_NotLikeSearch(classType, xcLSOP(opLambda));
+    }
+
+    /**
+     * NotLikeSearch with various options. (versatile) {not like 'xxx%' escape ...} <br>
+     * And NullOrEmptyIgnored, SeveralRegistered. <br>
+     * CLASS_TYPE: {NotNull, VARCHAR(255)}
+     * @param classType The value of classType as notLikeSearch. (basically NotNull, NotEmpty: error as default, or no condition as option)
      * @param likeSearchOption The option of not-like-search. (NotNull)
      */
-    public void setClassType_NotLikeSearch(final String classType,
-            final LikeSearchOption likeSearchOption) {
-        regLSQ(CK_NLS, fRES(classType), getCValueClassType(), "CLASS_TYPE",
-                likeSearchOption);
+    protected void setClassType_NotLikeSearch(String classType, LikeSearchOption likeSearchOption) {
+        regLSQ(CK_NLS, fRES(classType), xgetCValueClassType(), "CLASS_TYPE", likeSearchOption);
     }
 
-    protected void regClassType(final ConditionKey k, final Object v) {
-        regQ(k, v, getCValueClassType(), "CLASS_TYPE");
-    }
-
-    abstract protected ConditionValue getCValueClassType();
+    protected void regClassType(ConditionKey ky, Object vl) { regQ(ky, vl, xgetCValueClassType(), "CLASS_TYPE"); }
+    protected abstract ConditionValue xgetCValueClassType();
 
     /**
-     * Equal(=). And NullIgnored, OnlyOnceRegistered. <br />
-     * VERSION_NO: {NotNull, INTEGER(10)}
-     * @param versionNo The value of versionNo as equal.
+     * Equal(=). And NullIgnored, OnlyOnceRegistered. <br>
+     * VERSION_NO: {NotNull, INT(10)}
+     * @param versionNo The value of versionNo as equal. (basically NotNull: error as default, or no condition as option)
      */
-    public void setVersionNo_Equal(final Integer versionNo) {
+    public void setVersionNo_Equal(Integer versionNo) {
         doSetVersionNo_Equal(versionNo);
     }
 
-    protected void doSetVersionNo_Equal(final Integer versionNo) {
+    protected void doSetVersionNo_Equal(Integer versionNo) {
         regVersionNo(CK_EQ, versionNo);
     }
 
     /**
-     * NotEqual(&lt;&gt;). And NullIgnored, OnlyOnceRegistered. <br />
-     * VERSION_NO: {NotNull, INTEGER(10)}
-     * @param versionNo The value of versionNo as notEqual.
+     * NotEqual(&lt;&gt;). And NullIgnored, OnlyOnceRegistered. <br>
+     * VERSION_NO: {NotNull, INT(10)}
+     * @param versionNo The value of versionNo as notEqual. (basically NotNull: error as default, or no condition as option)
      */
-    public void setVersionNo_NotEqual(final Integer versionNo) {
+    public void setVersionNo_NotEqual(Integer versionNo) {
         doSetVersionNo_NotEqual(versionNo);
     }
 
-    protected void doSetVersionNo_NotEqual(final Integer versionNo) {
+    protected void doSetVersionNo_NotEqual(Integer versionNo) {
         regVersionNo(CK_NES, versionNo);
     }
 
     /**
-     * GreaterThan(&gt;). And NullIgnored, OnlyOnceRegistered. <br />
-     * VERSION_NO: {NotNull, INTEGER(10)}
-     * @param versionNo The value of versionNo as greaterThan.
+     * GreaterThan(&gt;). And NullIgnored, OnlyOnceRegistered. <br>
+     * VERSION_NO: {NotNull, INT(10)}
+     * @param versionNo The value of versionNo as greaterThan. (basically NotNull: error as default, or no condition as option)
      */
-    public void setVersionNo_GreaterThan(final Integer versionNo) {
+    public void setVersionNo_GreaterThan(Integer versionNo) {
         regVersionNo(CK_GT, versionNo);
     }
 
     /**
-     * LessThan(&lt;). And NullIgnored, OnlyOnceRegistered. <br />
-     * VERSION_NO: {NotNull, INTEGER(10)}
-     * @param versionNo The value of versionNo as lessThan.
+     * LessThan(&lt;). And NullIgnored, OnlyOnceRegistered. <br>
+     * VERSION_NO: {NotNull, INT(10)}
+     * @param versionNo The value of versionNo as lessThan. (basically NotNull: error as default, or no condition as option)
      */
-    public void setVersionNo_LessThan(final Integer versionNo) {
+    public void setVersionNo_LessThan(Integer versionNo) {
         regVersionNo(CK_LT, versionNo);
     }
 
     /**
-     * GreaterEqual(&gt;=). And NullIgnored, OnlyOnceRegistered. <br />
-     * VERSION_NO: {NotNull, INTEGER(10)}
-     * @param versionNo The value of versionNo as greaterEqual.
+     * GreaterEqual(&gt;=). And NullIgnored, OnlyOnceRegistered. <br>
+     * VERSION_NO: {NotNull, INT(10)}
+     * @param versionNo The value of versionNo as greaterEqual. (basically NotNull: error as default, or no condition as option)
      */
-    public void setVersionNo_GreaterEqual(final Integer versionNo) {
+    public void setVersionNo_GreaterEqual(Integer versionNo) {
         regVersionNo(CK_GE, versionNo);
     }
 
     /**
-     * LessEqual(&lt;=). And NullIgnored, OnlyOnceRegistered. <br />
-     * VERSION_NO: {NotNull, INTEGER(10)}
-     * @param versionNo The value of versionNo as lessEqual.
+     * LessEqual(&lt;=). And NullIgnored, OnlyOnceRegistered. <br>
+     * VERSION_NO: {NotNull, INT(10)}
+     * @param versionNo The value of versionNo as lessEqual. (basically NotNull: error as default, or no condition as option)
      */
-    public void setVersionNo_LessEqual(final Integer versionNo) {
+    public void setVersionNo_LessEqual(Integer versionNo) {
         regVersionNo(CK_LE, versionNo);
     }
 
     /**
-     * RangeOf with various options. (versatile) <br />
-     * {(default) minNumber &lt;= column &lt;= maxNumber} <br />
-     * And NullIgnored, OnlyOnceRegistered. <br />
-     * VERSION_NO: {NotNull, INTEGER(10)}
-     * @param minNumber The min number of versionNo. (NullAllowed)
-     * @param maxNumber The max number of versionNo. (NullAllowed)
-     * @param rangeOfOption The option of range-of. (NotNull)
+     * RangeOf with various options. (versatile) <br>
+     * {(default) minNumber &lt;= column &lt;= maxNumber} <br>
+     * And NullIgnored, OnlyOnceRegistered. <br>
+     * VERSION_NO: {NotNull, INT(10)}
+     * @param minNumber The min number of versionNo. (basically NotNull: if op.allowOneSide(), null allowed)
+     * @param maxNumber The max number of versionNo. (basically NotNull: if op.allowOneSide(), null allowed)
+     * @param opLambda The callback for option of range-of. (NotNull)
      */
-    public void setVersionNo_RangeOf(final Integer minNumber,
-            final Integer maxNumber, final RangeOfOption rangeOfOption) {
-        regROO(minNumber, maxNumber, getCValueVersionNo(), "VERSION_NO",
-                rangeOfOption);
+    public void setVersionNo_RangeOf(Integer minNumber, Integer maxNumber, ConditionOptionCall<RangeOfOption> opLambda) {
+        setVersionNo_RangeOf(minNumber, maxNumber, xcROOP(opLambda));
     }
 
     /**
-     * InScope {in (1, 2)}. And NullIgnored, NullElementIgnored, SeveralRegistered. <br />
-     * VERSION_NO: {NotNull, INTEGER(10)}
-     * @param versionNoList The collection of versionNo as inScope.
+     * RangeOf with various options. (versatile) <br>
+     * {(default) minNumber &lt;= column &lt;= maxNumber} <br>
+     * And NullIgnored, OnlyOnceRegistered. <br>
+     * VERSION_NO: {NotNull, INT(10)}
+     * @param minNumber The min number of versionNo. (basically NotNull: if op.allowOneSide(), null allowed)
+     * @param maxNumber The max number of versionNo. (basically NotNull: if op.allowOneSide(), null allowed)
+     * @param rangeOfOption The option of range-of. (NotNull)
      */
-    public void setVersionNo_InScope(final Collection<Integer> versionNoList) {
+    protected void setVersionNo_RangeOf(Integer minNumber, Integer maxNumber, RangeOfOption rangeOfOption) {
+        regROO(minNumber, maxNumber, xgetCValueVersionNo(), "VERSION_NO", rangeOfOption);
+    }
+
+    /**
+     * InScope {in (1, 2)}. And NullIgnored, NullElementIgnored, SeveralRegistered. <br>
+     * VERSION_NO: {NotNull, INT(10)}
+     * @param versionNoList The collection of versionNo as inScope. (basically NotNull, NotEmpty: error as default, or no condition as option)
+     */
+    public void setVersionNo_InScope(Collection<Integer> versionNoList) {
         doSetVersionNo_InScope(versionNoList);
     }
 
-    protected void doSetVersionNo_InScope(
-            final Collection<Integer> versionNoList) {
-        regINS(CK_INS, cTL(versionNoList), getCValueVersionNo(), "VERSION_NO");
+    protected void doSetVersionNo_InScope(Collection<Integer> versionNoList) {
+        regINS(CK_INS, cTL(versionNoList), xgetCValueVersionNo(), "VERSION_NO");
     }
 
     /**
-     * NotInScope {not in (1, 2)}. And NullIgnored, NullElementIgnored, SeveralRegistered. <br />
-     * VERSION_NO: {NotNull, INTEGER(10)}
-     * @param versionNoList The collection of versionNo as notInScope.
+     * NotInScope {not in (1, 2)}. And NullIgnored, NullElementIgnored, SeveralRegistered. <br>
+     * VERSION_NO: {NotNull, INT(10)}
+     * @param versionNoList The collection of versionNo as notInScope. (basically NotNull, NotEmpty: error as default, or no condition as option)
      */
-    public void setVersionNo_NotInScope(final Collection<Integer> versionNoList) {
+    public void setVersionNo_NotInScope(Collection<Integer> versionNoList) {
         doSetVersionNo_NotInScope(versionNoList);
     }
 
-    protected void doSetVersionNo_NotInScope(
-            final Collection<Integer> versionNoList) {
-        regINS(CK_NINS, cTL(versionNoList), getCValueVersionNo(), "VERSION_NO");
+    protected void doSetVersionNo_NotInScope(Collection<Integer> versionNoList) {
+        regINS(CK_NINS, cTL(versionNoList), xgetCValueVersionNo(), "VERSION_NO");
     }
 
-    protected void regVersionNo(final ConditionKey k, final Object v) {
-        regQ(k, v, getCValueVersionNo(), "VERSION_NO");
-    }
-
-    abstract protected ConditionValue getCValueVersionNo();
+    protected void regVersionNo(ConditionKey ky, Object vl) { regQ(ky, vl, xgetCValueVersionNo(), "VERSION_NO"); }
+    protected abstract ConditionValue xgetCValueVersionNo();
 
     // ===================================================================================
     //                                                                     ScalarCondition
     //                                                                     ===============
     /**
-     * Prepare ScalarCondition as equal. <br />
-     * {where FOO = (select max(BAR) from ...)
+     * Prepare ScalarCondition as equal. <br>
+     * {where FOO = (select max(BAR) from ...)}
      * <pre>
-     * cb.query().<span style="color: #FD4747">scalar_Equal()</span>.max(new SubQuery&lt;PersistentEventValueCB&gt;() {
-     *     public void query(PersistentEventValueCB subCB) {
-     *         subCB.specify().setXxx... <span style="color: #3F7E5E">// derived column for function</span>
-     *         subCB.query().setYyy...
-     *     }
+     * cb.query().scalar_Equal().<span style="color: #CC4747">avg</span>(<span style="color: #553000">purchaseCB</span> <span style="color: #90226C; font-weight: bold"><span style="font-size: 120%">-</span>&gt;</span> {
+     *     <span style="color: #553000">purchaseCB</span>.specify().<span style="color: #CC4747">columnPurchasePrice</span>(); <span style="color: #3F7E5E">// *Point!</span>
+     *     <span style="color: #553000">purchaseCB</span>.query().setPaymentCompleteFlg_Equal_True();
      * });
      * </pre>
      * @return The object to set up a function. (NotNull)
      */
-    public HpSSQFunction<PersistentEventValueCB> scalar_Equal() {
-        return xcreateSSQFunction(CK_EQ.getOperand());
+    public HpSLCFunction<PersistentEventValueCB> scalar_Equal() {
+        return xcreateSLCFunction(CK_EQ, PersistentEventValueCB.class);
     }
 
     /**
-     * Prepare ScalarCondition as equal. <br />
-     * {where FOO &lt;&gt; (select max(BAR) from ...)
+     * Prepare ScalarCondition as equal. <br>
+     * {where FOO &lt;&gt; (select max(BAR) from ...)}
      * <pre>
-     * cb.query().<span style="color: #FD4747">scalar_NotEqual()</span>.max(new SubQuery&lt;PersistentEventValueCB&gt;() {
-     *     public void query(PersistentEventValueCB subCB) {
-     *         subCB.specify().setXxx... <span style="color: #3F7E5E">// derived column for function</span>
-     *         subCB.query().setYyy...
-     *     }
+     * cb.query().scalar_Equal().<span style="color: #CC4747">avg</span>(<span style="color: #553000">purchaseCB</span> <span style="color: #90226C; font-weight: bold"><span style="font-size: 120%">-</span>&gt;</span> {
+     *     <span style="color: #553000">purchaseCB</span>.specify().<span style="color: #CC4747">columnPurchasePrice</span>(); <span style="color: #3F7E5E">// *Point!</span>
+     *     <span style="color: #553000">purchaseCB</span>.query().setPaymentCompleteFlg_Equal_True();
      * });
      * </pre>
      * @return The object to set up a function. (NotNull)
      */
-    public HpSSQFunction<PersistentEventValueCB> scalar_NotEqual() {
-        return xcreateSSQFunction(CK_NES.getOperand());
+    public HpSLCFunction<PersistentEventValueCB> scalar_NotEqual() {
+        return xcreateSLCFunction(CK_NES, PersistentEventValueCB.class);
     }
 
     /**
-     * Prepare ScalarCondition as greaterThan. <br />
-     * {where FOO &gt; (select max(BAR) from ...)
+     * Prepare ScalarCondition as greaterThan. <br>
+     * {where FOO &gt; (select max(BAR) from ...)}
      * <pre>
-     * cb.query().<span style="color: #FD4747">scalar_GreaterThan()</span>.max(new SubQuery&lt;PersistentEventValueCB&gt;() {
+     * cb.query().scalar_Equal().<span style="color: #CC4747">avg</span>(<span style="color: #553000">purchaseCB</span> <span style="color: #90226C; font-weight: bold"><span style="font-size: 120%">-</span>&gt;</span> {
+     *     <span style="color: #553000">purchaseCB</span>.specify().<span style="color: #CC4747">columnPurchasePrice</span>(); <span style="color: #3F7E5E">// *Point!</span>
+     *     <span style="color: #553000">purchaseCB</span>.query().setPaymentCompleteFlg_Equal_True();
+     * });
+     * </pre>
+     * @return The object to set up a function. (NotNull)
+     */
+    public HpSLCFunction<PersistentEventValueCB> scalar_GreaterThan() {
+        return xcreateSLCFunction(CK_GT, PersistentEventValueCB.class);
+    }
+
+    /**
+     * Prepare ScalarCondition as lessThan. <br>
+     * {where FOO &lt; (select max(BAR) from ...)}
+     * <pre>
+     * cb.query().scalar_Equal().<span style="color: #CC4747">avg</span>(<span style="color: #553000">purchaseCB</span> <span style="color: #90226C; font-weight: bold"><span style="font-size: 120%">-</span>&gt;</span> {
+     *     <span style="color: #553000">purchaseCB</span>.specify().<span style="color: #CC4747">columnPurchasePrice</span>(); <span style="color: #3F7E5E">// *Point!</span>
+     *     <span style="color: #553000">purchaseCB</span>.query().setPaymentCompleteFlg_Equal_True();
+     * });
+     * </pre>
+     * @return The object to set up a function. (NotNull)
+     */
+    public HpSLCFunction<PersistentEventValueCB> scalar_LessThan() {
+        return xcreateSLCFunction(CK_LT, PersistentEventValueCB.class);
+    }
+
+    /**
+     * Prepare ScalarCondition as greaterEqual. <br>
+     * {where FOO &gt;= (select max(BAR) from ...)}
+     * <pre>
+     * cb.query().scalar_Equal().<span style="color: #CC4747">avg</span>(<span style="color: #553000">purchaseCB</span> <span style="color: #90226C; font-weight: bold"><span style="font-size: 120%">-</span>&gt;</span> {
+     *     <span style="color: #553000">purchaseCB</span>.specify().<span style="color: #CC4747">columnPurchasePrice</span>(); <span style="color: #3F7E5E">// *Point!</span>
+     *     <span style="color: #553000">purchaseCB</span>.query().setPaymentCompleteFlg_Equal_True();
+     * });
+     * </pre>
+     * @return The object to set up a function. (NotNull)
+     */
+    public HpSLCFunction<PersistentEventValueCB> scalar_GreaterEqual() {
+        return xcreateSLCFunction(CK_GE, PersistentEventValueCB.class);
+    }
+
+    /**
+     * Prepare ScalarCondition as lessEqual. <br>
+     * {where FOO &lt;= (select max(BAR) from ...)}
+     * <pre>
+     * cb.query().<span style="color: #CC4747">scalar_LessEqual()</span>.max(new SubQuery&lt;PersistentEventValueCB&gt;() {
      *     public void query(PersistentEventValueCB subCB) {
      *         subCB.specify().setFoo... <span style="color: #3F7E5E">// derived column for function</span>
      *         subCB.query().setBar...
@@ -893,214 +923,122 @@ public abstract class AbstractBsPersistentEventValueCQ extends
      * </pre>
      * @return The object to set up a function. (NotNull)
      */
-    public HpSSQFunction<PersistentEventValueCB> scalar_GreaterThan() {
-        return xcreateSSQFunction(CK_GT.getOperand());
+    public HpSLCFunction<PersistentEventValueCB> scalar_LessEqual() {
+        return xcreateSLCFunction(CK_LE, PersistentEventValueCB.class);
     }
 
-    /**
-     * Prepare ScalarCondition as lessThan. <br />
-     * {where FOO &lt; (select max(BAR) from ...)
-     * <pre>
-     * cb.query().<span style="color: #FD4747">scalar_LessThan()</span>.max(new SubQuery&lt;PersistentEventValueCB&gt;() {
-     *     public void query(PersistentEventValueCB subCB) {
-     *         subCB.specify().setFoo... <span style="color: #3F7E5E">// derived column for function</span>
-     *         subCB.query().setBar...
-     *     }
-     * });
-     * </pre>
-     * @return The object to set up a function. (NotNull)
-     */
-    public HpSSQFunction<PersistentEventValueCB> scalar_LessThan() {
-        return xcreateSSQFunction(CK_LT.getOperand());
+    @SuppressWarnings("unchecked")
+    protected <CB extends ConditionBean> void xscalarCondition(String fn, SubQuery<CB> sq, String rd, HpSLCCustomized<CB> cs, ScalarConditionOption op) {
+        assertObjectNotNull("subQuery", sq);
+        PersistentEventValueCB cb = xcreateScalarConditionCB(); sq.query((CB)cb);
+        String pp = keepScalarCondition(cb.query()); // for saving query-value
+        cs.setPartitionByCBean((CB)xcreateScalarConditionPartitionByCB()); // for using partition-by
+        registerScalarCondition(fn, cb.query(), pp, rd, cs, op);
     }
-
-    /**
-     * Prepare ScalarCondition as greaterEqual. <br />
-     * {where FOO &gt;= (select max(BAR) from ...)
-     * <pre>
-     * cb.query().<span style="color: #FD4747">scalar_GreaterEqual()</span>.max(new SubQuery&lt;PersistentEventValueCB&gt;() {
-     *     public void query(PersistentEventValueCB subCB) {
-     *         subCB.specify().setFoo... <span style="color: #3F7E5E">// derived column for function</span>
-     *         subCB.query().setBar...
-     *     }
-     * });
-     * </pre>
-     * @return The object to set up a function. (NotNull)
-     */
-    public HpSSQFunction<PersistentEventValueCB> scalar_GreaterEqual() {
-        return xcreateSSQFunction(CK_GE.getOperand());
-    }
-
-    /**
-     * Prepare ScalarCondition as lessEqual. <br />
-     * {where FOO &lt;= (select max(BAR) from ...)
-     * <pre>
-     * cb.query().<span style="color: #FD4747">scalar_LessEqual()</span>.max(new SubQuery&lt;PersistentEventValueCB&gt;() {
-     *     public void query(PersistentEventValueCB subCB) {
-     *         subCB.specify().setFoo... <span style="color: #3F7E5E">// derived column for function</span>
-     *         subCB.query().setBar...
-     *     }
-     * });
-     * </pre>
-     * @return The object to set up a function. (NotNull)
-     */
-    public HpSSQFunction<PersistentEventValueCB> scalar_LessEqual() {
-        return xcreateSSQFunction(CK_LE.getOperand());
-    }
-
-    protected HpSSQFunction<PersistentEventValueCB> xcreateSSQFunction(
-            final String operand) {
-        return new HpSSQFunction<PersistentEventValueCB>(
-                new HpSSQSetupper<PersistentEventValueCB>() {
-                    @Override
-                    public void setup(final String function,
-                            final SubQuery<PersistentEventValueCB> subQuery,
-                            final HpSSQOption<PersistentEventValueCB> option) {
-                        xscalarCondition(function, subQuery, operand, option);
-                    }
-                });
-    }
-
-    protected void xscalarCondition(final String function,
-            final SubQuery<PersistentEventValueCB> subQuery,
-            final String operand,
-            final HpSSQOption<PersistentEventValueCB> option) {
-        assertObjectNotNull("subQuery<PersistentEventValueCB>", subQuery);
-        final PersistentEventValueCB cb = xcreateScalarConditionCB();
-        subQuery.query(cb);
-        final String subQueryPropertyName = keepScalarCondition(cb.query()); // for saving query-value
-        option.setPartitionByCBean(xcreateScalarConditionPartitionByCB()); // for using partition-by
-        registerScalarCondition(function, cb.query(), subQueryPropertyName,
-                operand, option);
-    }
-
-    public abstract String keepScalarCondition(PersistentEventValueCQ subQuery);
+    public abstract String keepScalarCondition(PersistentEventValueCQ sq);
 
     protected PersistentEventValueCB xcreateScalarConditionCB() {
-        final PersistentEventValueCB cb = new PersistentEventValueCB();
-        cb.xsetupForScalarCondition(this);
-        return cb;
+        PersistentEventValueCB cb = newMyCB(); cb.xsetupForScalarCondition(this); return cb;
     }
 
     protected PersistentEventValueCB xcreateScalarConditionPartitionByCB() {
-        final PersistentEventValueCB cb = new PersistentEventValueCB();
-        cb.xsetupForScalarConditionPartitionBy(this);
-        return cb;
+        PersistentEventValueCB cb = newMyCB(); cb.xsetupForScalarConditionPartitionBy(this); return cb;
     }
 
     // ===================================================================================
     //                                                                       MyselfDerived
     //                                                                       =============
-    public void xsmyselfDerive(final String function,
-            final SubQuery<PersistentEventValueCB> subQuery,
-            final String aliasName, final DerivedReferrerOption option) {
-        assertObjectNotNull("subQuery<PersistentEventValueCB>", subQuery);
-        final PersistentEventValueCB cb = new PersistentEventValueCB();
-        cb.xsetupForDerivedReferrer(this);
-        subQuery.query(cb);
-        final String subQueryPropertyName = keepSpecifyMyselfDerived(cb.query()); // for saving query-value.
-        registerSpecifyMyselfDerived(function, cb.query(), "ID", "ID",
-                subQueryPropertyName, "myselfDerived", aliasName, option);
+    public void xsmyselfDerive(String fn, SubQuery<PersistentEventValueCB> sq, String al, DerivedReferrerOption op) {
+        assertObjectNotNull("subQuery", sq);
+        PersistentEventValueCB cb = new PersistentEventValueCB(); cb.xsetupForDerivedReferrer(this);
+        lockCall(() -> sq.query(cb)); String pp = keepSpecifyMyselfDerived(cb.query()); String pk = "ID";
+        registerSpecifyMyselfDerived(fn, cb.query(), pk, pk, pp, "myselfDerived", al, op);
     }
-
-    public abstract String keepSpecifyMyselfDerived(
-            PersistentEventValueCQ subQuery);
+    public abstract String keepSpecifyMyselfDerived(PersistentEventValueCQ sq);
 
     /**
-     * Prepare for (Query)MyselfDerived (SubQuery).
+     * Prepare for (Query)MyselfDerived (correlated sub-query).
      * @return The object to set up a function for myself table. (NotNull)
      */
     public HpQDRFunction<PersistentEventValueCB> myselfDerived() {
-        return xcreateQDRFunctionMyselfDerived();
+        return xcreateQDRFunctionMyselfDerived(PersistentEventValueCB.class);
     }
-
-    protected HpQDRFunction<PersistentEventValueCB> xcreateQDRFunctionMyselfDerived() {
-        return new HpQDRFunction<PersistentEventValueCB>(
-                new HpQDRSetupper<PersistentEventValueCB>() {
-                    @Override
-                    public void setup(final String function,
-                            final SubQuery<PersistentEventValueCB> subQuery,
-                            final String operand, final Object value,
-                            final DerivedReferrerOption option) {
-                        xqderiveMyselfDerived(function, subQuery, operand,
-                                value, option);
-                    }
-                });
+    @SuppressWarnings("unchecked")
+    protected <CB extends ConditionBean> void xqderiveMyselfDerived(String fn, SubQuery<CB> sq, String rd, Object vl, DerivedReferrerOption op) {
+        assertObjectNotNull("subQuery", sq);
+        PersistentEventValueCB cb = new PersistentEventValueCB(); cb.xsetupForDerivedReferrer(this); sq.query((CB)cb);
+        String pk = "ID";
+        String sqpp = keepQueryMyselfDerived(cb.query()); // for saving query-value.
+        String prpp = keepQueryMyselfDerivedParameter(vl);
+        registerQueryMyselfDerived(fn, cb.query(), pk, pk, sqpp, "myselfDerived", rd, vl, prpp, op);
     }
-
-    public void xqderiveMyselfDerived(final String function,
-            final SubQuery<PersistentEventValueCB> subQuery,
-            final String operand, final Object value,
-            final DerivedReferrerOption option) {
-        assertObjectNotNull("subQuery<PersistentEventValueCB>", subQuery);
-        final PersistentEventValueCB cb = new PersistentEventValueCB();
-        cb.xsetupForDerivedReferrer(this);
-        subQuery.query(cb);
-        final String subQueryPropertyName = keepQueryMyselfDerived(cb.query()); // for saving query-value.
-        final String parameterPropertyName = keepQueryMyselfDerivedParameter(value);
-        registerQueryMyselfDerived(function, cb.query(), "ID", "ID",
-                subQueryPropertyName, "myselfDerived", operand, value,
-                parameterPropertyName, option);
-    }
-
-    public abstract String keepQueryMyselfDerived(
-            PersistentEventValueCQ subQuery);
-
-    public abstract String keepQueryMyselfDerivedParameter(Object parameterValue);
+    public abstract String keepQueryMyselfDerived(PersistentEventValueCQ sq);
+    public abstract String keepQueryMyselfDerivedParameter(Object vl);
 
     // ===================================================================================
     //                                                                        MyselfExists
     //                                                                        ============
     /**
-     * Prepare for MyselfExists (SubQuery).
-     * @param subQuery The implementation of sub query. (NotNull)
+     * Prepare for MyselfExists (correlated sub-query).
+     * @param subCBLambda The implementation of sub-query. (NotNull)
      */
-    public void myselfExists(final SubQuery<PersistentEventValueCB> subQuery) {
-        assertObjectNotNull("subQuery<PersistentEventValueCB>", subQuery);
-        final PersistentEventValueCB cb = new PersistentEventValueCB();
-        cb.xsetupForMyselfExists(this);
-        subQuery.query(cb);
-        final String subQueryPropertyName = keepMyselfExists(cb.query()); // for saving query-value.
-        registerMyselfExists(cb.query(), subQueryPropertyName);
+    public void myselfExists(SubQuery<PersistentEventValueCB> subCBLambda) {
+        assertObjectNotNull("subCBLambda", subCBLambda);
+        PersistentEventValueCB cb = new PersistentEventValueCB(); cb.xsetupForMyselfExists(this);
+        lockCall(() -> subCBLambda.query(cb)); String pp = keepMyselfExists(cb.query());
+        registerMyselfExists(cb.query(), pp);
     }
-
-    public abstract String keepMyselfExists(PersistentEventValueCQ subQuery);
+    public abstract String keepMyselfExists(PersistentEventValueCQ sq);
 
     // ===================================================================================
-    //                                                                       MyselfInScope
-    //                                                                       =============
+    //                                                                        Manual Order
+    //                                                                        ============
     /**
-     * Prepare for MyselfInScope (SubQuery).
-     * @param subQuery The implementation of sub query. (NotNull)
+     * Order along manual ordering information.
+     * <pre>
+     * cb.query().addOrderBy_Birthdate_Asc().<span style="color: #CC4747">withManualOrder</span>(<span style="color: #553000">op</span> <span style="color: #90226C; font-weight: bold"><span style="font-size: 120%">-</span>&gt;</span> {
+     *     <span style="color: #553000">op</span>.<span style="color: #CC4747">when_GreaterEqual</span>(priorityDate); <span style="color: #3F7E5E">// e.g. 2000/01/01</span>
+     * });
+     * <span style="color: #3F7E5E">// order by </span>
+     * <span style="color: #3F7E5E">//   case</span>
+     * <span style="color: #3F7E5E">//     when BIRTHDATE &gt;= '2000/01/01' then 0</span>
+     * <span style="color: #3F7E5E">//     else 1</span>
+     * <span style="color: #3F7E5E">//   end asc, ...</span>
+     *
+     * cb.query().addOrderBy_MemberStatusCode_Asc().<span style="color: #CC4747">withManualOrder</span>(<span style="color: #553000">op</span> <span style="color: #90226C; font-weight: bold"><span style="font-size: 120%">-</span>&gt;</span> {
+     *     <span style="color: #553000">op</span>.<span style="color: #CC4747">when_Equal</span>(CDef.MemberStatus.Withdrawal);
+     *     <span style="color: #553000">op</span>.<span style="color: #CC4747">when_Equal</span>(CDef.MemberStatus.Formalized);
+     *     <span style="color: #553000">op</span>.<span style="color: #CC4747">when_Equal</span>(CDef.MemberStatus.Provisional);
+     * });
+     * <span style="color: #3F7E5E">// order by </span>
+     * <span style="color: #3F7E5E">//   case</span>
+     * <span style="color: #3F7E5E">//     when MEMBER_STATUS_CODE = 'WDL' then 0</span>
+     * <span style="color: #3F7E5E">//     when MEMBER_STATUS_CODE = 'FML' then 1</span>
+     * <span style="color: #3F7E5E">//     when MEMBER_STATUS_CODE = 'PRV' then 2</span>
+     * <span style="color: #3F7E5E">//     else 3</span>
+     * <span style="color: #3F7E5E">//   end asc, ...</span>
+     * </pre>
+     * <p>This function with Union is unsupported!</p>
+     * <p>The order values are bound (treated as bind parameter).</p>
+     * @param opLambda The callback for option of manual-order containing order values. (NotNull)
      */
-    public void myselfInScope(final SubQuery<PersistentEventValueCB> subQuery) {
-        assertObjectNotNull("subQuery<PersistentEventValueCB>", subQuery);
-        final PersistentEventValueCB cb = new PersistentEventValueCB();
-        cb.xsetupForMyselfInScope(this);
-        subQuery.query(cb);
-        final String subQueryPropertyName = keepMyselfInScope(cb.query()); // for saving query-value.
-        registerMyselfInScope(cb.query(), subQueryPropertyName);
+    public void withManualOrder(ManualOrderOptionCall opLambda) { // is user public!
+        xdoWithManualOrder(cMOO(opLambda));
     }
 
-    public abstract String keepMyselfInScope(PersistentEventValueCQ subQuery);
-
+    // ===================================================================================
+    //                                                                    Small Adjustment
+    //                                                                    ================
     // ===================================================================================
     //                                                                       Very Internal
     //                                                                       =============
+    protected PersistentEventValueCB newMyCB() {
+        return new PersistentEventValueCB();
+    }
     // very internal (for suppressing warn about 'Not Use Import')
-    protected String xabCB() {
-        return PersistentEventValueCB.class.getName();
-    }
-
-    protected String xabCQ() {
-        return PersistentEventValueCQ.class.getName();
-    }
-
-    protected String xabLSO() {
-        return LikeSearchOption.class.getName();
-    }
-
-    protected String xabSSQS() {
-        return HpSSQSetupper.class.getName();
-    }
+    protected String xabUDT() { return Date.class.getName(); }
+    protected String xabCQ() { return PersistentEventValueCQ.class.getName(); }
+    protected String xabLSO() { return LikeSearchOption.class.getName(); }
+    protected String xabSLCS() { return HpSLCSetupper.class.getName(); }
+    protected String xabSCP() { return SubQuery.class.getName(); }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 the CodeLibs Project and the Others.
+ * Copyright 2012-2020 CodeLibs Project and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 package org.codelibs.empros.db.cbean.nss;
 
 import org.codelibs.empros.db.cbean.cq.PersistentEventValueCQ;
-import org.seasar.dbflute.cbean.ConditionQuery;
 
 /**
  * The nest select set-upper of PERSISTENT_EVENT_VALUE.
@@ -27,27 +26,18 @@ public class PersistentEventValueNss {
     // ===================================================================================
     //                                                                           Attribute
     //                                                                           =========
-    protected PersistentEventValueCQ _query;
-
-    public PersistentEventValueNss(final PersistentEventValueCQ query) {
-        _query = query;
-    }
-
-    public boolean hasConditionQuery() {
-        return _query != null;
-    }
+    protected final PersistentEventValueCQ _query;
+    public PersistentEventValueNss(PersistentEventValueCQ query) { _query = query; }
+    public boolean hasConditionQuery() { return _query != null; }
 
     // ===================================================================================
     //                                                                     Nested Relation
     //                                                                     ===============
-    public PersistentEventNss withPersistentEvent() {
-        _query.doNss(new PersistentEventValueCQ.NssCall() {
-            @Override
-            public ConditionQuery qf() {
-                return _query.queryPersistentEvent();
-            }
-        });
-        return new PersistentEventNss(_query.queryPersistentEvent());
+    /**
+     * With nested relation columns to select clause. <br>
+     * PERSISTENT_EVENT by my EVENT_ID, named 'persistentEvent'.
+     */
+    public void withPersistentEvent() {
+        _query.xdoNss(() -> _query.queryPersistentEvent());
     }
-
 }

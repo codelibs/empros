@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 the CodeLibs Project and the Others.
+ * Copyright 2012-2020 CodeLibs Project and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package org.codelibs.empros.db.exentity;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -55,7 +56,7 @@ public class PersistentEvent extends BsPersistentEvent {
             pEventValueList.add(pEventValue);
         }
         setCreatedBy(event.getCreatedBy());
-        setCreatedTime(new Timestamp(event.getCreatedTime().getTime()));
+        setCreatedTime(LocalDateTime.parse(event.getCreatedTime().toString()));
     }
 
     public void updateValues() {

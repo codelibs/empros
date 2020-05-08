@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 the CodeLibs Project and the Others.
+ * Copyright 2012-2020 CodeLibs Project and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,47 +15,47 @@
  */
 package org.codelibs.empros.db.bsentity;
 
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
+import java.util.ArrayList;
 
+import org.dbflute.Entity;
+import org.dbflute.dbmeta.DBMeta;
+import org.dbflute.dbmeta.AbstractEntity;
+import org.dbflute.dbmeta.accessory.DomainEntity;
+import org.dbflute.optional.OptionalEntity;
 import org.codelibs.empros.db.allcommon.DBMetaInstanceHandler;
-import org.codelibs.empros.db.exentity.PersistentEvent;
-import org.codelibs.empros.db.exentity.PersistentEventValue;
-import org.seasar.dbflute.Entity;
-import org.seasar.dbflute.dbmeta.DBMeta;
+import org.codelibs.empros.db.exentity.*;
 
 /**
- * The entity of PERSISTENT_EVENT_VALUE as TABLE. <br />
+ * The entity of PERSISTENT_EVENT_VALUE as TABLE. <br>
  * <pre>
  * [primary-key]
  *     ID
- * 
+ *
  * [column]
  *     ID, EVENT_ID, NAME, VALUE, CLASS_TYPE, VERSION_NO
- * 
+ *
  * [sequence]
  *     
- * 
+ *
  * [identity]
  *     ID
- * 
+ *
  * [version-no]
  *     VERSION_NO
- * 
+ *
  * [foreign table]
  *     PERSISTENT_EVENT
- * 
+ *
  * [referrer table]
  *     
- * 
+ *
  * [foreign property]
  *     persistentEvent
- * 
+ *
  * [referrer property]
  *     
- * 
+ *
  * [get/set template]
  * /= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
  * Long id = entity.getId();
@@ -74,21 +74,17 @@ import org.seasar.dbflute.dbmeta.DBMeta;
  * </pre>
  * @author DBFlute(AutoGenerator)
  */
-public abstract class BsPersistentEventValue implements Entity, Serializable,
-        Cloneable {
+public abstract class BsPersistentEventValue extends AbstractEntity implements DomainEntity {
 
     // ===================================================================================
     //                                                                          Definition
     //                                                                          ==========
-    /** Serial version UID. (Default) */
+    /** The serial version UID for object serialization. (Default) */
     private static final long serialVersionUID = 1L;
 
     // ===================================================================================
     //                                                                           Attribute
     //                                                                           =========
-    // -----------------------------------------------------
-    //                                                Column
-    //                                                ------
     /** ID: {PK, ID, NotNull, BIGINT(19)} */
     protected Long _id;
 
@@ -104,56 +100,28 @@ public abstract class BsPersistentEventValue implements Entity, Serializable,
     /** CLASS_TYPE: {NotNull, VARCHAR(255)} */
     protected String _classType;
 
-    /** VERSION_NO: {NotNull, INTEGER(10)} */
+    /** VERSION_NO: {NotNull, INT(10)} */
     protected Integer _versionNo;
 
-    // -----------------------------------------------------
-    //                                              Internal
-    //                                              --------
-    /** The modified properties for this entity. (NotNull) */
-    protected final EntityModifiedProperties __modifiedProperties = newModifiedProperties();
-
     // ===================================================================================
-    //                                                                          Table Name
-    //                                                                          ==========
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getTableDbName() {
+    //                                                                             DB Meta
+    //                                                                             =======
+    /** {@inheritDoc} */
+    public DBMeta asDBMeta() {
+        return DBMetaInstanceHandler.findDBMeta(asTableDbName());
+    }
+
+    /** {@inheritDoc} */
+    public String asTableDbName() {
         return "PERSISTENT_EVENT_VALUE";
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getTablePropertyName() { // according to Java Beans rule
-        return "persistentEventValue";
-    }
-
     // ===================================================================================
-    //                                                                              DBMeta
-    //                                                                              ======
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public DBMeta getDBMeta() {
-        return DBMetaInstanceHandler.findDBMeta(getTableDbName());
-    }
-
-    // ===================================================================================
-    //                                                                         Primary Key
-    //                                                                         ===========
-    /**
-     * {@inheritDoc}
-     */
-    @Override
+    //                                                                        Key Handling
+    //                                                                        ============
+    /** {@inheritDoc} */
     public boolean hasPrimaryKeyValue() {
-        if (getId() == null) {
-            return false;
-        }
+        if (_id == null) { return false; }
         return true;
     }
 
@@ -161,302 +129,206 @@ public abstract class BsPersistentEventValue implements Entity, Serializable,
     //                                                                    Foreign Property
     //                                                                    ================
     /** PERSISTENT_EVENT by my EVENT_ID, named 'persistentEvent'. */
-    protected PersistentEvent _persistentEvent;
+    protected OptionalEntity<PersistentEvent> _persistentEvent;
 
     /**
-     * PERSISTENT_EVENT by my EVENT_ID, named 'persistentEvent'.
-     * @return The entity of foreign property 'persistentEvent'. (NullAllowed: If the foreign key does not have 'NotNull' constraint, please check null.)
+     * [get] PERSISTENT_EVENT by my EVENT_ID, named 'persistentEvent'. <br>
+     * Optional: alwaysPresent(), ifPresent().orElse(), get(), ...
+     * @return The entity of foreign property 'persistentEvent'. (NotNull, EmptyAllowed: when e.g. null FK column, no setupSelect)
      */
-    public PersistentEvent getPersistentEvent() {
+    public OptionalEntity<PersistentEvent> getPersistentEvent() {
+        if (_persistentEvent == null) { _persistentEvent = OptionalEntity.relationEmpty(this, "persistentEvent"); }
         return _persistentEvent;
     }
 
     /**
-     * PERSISTENT_EVENT by my EVENT_ID, named 'persistentEvent'.
+     * [set] PERSISTENT_EVENT by my EVENT_ID, named 'persistentEvent'.
      * @param persistentEvent The entity of foreign property 'persistentEvent'. (NullAllowed)
      */
-    public void setPersistentEvent(final PersistentEvent persistentEvent) {
+    public void setPersistentEvent(OptionalEntity<PersistentEvent> persistentEvent) {
         _persistentEvent = persistentEvent;
     }
 
     // ===================================================================================
     //                                                                   Referrer Property
     //                                                                   =================
-    protected <ELEMENT> List<ELEMENT> newReferrerList() {
+    protected <ELEMENT> List<ELEMENT> newReferrerList() { // overriding to import
         return new ArrayList<ELEMENT>();
-    }
-
-    // ===================================================================================
-    //                                                                 Modified Properties
-    //                                                                 ===================
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Set<String> modifiedProperties() {
-        return __modifiedProperties.getPropertyNames();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void clearModifiedInfo() {
-        __modifiedProperties.clear();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean hasModification() {
-        return !__modifiedProperties.isEmpty();
-    }
-
-    protected EntityModifiedProperties newModifiedProperties() {
-        return new EntityModifiedProperties();
     }
 
     // ===================================================================================
     //                                                                      Basic Override
     //                                                                      ==============
-    /**
-     * Determine the object is equal with this. <br />
-     * If primary-keys or columns of the other are same as this one, returns true.
-     * @param other The other entity. (NullAllowed)
-     * @return Comparing result.
-     */
     @Override
-    public boolean equals(final Object other) {
-        if (other == null || !(other instanceof BsPersistentEventValue)) {
+    protected boolean doEquals(Object obj) {
+        if (obj instanceof BsPersistentEventValue) {
+            BsPersistentEventValue other = (BsPersistentEventValue)obj;
+            if (!xSV(_id, other._id)) { return false; }
+            return true;
+        } else {
             return false;
         }
-        final BsPersistentEventValue otherEntity = (BsPersistentEventValue) other;
-        if (!xSV(getId(), otherEntity.getId())) {
-            return false;
-        }
-        return true;
     }
 
-    protected boolean xSV(final Object value1, final Object value2) { // isSameValue()
-        return InternalUtil.isSameValue(value1, value2);
-    }
-
-    /**
-     * Calculate the hash-code from primary-keys or columns.
-     * @return The hash-code from primary-key or columns.
-     */
     @Override
-    public int hashCode() {
-        int result = 17;
-        result = xCH(result, getTableDbName());
-        result = xCH(result, getId());
-        return result;
+    protected int doHashCode(int initial) {
+        int hs = initial;
+        hs = xCH(hs, asTableDbName());
+        hs = xCH(hs, _id);
+        return hs;
     }
 
-    protected int xCH(final int result, final Object value) { // calculateHashcode()
-        return InternalUtil.calculateHashcode(result, value);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public int instanceHash() {
-        return super.hashCode();
-    }
-
-    /**
-     * Convert to display string of entity's data. (no relation data)
-     * @return The display string of all columns and relation existences. (NotNull)
-     */
-    @Override
-    public String toString() {
-        return buildDisplayString(InternalUtil.toClassTitle(this), true, true);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toStringWithRelation() {
-        final StringBuilder sb = new StringBuilder();
-        sb.append(toString());
-        final String l = "\n  ";
-        if (_persistentEvent != null) {
-            sb.append(l).append(xbRDS(_persistentEvent, "persistentEvent"));
-        }
+    protected String doBuildStringWithRelation(String li) {
+        StringBuilder sb = new StringBuilder();
+        if (_persistentEvent != null && _persistentEvent.isPresent())
+        { sb.append(li).append(xbRDS(_persistentEvent, "persistentEvent")); }
         return sb.toString();
     }
-
-    protected String xbRDS(final Entity e, final String name) { // buildRelationDisplayString()
-        return e.buildDisplayString(name, true, true);
+    protected <ET extends Entity> String xbRDS(org.dbflute.optional.OptionalEntity<ET> et, String name) { // buildRelationDisplayString()
+        return et.get().buildDisplayString(name, true, true);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public String buildDisplayString(final String name, final boolean column,
-            final boolean relation) {
-        final StringBuilder sb = new StringBuilder();
-        if (name != null) {
-            sb.append(name).append(column || relation ? ":" : "");
-        }
-        if (column) {
-            sb.append(buildColumnString());
-        }
-        if (relation) {
-            sb.append(buildRelationString());
-        }
-        sb.append("@").append(Integer.toHexString(hashCode()));
-        return sb.toString();
-    }
-
-    protected String buildColumnString() {
-        final StringBuilder sb = new StringBuilder();
-        final String delimiter = ", ";
-        sb.append(delimiter).append(getId());
-        sb.append(delimiter).append(getEventId());
-        sb.append(delimiter).append(getName());
-        sb.append(delimiter).append(getValue());
-        sb.append(delimiter).append(getClassType());
-        sb.append(delimiter).append(getVersionNo());
-        if (sb.length() > delimiter.length()) {
-            sb.delete(0, delimiter.length());
+    protected String doBuildColumnString(String dm) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(dm).append(xfND(_id));
+        sb.append(dm).append(xfND(_eventId));
+        sb.append(dm).append(xfND(_name));
+        sb.append(dm).append(xfND(_value));
+        sb.append(dm).append(xfND(_classType));
+        sb.append(dm).append(xfND(_versionNo));
+        if (sb.length() > dm.length()) {
+            sb.delete(0, dm.length());
         }
         sb.insert(0, "{").append("}");
         return sb.toString();
     }
 
-    protected String buildRelationString() {
-        final StringBuilder sb = new StringBuilder();
-        final String c = ",";
-        if (_persistentEvent != null) {
-            sb.append(c).append("persistentEvent");
-        }
-        if (sb.length() > c.length()) {
-            sb.delete(0, c.length()).insert(0, "(").append(")");
+    @Override
+    protected String doBuildRelationString(String dm) {
+        StringBuilder sb = new StringBuilder();
+        if (_persistentEvent != null && _persistentEvent.isPresent())
+        { sb.append(dm).append("persistentEvent"); }
+        if (sb.length() > dm.length()) {
+            sb.delete(0, dm.length()).insert(0, "(").append(")");
         }
         return sb.toString();
     }
 
-    /**
-     * Clone entity instance using super.clone(). (shallow copy) 
-     * @return The cloned instance of this entity. (NotNull)
-     */
     @Override
     public PersistentEventValue clone() {
-        try {
-            return (PersistentEventValue) super.clone();
-        } catch (final CloneNotSupportedException e) {
-            throw new IllegalStateException("Failed to clone the entity: "
-                    + toString(), e);
-        }
+        return (PersistentEventValue)super.clone();
     }
 
     // ===================================================================================
     //                                                                            Accessor
     //                                                                            ========
     /**
-     * [get] ID: {PK, ID, NotNull, BIGINT(19)} <br />
-     * @return The value of the column 'ID'. (NullAllowed)
+     * [get] ID: {PK, ID, NotNull, BIGINT(19)} <br>
+     * @return The value of the column 'ID'. (basically NotNull if selected: for the constraint)
      */
     public Long getId() {
+        checkSpecifiedProperty("id");
         return _id;
     }
 
     /**
-     * [set] ID: {PK, ID, NotNull, BIGINT(19)} <br />
-     * @param id The value of the column 'ID'. (NullAllowed)
+     * [set] ID: {PK, ID, NotNull, BIGINT(19)} <br>
+     * @param id The value of the column 'ID'. (basically NotNull if update: for the constraint)
      */
-    public void setId(final Long id) {
-        __modifiedProperties.addPropertyName("id");
+    public void setId(Long id) {
+        registerModifiedProperty("id");
         _id = id;
     }
 
     /**
-     * [get] EVENT_ID: {IX, NotNull, BIGINT(19), FK to PERSISTENT_EVENT} <br />
-     * @return The value of the column 'EVENT_ID'. (NullAllowed)
+     * [get] EVENT_ID: {IX, NotNull, BIGINT(19), FK to PERSISTENT_EVENT} <br>
+     * @return The value of the column 'EVENT_ID'. (basically NotNull if selected: for the constraint)
      */
     public Long getEventId() {
+        checkSpecifiedProperty("eventId");
         return _eventId;
     }
 
     /**
-     * [set] EVENT_ID: {IX, NotNull, BIGINT(19), FK to PERSISTENT_EVENT} <br />
-     * @param eventId The value of the column 'EVENT_ID'. (NullAllowed)
+     * [set] EVENT_ID: {IX, NotNull, BIGINT(19), FK to PERSISTENT_EVENT} <br>
+     * @param eventId The value of the column 'EVENT_ID'. (basically NotNull if update: for the constraint)
      */
-    public void setEventId(final Long eventId) {
-        __modifiedProperties.addPropertyName("eventId");
+    public void setEventId(Long eventId) {
+        registerModifiedProperty("eventId");
         _eventId = eventId;
     }
 
     /**
-     * [get] NAME: {NotNull, VARCHAR(4000)} <br />
-     * @return The value of the column 'NAME'. (NullAllowed)
+     * [get] NAME: {NotNull, VARCHAR(4000)} <br>
+     * @return The value of the column 'NAME'. (basically NotNull if selected: for the constraint)
      */
     public String getName() {
+        checkSpecifiedProperty("name");
         return _name;
     }
 
     /**
-     * [set] NAME: {NotNull, VARCHAR(4000)} <br />
-     * @param name The value of the column 'NAME'. (NullAllowed)
+     * [set] NAME: {NotNull, VARCHAR(4000)} <br>
+     * @param name The value of the column 'NAME'. (basically NotNull if update: for the constraint)
      */
-    public void setName(final String name) {
-        __modifiedProperties.addPropertyName("name");
+    public void setName(String name) {
+        registerModifiedProperty("name");
         _name = name;
     }
 
     /**
-     * [get] VALUE: {NotNull, VARCHAR(4000)} <br />
-     * @return The value of the column 'VALUE'. (NullAllowed)
+     * [get] VALUE: {NotNull, VARCHAR(4000)} <br>
+     * @return The value of the column 'VALUE'. (basically NotNull if selected: for the constraint)
      */
     public String getValue() {
+        checkSpecifiedProperty("value");
         return _value;
     }
 
     /**
-     * [set] VALUE: {NotNull, VARCHAR(4000)} <br />
-     * @param value The value of the column 'VALUE'. (NullAllowed)
+     * [set] VALUE: {NotNull, VARCHAR(4000)} <br>
+     * @param value The value of the column 'VALUE'. (basically NotNull if update: for the constraint)
      */
-    public void setValue(final String value) {
-        __modifiedProperties.addPropertyName("value");
+    public void setValue(String value) {
+        registerModifiedProperty("value");
         _value = value;
     }
 
     /**
-     * [get] CLASS_TYPE: {NotNull, VARCHAR(255)} <br />
-     * @return The value of the column 'CLASS_TYPE'. (NullAllowed)
+     * [get] CLASS_TYPE: {NotNull, VARCHAR(255)} <br>
+     * @return The value of the column 'CLASS_TYPE'. (basically NotNull if selected: for the constraint)
      */
     public String getClassType() {
+        checkSpecifiedProperty("classType");
         return _classType;
     }
 
     /**
-     * [set] CLASS_TYPE: {NotNull, VARCHAR(255)} <br />
-     * @param classType The value of the column 'CLASS_TYPE'. (NullAllowed)
+     * [set] CLASS_TYPE: {NotNull, VARCHAR(255)} <br>
+     * @param classType The value of the column 'CLASS_TYPE'. (basically NotNull if update: for the constraint)
      */
-    public void setClassType(final String classType) {
-        __modifiedProperties.addPropertyName("classType");
+    public void setClassType(String classType) {
+        registerModifiedProperty("classType");
         _classType = classType;
     }
 
     /**
-     * [get] VERSION_NO: {NotNull, INTEGER(10)} <br />
-     * @return The value of the column 'VERSION_NO'. (NullAllowed)
+     * [get] VERSION_NO: {NotNull, INT(10)} <br>
+     * @return The value of the column 'VERSION_NO'. (basically NotNull if selected: for the constraint)
      */
     public Integer getVersionNo() {
+        checkSpecifiedProperty("versionNo");
         return _versionNo;
     }
 
     /**
-     * [set] VERSION_NO: {NotNull, INTEGER(10)} <br />
-     * @param versionNo The value of the column 'VERSION_NO'. (NullAllowed)
+     * [set] VERSION_NO: {NotNull, INT(10)} <br>
+     * @param versionNo The value of the column 'VERSION_NO'. (basically NotNull if update: for the constraint)
      */
-    public void setVersionNo(final Integer versionNo) {
-        __modifiedProperties.addPropertyName("versionNo");
+    public void setVersionNo(Integer versionNo) {
+        registerModifiedProperty("versionNo");
         _versionNo = versionNo;
     }
 }

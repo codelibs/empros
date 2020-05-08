@@ -46,7 +46,8 @@ public class DBMetaInstanceHandler implements DBMetaProvider {
     protected static final Map<String, String> _tableDbNameClassNameMap;
     static {
         final Map<String, String> tmpMap = newHashMap();
-        tmpMap.put("MEMBER", "org.codelibs.empros.db.bsentity.dbmeta.MemberDbm");
+        tmpMap.put("PERSISTENT_EVENT", "org.codelibs.empros.db.bsentity.dbmeta.PersistentEventDbm");
+        tmpMap.put("PERSISTENT_EVENT_VALUE", "org.codelibs.empros.db.bsentity.dbmeta.PersistentEventValueDbm");
         _tableDbNameClassNameMap = Collections.unmodifiableMap(tmpMap);
     }
 

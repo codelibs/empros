@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 the CodeLibs Project and the Others.
+ * Copyright 2012-2020 CodeLibs Project and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,17 +15,19 @@
  */
 package org.codelibs.empros.db.cbean.cq.ciq;
 
+import java.util.Map;
+
 import org.codelibs.empros.db.cbean.PersistentEventCB;
 import org.codelibs.empros.db.cbean.cq.PersistentEventCQ;
 import org.codelibs.empros.db.cbean.cq.PersistentEventValueCQ;
 import org.codelibs.empros.db.cbean.cq.bs.AbstractBsPersistentEventCQ;
 import org.codelibs.empros.db.cbean.cq.bs.BsPersistentEventCQ;
-import org.seasar.dbflute.cbean.ConditionQuery;
-import org.seasar.dbflute.cbean.ckey.ConditionKey;
-import org.seasar.dbflute.cbean.coption.ConditionOption;
-import org.seasar.dbflute.cbean.cvalue.ConditionValue;
-import org.seasar.dbflute.cbean.sqlclause.SqlClause;
-import org.seasar.dbflute.exception.IllegalConditionBeanOperationException;
+import org.dbflute.cbean.ConditionQuery;
+import org.dbflute.cbean.ckey.ConditionKey;
+import org.dbflute.cbean.coption.ConditionOption;
+import org.dbflute.cbean.cvalue.ConditionValue;
+import org.dbflute.cbean.sqlclause.SqlClause;
+import org.dbflute.exception.IllegalConditionBeanOperationException;
 
 /**
  * The condition-query for in-line of PERSISTENT_EVENT.
@@ -41,10 +43,9 @@ public class PersistentEventCIQ extends AbstractBsPersistentEventCQ {
     // ===================================================================================
     //                                                                         Constructor
     //                                                                         ===========
-    public PersistentEventCIQ(final ConditionQuery childQuery,
-            final SqlClause sqlClause, final String aliasName,
-            final int nestLevel, final BsPersistentEventCQ myCQ) {
-        super(childQuery, sqlClause, aliasName, nestLevel);
+    public PersistentEventCIQ(ConditionQuery referrerQuery, SqlClause sqlClause
+                        , String aliasName, int nestLevel, BsPersistentEventCQ myCQ) {
+        super(referrerQuery, sqlClause, aliasName, nestLevel);
         _myCQ = myCQ;
         _foreignPropertyName = _myCQ.xgetForeignPropertyName(); // accept foreign property name
         _relationPath = _myCQ.xgetRelationPath(); // accept relation path
@@ -54,162 +55,63 @@ public class PersistentEventCIQ extends AbstractBsPersistentEventCQ {
     // ===================================================================================
     //                                                             Override about Register
     //                                                             =======================
-    @Override
-    protected void reflectRelationOnUnionQuery(final ConditionQuery bq,
-            final ConditionQuery uq) {
-        final String msg = "InlineView must not need UNION method: " + bq
-                + " : " + uq;
-        throw new IllegalConditionBeanOperationException(msg);
-    }
+    protected void reflectRelationOnUnionQuery(ConditionQuery bq, ConditionQuery uq)
+    { throw new IllegalConditionBeanOperationException("InlineView cannot use Union: " + bq + " : " + uq); }
 
     @Override
-    protected void setupConditionValueAndRegisterWhereClause(
-            final ConditionKey k, final Object v, final ConditionValue cv,
-            final String col) {
-        regIQ(k, v, cv, col);
-    }
+    protected void setupConditionValueAndRegisterWhereClause(ConditionKey k, Object v, ConditionValue cv, String col)
+    { regIQ(k, v, cv, col); }
 
     @Override
-    protected void setupConditionValueAndRegisterWhereClause(
-            final ConditionKey k, final Object v, final ConditionValue cv,
-            final String col, final ConditionOption op) {
-        regIQ(k, v, cv, col, op);
-    }
+    protected void setupConditionValueAndRegisterWhereClause(ConditionKey k, Object v, ConditionValue cv, String col, ConditionOption op)
+    { regIQ(k, v, cv, col, op); }
 
     @Override
-    protected void registerWhereClause(final String wc) {
-        registerInlineWhereClause(wc);
-    }
+    protected void registerWhereClause(String wc)
+    { registerInlineWhereClause(wc); }
 
     @Override
     protected boolean isInScopeRelationSuppressLocalAliasName() {
-        if (_onClause) {
-            throw new IllegalConditionBeanOperationException(
-                    "InScopeRelation on OnClause is unsupported.");
-        }
+        if (_onClause) { throw new IllegalConditionBeanOperationException("InScopeRelation on OnClause is unsupported."); }
         return true;
     }
 
     // ===================================================================================
     //                                                                Override about Query
     //                                                                ====================
-    @Override
-    protected ConditionValue getCValueId() {
-        return _myCQ.getId();
-    }
+    protected ConditionValue xgetCValueId() { return _myCQ.xdfgetId(); }
+    public String keepId_ExistsReferrer_PersistentEventValueList(PersistentEventValueCQ sq)
+    { throwIICBOE("ExistsReferrer"); return null; }
+    public String keepId_NotExistsReferrer_PersistentEventValueList(PersistentEventValueCQ sq)
+    { throwIICBOE("NotExistsReferrer"); return null; }
+    public String keepId_SpecifyDerivedReferrer_PersistentEventValueList(PersistentEventValueCQ sq)
+    { throwIICBOE("(Specify)DerivedReferrer"); return null; }
+    public String keepId_QueryDerivedReferrer_PersistentEventValueList(PersistentEventValueCQ sq)
+    { throwIICBOE("(Query)DerivedReferrer"); return null; }
+    public String keepId_QueryDerivedReferrer_PersistentEventValueListParameter(Object vl)
+    { throwIICBOE("(Query)DerivedReferrer"); return null; }
+    protected ConditionValue xgetCValueCreatedBy() { return _myCQ.xdfgetCreatedBy(); }
+    protected ConditionValue xgetCValueCreatedTime() { return _myCQ.xdfgetCreatedTime(); }
+    protected ConditionValue xgetCValueVersionNo() { return _myCQ.xdfgetVersionNo(); }
+    protected Map<String, Object> xfindFixedConditionDynamicParameterMap(String pp) { return null; }
+    public String keepScalarCondition(PersistentEventCQ sq)
+    { throwIICBOE("ScalarCondition"); return null; }
+    public String keepSpecifyMyselfDerived(PersistentEventCQ sq)
+    { throwIICBOE("(Specify)MyselfDerived"); return null;}
+    public String keepQueryMyselfDerived(PersistentEventCQ sq)
+    { throwIICBOE("(Query)MyselfDerived"); return null;}
+    public String keepQueryMyselfDerivedParameter(Object vl)
+    { throwIICBOE("(Query)MyselfDerived"); return null;}
+    public String keepMyselfExists(PersistentEventCQ sq)
+    { throwIICBOE("MyselfExists"); return null;}
 
-    @Override
-    public String keepId_ExistsReferrer_PersistentEventValueList(
-            final PersistentEventValueCQ sq) {
-        throwIICBOE("ExistsReferrer");
-        return null;
-    }
-
-    @Override
-    public String keepId_NotExistsReferrer_PersistentEventValueList(
-            final PersistentEventValueCQ sq) {
-        throwIICBOE("NotExistsReferrer");
-        return null;
-    }
-
-    @Override
-    public String keepId_InScopeRelation_PersistentEventValueList(
-            final PersistentEventValueCQ sq) {
-        return _myCQ.keepId_InScopeRelation_PersistentEventValueList(sq);
-    }
-
-    @Override
-    public String keepId_NotInScopeRelation_PersistentEventValueList(
-            final PersistentEventValueCQ sq) {
-        return _myCQ.keepId_NotInScopeRelation_PersistentEventValueList(sq);
-    }
-
-    @Override
-    public String keepId_SpecifyDerivedReferrer_PersistentEventValueList(
-            final PersistentEventValueCQ sq) {
-        throwIICBOE("(Specify)DerivedReferrer");
-        return null;
-    }
-
-    @Override
-    public String keepId_QueryDerivedReferrer_PersistentEventValueList(
-            final PersistentEventValueCQ sq) {
-        throwIICBOE("(Query)DerivedReferrer");
-        return null;
-    }
-
-    @Override
-    public String keepId_QueryDerivedReferrer_PersistentEventValueListParameter(
-            final Object pv) {
-        throwIICBOE("(Query)DerivedReferrer");
-        return null;
-    }
-
-    @Override
-    protected ConditionValue getCValueCreatedBy() {
-        return _myCQ.getCreatedBy();
-    }
-
-    @Override
-    protected ConditionValue getCValueCreatedTime() {
-        return _myCQ.getCreatedTime();
-    }
-
-    @Override
-    protected ConditionValue getCValueVersionNo() {
-        return _myCQ.getVersionNo();
-    }
-
-    @Override
-    public String keepScalarCondition(final PersistentEventCQ subQuery) {
-        throwIICBOE("ScalarCondition");
-        return null;
-    }
-
-    @Override
-    public String keepSpecifyMyselfDerived(final PersistentEventCQ subQuery) {
-        throwIICBOE("(Specify)MyselfDerived");
-        return null;
-    }
-
-    @Override
-    public String keepQueryMyselfDerived(final PersistentEventCQ subQuery) {
-        throwIICBOE("(Query)MyselfDerived");
-        return null;
-    }
-
-    @Override
-    public String keepQueryMyselfDerivedParameter(final Object parameterValue) {
-        throwIICBOE("(Query)MyselfDerived");
-        return null;
-    }
-
-    @Override
-    public String keepMyselfExists(final PersistentEventCQ subQuery) {
-        throwIICBOE("MyselfExists");
-        return null;
-    }
-
-    @Override
-    public String keepMyselfInScope(final PersistentEventCQ subQuery) {
-        throwIICBOE("MyselfInScope");
-        return null;
-    }
-
-    protected void throwIICBOE(final String name) { // throwInlineIllegalConditionBeanOperationException()
-        throw new IllegalConditionBeanOperationException(name
-                + " at InlineView is unsupported.");
-    }
+    protected void throwIICBOE(String name)
+    { throw new IllegalConditionBeanOperationException(name + " at InlineView is unsupported."); }
 
     // ===================================================================================
     //                                                                       Very Internal
     //                                                                       =============
     // very internal (for suppressing warn about 'Not Use Import')
-    protected String xinCB() {
-        return PersistentEventCB.class.getName();
-    }
-
-    protected String xinCQ() {
-        return PersistentEventCQ.class.getName();
-    }
+    protected String xinCB() { return PersistentEventCB.class.getName(); }
+    protected String xinCQ() { return PersistentEventCQ.class.getName(); }
 }
