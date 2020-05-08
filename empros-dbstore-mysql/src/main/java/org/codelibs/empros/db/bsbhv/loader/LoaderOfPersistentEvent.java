@@ -20,7 +20,7 @@ import java.util.List;
 import org.codelibs.empros.db.exbhv.*;
 import org.codelibs.empros.db.exentity.*;
 import org.codelibs.empros.db.cbean.*;
-import org.dbflute.bhv.*;
+import org.dbflute.bhv.BehaviorSelector;
 import org.dbflute.bhv.referrer.*;
 
 /**

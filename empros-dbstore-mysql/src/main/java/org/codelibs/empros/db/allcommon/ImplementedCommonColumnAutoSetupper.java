@@ -15,11 +15,10 @@
  */
 package org.codelibs.empros.db.allcommon;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.dbflute.Entity;
 import org.dbflute.hook.CommonColumnAutoSetupper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The basic implementation of the auto set-upper of common column.

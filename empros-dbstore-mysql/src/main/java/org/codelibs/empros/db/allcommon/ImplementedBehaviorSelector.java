@@ -19,8 +19,6 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.dbflute.bhv.BehaviorReadable;
 import org.dbflute.bhv.BehaviorSelector;
 import org.dbflute.dbmeta.DBMeta;
@@ -28,7 +26,8 @@ import org.dbflute.exception.IllegalBehaviorStateException;
 import org.dbflute.util.DfTraceViewUtil;
 import org.dbflute.util.DfTypeUtil;
 import org.dbflute.util.Srl;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
 /**

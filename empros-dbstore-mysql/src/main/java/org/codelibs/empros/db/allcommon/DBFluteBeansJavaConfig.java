@@ -17,6 +17,8 @@ package org.codelibs.empros.db.allcommon;
 
 import javax.sql.DataSource;
 
+import org.dbflute.bhv.core.BehaviorCommandInvoker;
+import org.dbflute.bhv.core.InvokerAssistant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
@@ -24,8 +26,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
-import org.dbflute.bhv.core.BehaviorCommandInvoker;
-import org.dbflute.bhv.core.InvokerAssistant;
 
 /**
  * The Java configuration of DBFlute beans for Spring Framework. <br>

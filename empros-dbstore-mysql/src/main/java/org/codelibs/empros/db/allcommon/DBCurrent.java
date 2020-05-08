@@ -15,9 +15,9 @@
  */
 package org.codelibs.empros.db.allcommon;
 
+import org.dbflute.dbway.DBDef;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.dbflute.dbway.DBDef;
 
 /**
  * @author DBFlute(AutoGenerator)
