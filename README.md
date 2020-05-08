@@ -46,7 +46,7 @@ or
 
 ### Environment
 
-- Java 6
+- Java 11
 - Eclipse (m2e, m2e-wtp, Spring Tool Suite)
 - Maven 3
 
