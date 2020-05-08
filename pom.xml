@@ -193,11 +193,6 @@
 			<name>The Seasar Foundation Maven2 Repository</name>
 			<url>https://maven.seasar.org/maven2-snapshot/</url>
 		</repository>
-		<repository>
-			<id>orangesignal.sourceforge.jp</id>
-			<name>OrangeSignal Repository</name>
-			<url>https://orangesignal.sourceforge.jp/maven2/</url>
-		</repository>
 	</repositories>
 	<dependencies>
 		<!-- Spring -->
