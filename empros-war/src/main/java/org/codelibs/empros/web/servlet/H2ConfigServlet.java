@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 the CodeLibs Project and the Others.
+ * Copyright 2012-2020 CodeLibs Project and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,8 +23,8 @@ import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 
-import org.seasar.util.misc.Disposable;
-import org.seasar.util.misc.DisposableUtil;
+import org.codelibs.core.misc.Disposable;
+import org.codelibs.core.misc.DisposableUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -94,9 +94,7 @@ public class H2ConfigServlet extends HttpServlet {
 
     @Override
     public void destroy() {
-        DisposableUtil.add(new Disposable() {
-            @Override
-            public void dispose() {
+        DisposableUtil.add( () -> {
                 if (server != null) {
                     try {
                         final Method stopMethod = serverClass.getMethod("stop",
@@ -108,7 +106,7 @@ public class H2ConfigServlet extends HttpServlet {
                     }
                 }
             }
-        });
+        );
     }
 
     private Object getH2Server(final String[] args)

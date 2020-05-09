@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 the CodeLibs Project and the Others.
+ * Copyright 2012-2020 CodeLibs Project and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,7 +40,7 @@ public class PersistentEvent extends BsPersistentEvent {
     }
 
     public PersistentEvent(final Event event) {
-        parseObject(org.seasar.util.lang.StringUtil.EMPTY, event);
+        parseObject(org.codelibs.core.lang.StringUtil.EMPTY, event);
         setCreatedBy(event.getCreatedBy());
         setCreatedTime(new Timestamp(event.getCreatedTime().getTime()));
     }

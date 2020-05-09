@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 the CodeLibs Project and the Others.
+ * Copyright 2012-2020 CodeLibs Project and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,14 +28,14 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.regex.Pattern;
 
-import jp.sf.orangesignal.csv.CsvConfig;
-import jp.sf.orangesignal.csv.CsvWriter;
+import com.orangesignal.csv.CsvConfig;
+import com.orangesignal.csv.CsvWriter;
 
-import org.apache.commons.io.IOUtils;
+import org.codelibs.core.io.CloseableUtil;
+import org.codelibs.core.lang.StringUtil;
+import org.codelibs.core.message.MessageFormatter;
 import org.codelibs.empros.event.Event;
 import org.codelibs.empros.exception.EmprosDataStoreException;
-import org.seasar.util.lang.StringUtil;
-import org.seasar.util.message.MessageFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -99,7 +99,7 @@ public class CsvStore implements DataStore {
             }
 
             for (final Event event : eventList) {
-                final List<String> valueList = new ArrayList<String>(
+                final List<String> valueList = new ArrayList<>(
                         columnList.size());
                 for (final String key : columnList) {
                     final Object value = event.getObject(key);
@@ -198,7 +198,7 @@ public class CsvStore implements DataStore {
     }
 
     protected class CsvDataWriter extends Thread {
-        protected Queue<CsvData> queue = new ConcurrentLinkedQueue<CsvData>();
+        protected Queue<CsvData> queue = new ConcurrentLinkedQueue<>();
 
         protected CsvWriter csvWriter;
 
@@ -212,11 +212,10 @@ public class CsvStore implements DataStore {
 
         public void flush() {
             synchronized (CsvStore.this) {
-                CsvStore.this.notify();
+                CsvStore.this.notifyAll();
             }
         }
 
-        @Override
         public void destroy() {
             running = false;
             interrupt();
@@ -233,6 +232,7 @@ public class CsvStore implements DataStore {
                             try {
                                 CsvStore.this.wait(writerTimeout);
                             } catch (final InterruptedException e) {
+                                // do nothing
                             }
                         }
                         if (queue.isEmpty()) {
@@ -251,7 +251,7 @@ public class CsvStore implements DataStore {
                         }
                     } catch (final Exception e) {
                         logger.error(MessageFormatter.getSimpleMessage(
-                                "EEMC0004", new Object[] { csvData }), e);
+                                "EEMC0004", csvData ), e);
                     }
                 }
             }
@@ -300,7 +300,7 @@ public class CsvStore implements DataStore {
                 } catch (final IOException e) {
                     logger.warn("Failed to flush a csv writer.", e);
                 }
-                IOUtils.closeQuietly(csvWriter);
+                CloseableUtil.closeQuietly(csvWriter);
                 csvWriter = null;
             }
         }

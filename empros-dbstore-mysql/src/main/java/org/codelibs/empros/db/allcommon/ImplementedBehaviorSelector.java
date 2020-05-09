@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 the CodeLibs Project and the Others.
+ * Copyright 2012-2020 CodeLibs Project and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,18 @@
 package org.codelibs.empros.db.allcommon;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.seasar.dbflute.BehaviorSelector;
-import org.seasar.dbflute.bhv.BehaviorReadable;
-import org.seasar.dbflute.dbmeta.DBMeta;
-import org.seasar.dbflute.util.DfTraceViewUtil;
-import org.seasar.dbflute.util.DfTypeUtil;
+import org.dbflute.bhv.BehaviorReadable;
+import org.dbflute.bhv.BehaviorSelector;
+import org.dbflute.dbmeta.DBMeta;
+import org.dbflute.exception.IllegalBehaviorStateException;
+import org.dbflute.util.DfTraceViewUtil;
+import org.dbflute.util.DfTypeUtil;
+import org.dbflute.util.Srl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -37,15 +39,14 @@ public class ImplementedBehaviorSelector implements BehaviorSelector {
     // ===================================================================================
     //                                                                          Definition
     //                                                                          ==========
-    /** Log instance. */
-    private static final Log _log = LogFactory
-            .getLog(ImplementedBehaviorSelector.class);
+    /** The logger instance for this class. (NotNull) */
+    private static final Logger _log = LoggerFactory.getLogger(ImplementedBehaviorSelector.class);
 
     // ===================================================================================
     //                                                                           Attribute
     //                                                                           =========
-    /** The cache of behavior. */
-    protected final Map<Class<? extends BehaviorReadable>, BehaviorReadable> _behaviorCache = newHashMap();
+    /** The concurrent cache of behavior. */
+    protected final Map<Class<? extends BehaviorReadable>, BehaviorReadable> _behaviorCache = newConcurrentHashMap();
 
     /** The container of Spring. */
     protected ApplicationContext _container;
@@ -54,28 +55,31 @@ public class ImplementedBehaviorSelector implements BehaviorSelector {
     //                                                                          Initialize
     //                                                                          ==========
     /**
-     * Initialize condition-bean meta data. <br />
+     * Initialize condition-bean meta data.
      */
-    @Override
     public void initializeConditionBeanMetaData() {
-        final Map<String, DBMeta> dbmetaMap = DBMetaInstanceHandler
-                .getUnmodifiableDBMetaMap();
+        final Map<String, DBMeta> dbmetaMap = DBMetaInstanceHandler.getUnmodifiableDBMetaMap();
         final Collection<DBMeta> dbmetas = dbmetaMap.values();
         long before = 0;
         if (_log.isInfoEnabled()) {
             before = System.currentTimeMillis();
-            _log.info("/= = = = = = = = = = = = = = = = = initializeConditionBeanMetaData()");
+            _log.info("...Initializing condition-bean meta data");
         }
-        for (final DBMeta dbmeta : dbmetas) {
-            final BehaviorReadable bhv = byName(dbmeta.getTableDbName());
-            bhv.warmUpCommand();
+        int count = 0;
+        for (DBMeta dbmeta : dbmetas) {
+            try {
+                final BehaviorReadable bhv = byName(dbmeta.getTableDbName());
+                bhv.warmUpCommand();
+                ++count;
+            } catch (IllegalBehaviorStateException ignored) { // means the behavior is suppressed
+                if (_log.isDebugEnabled()) {
+                    _log.debug("No behavior for " + dbmeta.getTableDbName());
+                }
+            }
         }
         if (_log.isInfoEnabled()) {
-            final long after = System.currentTimeMillis();
-            _log.info("Initialized Count: " + dbmetas.size());
-            _log.info("= = = = = = = = = =/ ["
-                    + DfTraceViewUtil.convertToPerformanceView(after - before)
-                    + "]");
+            long after = System.currentTimeMillis();
+            _log.info("CB initialized: " + count + " [" + DfTraceViewUtil.convertToPerformanceView(after - before) + "]");
         }
     }
 
@@ -83,15 +87,13 @@ public class ImplementedBehaviorSelector implements BehaviorSelector {
     //                                                                            Selector
     //                                                                            ========
     /**
-     * Select behavior.
+     * Select behavior instance by the type.
      * @param <BEHAVIOR> The type of behavior.
      * @param behaviorType Behavior type. (NotNull)
-     * @return Behavior. (NotNull)
+     * @return The selected instance of the behavior. (NotNull)
      */
-    @Override
     @SuppressWarnings("unchecked")
-    public <BEHAVIOR extends BehaviorReadable> BEHAVIOR select(
-            final Class<BEHAVIOR> behaviorType) {
+    public <BEHAVIOR extends BehaviorReadable> BEHAVIOR select(Class<BEHAVIOR> behaviorType) {
         BEHAVIOR bhv = (BEHAVIOR) _behaviorCache.get(behaviorType);
         if (bhv != null) {
             return bhv;
@@ -103,46 +105,43 @@ public class ImplementedBehaviorSelector implements BehaviorSelector {
                 // or reading might failed by same-time writing
                 return bhv;
             }
-            bhv = getComponent(behaviorType);
+            bhv = (BEHAVIOR) getComponent(behaviorType);
             _behaviorCache.put(behaviorType, bhv);
             return bhv;
         }
     }
 
     /**
-     * Select behavior-readable by name.
-     * @param tableFlexibleName Table flexible-name. (NotNull)
-     * @return Behavior-readable. (NotNull)
+     * Select behavior (as readable type) by name.
+     * @param tableFlexibleName The flexible-name of table. (NotNull)
+     * @return The instance of found behavior. (NotNull)
+     * @throws org.dbflute.exception.DBMetaNotFoundException When the table is not found.
+     * @throws org.dbflute.exception.IllegalBehaviorStateException When the behavior class is suppressed.
      */
-    @Override
-    public BehaviorReadable byName(final String tableFlexibleName) {
-        assertStringNotNullAndNotTrimmedEmpty("tableFlexibleName",
-                tableFlexibleName);
-        final DBMeta dbmeta = DBMetaInstanceHandler
-                .findDBMeta(tableFlexibleName);
+    public BehaviorReadable byName(String tableFlexibleName) {
+        assertStringNotNullAndNotTrimmedEmpty("tableFlexibleName", tableFlexibleName);
+        final DBMeta dbmeta = DBMetaInstanceHandler.findDBMeta(tableFlexibleName);
         return select(getBehaviorType(dbmeta));
     }
 
     /**
      * Get behavior-type by DB meta.
-     * @param dbmeta DB meta. (NotNull)
-     * @return Behavior-type. (NotNull)
+     * @param dbmeta The instance of DB meta for the behavior. (NotNull)
+     * @return The type of behavior (as readable type). (NotNull)
+     * @throws org.dbflute.exception.IllegalBehaviorStateException When the behavior class is suppressed.
      */
     @SuppressWarnings("unchecked")
-    protected Class<BehaviorReadable> getBehaviorType(final DBMeta dbmeta) {
+    protected Class<BehaviorReadable> getBehaviorType(DBMeta dbmeta) {
         final String behaviorTypeName = dbmeta.getBehaviorTypeName();
         if (behaviorTypeName == null) {
-            final String msg = "The dbmeta.getBehaviorTypeName() should not return null: dbmeta="
-                    + dbmeta;
+            String msg = "The dbmeta.getBehaviorTypeName() should not return null: dbmeta=" + dbmeta;
             throw new IllegalStateException(msg);
         }
         final Class<BehaviorReadable> behaviorType;
         try {
-            behaviorType = (Class<BehaviorReadable>) Class
-                    .forName(behaviorTypeName);
-        } catch (final ClassNotFoundException e) {
-            throw new RuntimeException("The class does not exist: "
-                    + behaviorTypeName, e);
+            behaviorType = (Class<BehaviorReadable>) Class.forName(behaviorTypeName);
+        } catch (ClassNotFoundException e) {
+            throw new IllegalBehaviorStateException("The class does not exist: " + behaviorTypeName, e);
         }
         return behaviorType;
     }
@@ -150,28 +149,29 @@ public class ImplementedBehaviorSelector implements BehaviorSelector {
     // ===================================================================================
     //                                                                           Component
     //                                                                           =========
-    @SuppressWarnings("unchecked")
-    protected <COMPONENT> COMPONENT getComponent(
-            final Class<COMPONENT> componentType) { // only for behavior
+    protected <COMPONENT> COMPONENT getComponent(Class<COMPONENT> componentType) { // only for behavior
         assertObjectNotNull("componentType", componentType);
         assertObjectNotNull("_container", _container);
-        return (COMPONENT) _container
-                .getBean(initUncap(toClassTitle(componentType)));
+        return _container.getBean(componentType);
     }
 
     // ===================================================================================
     //                                                                      General Helper
     //                                                                      ==============
-    protected String initUncap(final String str) {
+    protected String replace(String str, String fromStr, String toStr) {
+        return Srl.replace(str, fromStr, toStr);
+    }
+
+    protected String initUncap(String str) {
         return str.substring(0, 1).toLowerCase() + str.substring(1);
     }
 
-    protected String toClassTitle(final Object obj) {
+    protected String toClassTitle(Object obj) {
         return DfTypeUtil.toClassTitle(obj);
     }
 
-    protected <KEY, VALUE> HashMap<KEY, VALUE> newHashMap() {
-        return new HashMap<KEY, VALUE>();
+    protected <KEY, VALUE> ConcurrentHashMap<KEY, VALUE> newConcurrentHashMap() {
+        return new ConcurrentHashMap<KEY, VALUE>();
     }
 
     // ===================================================================================
@@ -182,20 +182,17 @@ public class ImplementedBehaviorSelector implements BehaviorSelector {
     //                                         -------------
     /**
      * Assert that the object is not null.
-     * @param variableName Variable name. (NotNull)
-     * @param value Value. (NotNull)
-     * @exception IllegalArgumentException
+     * @param variableName The variable name for message. (NotNull)
+     * @param value The value the checked variable. (NotNull)
+     * @throws IllegalArgumentException When the variable name or the variable is null.
      */
-    protected void assertObjectNotNull(final String variableName,
-            final Object value) {
+    protected void assertObjectNotNull(String variableName, Object value) {
         if (variableName == null) {
-            final String msg = "The value should not be null: variableName=null value="
-                    + value;
+            String msg = "The value should not be null: variableName=null value=" + value;
             throw new IllegalArgumentException(msg);
         }
         if (value == null) {
-            final String msg = "The value should not be null: variableName="
-                    + variableName;
+            String msg = "The value should not be null: variableName=" + variableName;
             throw new IllegalArgumentException(msg);
         }
     }
@@ -205,16 +202,15 @@ public class ImplementedBehaviorSelector implements BehaviorSelector {
     //                                         -------------
     /**
      * Assert that the entity is not null and not trimmed empty.
-     * @param variableName Variable name. (NotNull)
-     * @param value Value. (NotNull)
+     * @param variableName The variable name for message. (NotNull)
+     * @param value The value the checked variable. (NotNull)
+     * @throws IllegalArgumentException When the argument is null or empty.
      */
-    protected void assertStringNotNullAndNotTrimmedEmpty(
-            final String variableName, final String value) {
+    protected void assertStringNotNullAndNotTrimmedEmpty(String variableName, String value) {
         assertObjectNotNull("variableName", variableName);
         assertObjectNotNull("value", value);
         if (value.trim().length() == 0) {
-            final String msg = "The value should not be empty: variableName="
-                    + variableName + " value=" + value;
+            String msg = "The value should not be empty: variableName=" + variableName + " value=" + value;
             throw new IllegalArgumentException(msg);
         }
     }
@@ -222,7 +218,7 @@ public class ImplementedBehaviorSelector implements BehaviorSelector {
     // ===================================================================================
     //                                                                            Accessor
     //                                                                            ========
-    public void setContainer(final ApplicationContext container) {
-        _container = container;
+    public void setContainer(ApplicationContext container) {
+        this._container = container;
     }
 }

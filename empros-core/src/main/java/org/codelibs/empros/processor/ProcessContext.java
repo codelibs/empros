@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 the CodeLibs Project and the Others.
+ * Copyright 2012-2020 CodeLibs Project and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,9 +41,9 @@ public class ProcessContext implements Cloneable {
 
     private Object response;
 
-    private Set<EventProcessor> processorSet = new HashSet<EventProcessor>();
+    private Set<EventProcessor> processorSet = new HashSet<>();
 
-    private Queue<Throwable> failureQueue = new ConcurrentLinkedQueue<Throwable>();
+    private Queue<Throwable> failureQueue = new ConcurrentLinkedQueue<>();
 
     private ProcessListener listener;
 
@@ -140,7 +140,7 @@ public class ProcessContext implements Cloneable {
             // replace with the following values.
             context.processed = new AtomicLong(0);
             if (processingEventList != null) {
-                context.processingEventList = new ArrayList<Event>(
+                context.processingEventList = new ArrayList<>(
                         processingEventList.size());
                 Collections.copy(context.processingEventList,
                         processingEventList);

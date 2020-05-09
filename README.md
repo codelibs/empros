@@ -1,4 +1,4 @@
-Empros
+Empros[![Build Status](https://travis-ci.org/codelibs/empros.svg?branch=master)](https://travis-ci.org/codelibs/empros)
 ======
 
 ## Overview
@@ -46,7 +46,7 @@ or
 
 ### Environment
 
-- Java 6
+- Java 11
 - Eclipse (m2e, m2e-wtp, Spring Tool Suite)
 - Maven 3
 

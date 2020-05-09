@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 the CodeLibs Project and the Others.
+ * Copyright 2012-2020 CodeLibs Project and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,53 +15,42 @@
  */
 package org.codelibs.empros.db.allcommon;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.seasar.dbflute.Entity;
-import org.seasar.dbflute.bhv.core.CommonColumnAutoSetupper;
+import org.dbflute.Entity;
+import org.dbflute.hook.CommonColumnAutoSetupper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The basic implementation of the auto set-upper of common column.
  * @author DBFlute(AutoGenerator)
  */
-public class ImplementedCommonColumnAutoSetupper implements
-        CommonColumnAutoSetupper {
+public class ImplementedCommonColumnAutoSetupper implements CommonColumnAutoSetupper {
 
     // =====================================================================================
     //                                                                            Definition
     //                                                                            ==========
-    /** Log instance. */
-    private static final Log _log = LogFactory
-            .getLog(ImplementedCommonColumnAutoSetupper.class);
+    /** The logger instance for this class. (NotNull) */
+    private static final Logger _log = LoggerFactory.getLogger(ImplementedCommonColumnAutoSetupper.class);
 
     // =====================================================================================
     //                                                                                Set up
     //                                                                                ======
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void handleCommonColumnOfInsertIfNeeds(final Entity targetEntity) {
+    /** {@inheritDoc} */
+    public void handleCommonColumnOfInsertIfNeeds(Entity targetEntity) {
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void handleCommonColumnOfUpdateIfNeeds(final Entity targetEntity) {
+    /** {@inheritDoc} */
+    public void handleCommonColumnOfUpdateIfNeeds(Entity targetEntity) {
     }
 
     // =====================================================================================
     //                                                                               Logging
     //                                                                               =======
     protected boolean isInternalDebugEnabled() {
-        return DBFluteConfig.getInstance().isInternalDebug()
-                && _log.isDebugEnabled();
+        return DBFluteConfig.getInstance().isInternalDebug() && _log.isDebugEnabled();
     }
 
-    protected void logSettingUp(final EntityDefinedCommonColumn entity,
-            final String keyword) {
-        _log.debug("...Setting up column columns of " + entity.getTableDbName()
-                + " before " + keyword);
+    protected void logSettingUp(EntityDefinedCommonColumn entity, String keyword) {
+        _log.debug("...Setting up column columns of " + entity.asTableDbName() + " before " + keyword);
     }
 }

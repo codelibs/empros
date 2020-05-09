@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 the CodeLibs Project and the Others.
+ * Copyright 2012-2020 CodeLibs Project and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ public class LoggingProcessor implements EventProcessor {
         if (logger.isInfoEnabled()) {
             final List<Event> eventList = ProcessorUtil
                     .getCurrentEventList(context);
-            logger.info("incoming event: {}", eventList.toString());
+            logger.info("incoming event: {}", eventList);
             context.addNumOfProcessedEvents(eventList.size());
         }
 

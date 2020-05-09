@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 the CodeLibs Project and the Others.
+ * Copyright 2012-2020 CodeLibs Project and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,17 +18,14 @@ package org.codelibs.empros.db.bsentity.dbmeta;
 import java.util.List;
 import java.util.Map;
 
-import org.codelibs.empros.db.allcommon.DBCurrent;
-import org.codelibs.empros.db.allcommon.DBFluteConfig;
-import org.codelibs.empros.db.exentity.PersistentEvent;
-import org.seasar.dbflute.DBDef;
-import org.seasar.dbflute.Entity;
-import org.seasar.dbflute.dbmeta.AbstractDBMeta;
-import org.seasar.dbflute.dbmeta.PropertyGateway;
-import org.seasar.dbflute.dbmeta.info.ColumnInfo;
-import org.seasar.dbflute.dbmeta.info.ReferrerInfo;
-import org.seasar.dbflute.dbmeta.info.UniqueInfo;
-import org.seasar.dbflute.dbmeta.name.TableSqlName;
+import org.codelibs.empros.db.allcommon.*;
+import org.codelibs.empros.db.exentity.*;
+import org.dbflute.Entity;
+import org.dbflute.dbmeta.AbstractDBMeta;
+import org.dbflute.dbmeta.info.*;
+import org.dbflute.dbmeta.name.*;
+import org.dbflute.dbmeta.property.PropertyGateway;
+import org.dbflute.dbway.DBDef;
 
 /**
  * The DB meta of PERSISTENT_EVENT. (Singleton)
@@ -40,167 +37,78 @@ public class PersistentEventDbm extends AbstractDBMeta {
     //                                                                           Singleton
     //                                                                           =========
     private static final PersistentEventDbm _instance = new PersistentEventDbm();
-
-    private PersistentEventDbm() {
-    }
-
-    public static PersistentEventDbm getInstance() {
-        return _instance;
-    }
+    private PersistentEventDbm() {}
+    public static PersistentEventDbm getInstance() { return _instance; }
 
     // ===================================================================================
     //                                                                       Current DBDef
     //                                                                       =============
-    @Override
-    public DBDef getCurrentDBDef() {
-        return DBCurrent.getInstance().currentDBDef();
-    }
+    public String getProjectName() { return DBCurrent.getInstance().projectName(); }
+    public String getProjectPrefix() { return DBCurrent.getInstance().projectPrefix(); }
+    public String getGenerationGapBasePrefix() { return DBCurrent.getInstance().generationGapBasePrefix(); }
+    public DBDef getCurrentDBDef() { return DBCurrent.getInstance().currentDBDef(); }
 
     // ===================================================================================
     //                                                                    Property Gateway
     //                                                                    ================
+    // -----------------------------------------------------
+    //                                       Column Property
+    //                                       ---------------
     protected final Map<String, PropertyGateway> _epgMap = newHashMap();
-    {
-        setupEpg(_epgMap, new EpgId(), "id");
-        setupEpg(_epgMap, new EpgCreatedBy(), "createdBy");
-        setupEpg(_epgMap, new EpgCreatedTime(), "createdTime");
-        setupEpg(_epgMap, new EpgVersionNo(), "versionNo");
+    { xsetupEpg(); }
+    protected void xsetupEpg() {
+        setupEpg(_epgMap, et -> ((PersistentEvent)et).getId(), (et, vl) -> ((PersistentEvent)et).setId(ctl(vl)), "id");
+        setupEpg(_epgMap, et -> ((PersistentEvent)et).getCreatedBy(), (et, vl) -> ((PersistentEvent)et).setCreatedBy((String)vl), "createdBy");
+        setupEpg(_epgMap, et -> ((PersistentEvent)et).getCreatedTime(), (et, vl) -> ((PersistentEvent)et).setCreatedTime(ctldt(vl)), "createdTime");
+        setupEpg(_epgMap, et -> ((PersistentEvent)et).getVersionNo(), (et, vl) -> ((PersistentEvent)et).setVersionNo(cti(vl)), "versionNo");
     }
-
-    @Override
-    public PropertyGateway findPropertyGateway(final String propertyName) {
-        return doFindEpg(_epgMap, propertyName);
-    }
-
-    public static class EpgId implements PropertyGateway {
-        @Override
-        public Object read(final Entity e) {
-            return ((PersistentEvent) e).getId();
-        }
-
-        @Override
-        public void write(final Entity e, final Object v) {
-            ((PersistentEvent) e).setId(ctl(v));
-        }
-    }
-
-    public static class EpgCreatedBy implements PropertyGateway {
-        @Override
-        public Object read(final Entity e) {
-            return ((PersistentEvent) e).getCreatedBy();
-        }
-
-        @Override
-        public void write(final Entity e, final Object v) {
-            ((PersistentEvent) e).setCreatedBy((String) v);
-        }
-    }
-
-    public static class EpgCreatedTime implements PropertyGateway {
-        @Override
-        public Object read(final Entity e) {
-            return ((PersistentEvent) e).getCreatedTime();
-        }
-
-        @Override
-        public void write(final Entity e, final Object v) {
-            ((PersistentEvent) e).setCreatedTime((java.sql.Timestamp) v);
-        }
-    }
-
-    public static class EpgVersionNo implements PropertyGateway {
-        @Override
-        public Object read(final Entity e) {
-            return ((PersistentEvent) e).getVersionNo();
-        }
-
-        @Override
-        public void write(final Entity e, final Object v) {
-            ((PersistentEvent) e).setVersionNo(cti(v));
-        }
-    }
+    public PropertyGateway findPropertyGateway(String prop)
+    { return doFindEpg(_epgMap, prop); }
 
     // ===================================================================================
     //                                                                          Table Info
     //                                                                          ==========
     protected final String _tableDbName = "PERSISTENT_EVENT";
-
+    protected final String _tableDispName = "PERSISTENT_EVENT";
     protected final String _tablePropertyName = "persistentEvent";
-
-    protected final TableSqlName _tableSqlName = new TableSqlName(
-            "PERSISTENT_EVENT", _tableDbName);
-    {
-        _tableSqlName.xacceptFilter(DBFluteConfig.getInstance()
-                .getTableSqlNameFilter());
-    }
-
-    @Override
-    public String getTableDbName() {
-        return _tableDbName;
-    }
-
-    @Override
-    public String getTablePropertyName() {
-        return _tablePropertyName;
-    }
-
-    @Override
-    public TableSqlName getTableSqlName() {
-        return _tableSqlName;
-    }
+    protected final TableSqlName _tableSqlName = new TableSqlName("PERSISTENT_EVENT", _tableDbName);
+    { _tableSqlName.xacceptFilter(DBFluteConfig.getInstance().getTableSqlNameFilter()); }
+    public String getTableDbName() { return _tableDbName; }
+    public String getTableDispName() { return _tableDispName; }
+    public String getTablePropertyName() { return _tablePropertyName; }
+    public TableSqlName getTableSqlName() { return _tableSqlName; }
 
     // ===================================================================================
     //                                                                         Column Info
     //                                                                         ===========
-    protected final ColumnInfo _columnId = cci(
-            "ID",
-            "ID",
-            null,
-            null,
-            true,
-            "id",
-            Long.class,
-            true,
-            true,
-            "BIGINT",
-            19,
-            0,
-            "NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_3C8DB779_F6C3_4430_BB41_7E25DEEB7F43",
-            false, null, null, null, "persistentEventValueList", null);
+    protected final ColumnInfo _columnId = cci("ID", "ID", null, null, Long.class, "id", null, true, true, true, "BIGINT", 19, 0, null, null, false, null, null, null, "persistentEventValueList", null, false);
+    protected final ColumnInfo _columnCreatedBy = cci("CREATED_BY", "CREATED_BY", null, null, String.class, "createdBy", null, false, false, true, "VARCHAR", 255, 0, null, null, false, null, null, null, null, null, false);
+    protected final ColumnInfo _columnCreatedTime = cci("CREATED_TIME", "CREATED_TIME", null, null, java.time.LocalDateTime.class, "createdTime", null, false, false, true, "DATETIME", 19, 0, null, null, false, null, null, null, null, null, false);
+    protected final ColumnInfo _columnVersionNo = cci("VERSION_NO", "VERSION_NO", null, null, Integer.class, "versionNo", null, false, false, true, "INT", 10, 0, null, null, false, OptimisticLockType.VERSION_NO, null, null, null, null, false);
 
-    protected final ColumnInfo _columnCreatedBy = cci("CREATED_BY",
-            "CREATED_BY", null, null, true, "createdBy", String.class, false,
-            false, "VARCHAR", 255, 0, null, false, null, null, null, null, null);
+    /**
+     * ID: {PK, ID, NotNull, BIGINT(19)}
+     * @return The information object of specified column. (NotNull)
+     */
+    public ColumnInfo columnId() { return _columnId; }
+    /**
+     * CREATED_BY: {NotNull, VARCHAR(255)}
+     * @return The information object of specified column. (NotNull)
+     */
+    public ColumnInfo columnCreatedBy() { return _columnCreatedBy; }
+    /**
+     * CREATED_TIME: {NotNull, DATETIME(19)}
+     * @return The information object of specified column. (NotNull)
+     */
+    public ColumnInfo columnCreatedTime() { return _columnCreatedTime; }
+    /**
+     * VERSION_NO: {NotNull, INT(10)}
+     * @return The information object of specified column. (NotNull)
+     */
+    public ColumnInfo columnVersionNo() { return _columnVersionNo; }
 
-    protected final ColumnInfo _columnCreatedTime = cci("CREATED_TIME",
-            "CREATED_TIME", null, null, true, "createdTime",
-            java.sql.Timestamp.class, false, false, "TIMESTAMP", 23, 10, null,
-            false, null, null, null, null, null);
-
-    protected final ColumnInfo _columnVersionNo = cci("VERSION_NO",
-            "VERSION_NO", null, null, true, "versionNo", Integer.class, false,
-            false, "INTEGER", 10, 0, null, false,
-            OptimisticLockType.VERSION_NO, null, null, null, null);
-
-    public ColumnInfo columnId() {
-        return _columnId;
-    }
-
-    public ColumnInfo columnCreatedBy() {
-        return _columnCreatedBy;
-    }
-
-    public ColumnInfo columnCreatedTime() {
-        return _columnCreatedTime;
-    }
-
-    public ColumnInfo columnVersionNo() {
-        return _columnVersionNo;
-    }
-
-    @Override
     protected List<ColumnInfo> ccil() {
-        final List<ColumnInfo> ls = newArrayList();
+        List<ColumnInfo> ls = newArrayList();
         ls.add(columnId());
         ls.add(columnCreatedBy());
         ls.add(columnCreatedTime());
@@ -208,9 +116,7 @@ public class PersistentEventDbm extends AbstractDBMeta {
         return ls;
     }
 
-    {
-        initializeInformationResource();
-    }
+    { initializeInformationResource(); }
 
     // ===================================================================================
     //                                                                         Unique Info
@@ -218,24 +124,15 @@ public class PersistentEventDbm extends AbstractDBMeta {
     // -----------------------------------------------------
     //                                       Primary Element
     //                                       ---------------
-    @Override
-    public UniqueInfo getPrimaryUniqueInfo() {
-        return cpui(columnId());
-    }
-
-    @Override
-    public boolean hasPrimaryKey() {
-        return true;
-    }
-
-    @Override
-    public boolean hasCompoundPrimaryKey() {
-        return false;
-    }
+    protected UniqueInfo cpui() { return hpcpui(columnId()); }
+    public boolean hasPrimaryKey() { return true; }
+    public boolean hasCompoundPrimaryKey() { return false; }
 
     // ===================================================================================
     //                                                                       Relation Info
     //                                                                       =============
+    // cannot cache because it uses related DB meta instance while booting
+    // (instead, cached by super's collection)
     // -----------------------------------------------------
     //                                      Foreign Property
     //                                      ----------------
@@ -243,97 +140,46 @@ public class PersistentEventDbm extends AbstractDBMeta {
     // -----------------------------------------------------
     //                                     Referrer Property
     //                                     -----------------
+    /**
+     * PERSISTENT_EVENT_VALUE by EVENT_ID, named 'persistentEventValueList'.
+     * @return The information object of referrer property. (NotNull)
+     */
     public ReferrerInfo referrerPersistentEventValueList() {
-        final Map<ColumnInfo, ColumnInfo> map = newLinkedHashMap(columnId(),
-                PersistentEventValueDbm.getInstance().columnEventId());
-        return cri("CONSTRAINT_81", "persistentEventValueList", this,
-                PersistentEventValueDbm.getInstance(), map, false,
-                "persistentEvent");
+        Map<ColumnInfo, ColumnInfo> mp = newLinkedHashMap(columnId(), PersistentEventValueDbm.getInstance().columnEventId());
+        return cri("FK_PERSISTENT_EVENT_VALUE_PERSISTENT_EVENT", "persistentEventValueList", this, PersistentEventValueDbm.getInstance(), mp, false, "persistentEvent");
     }
 
     // ===================================================================================
     //                                                                        Various Info
     //                                                                        ============
-    @Override
-    public boolean hasIdentity() {
-        return true;
-    }
-
-    @Override
-    public boolean hasVersionNo() {
-        return true;
-    }
-
-    @Override
-    public ColumnInfo getVersionNoColumnInfo() {
-        return _columnVersionNo;
-    }
+    public boolean hasIdentity() { return true; }
+    public boolean hasVersionNo() { return true; }
+    public ColumnInfo getVersionNoColumnInfo() { return _columnVersionNo; }
 
     // ===================================================================================
     //                                                                           Type Name
     //                                                                           =========
-    @Override
-    public String getEntityTypeName() {
-        return "org.codelibs.empros.db.exentity.PersistentEvent";
-    }
-
-    @Override
-    public String getConditionBeanTypeName() {
-        return "org.codelibs.empros.db.cbean.PersistentEventCB";
-    }
-
-    @Override
-    public String getDaoTypeName() {
-        return "${glPackageExtendedDao}.PersistentEventDao";
-    }
-
-    @Override
-    public String getBehaviorTypeName() {
-        return "org.codelibs.empros.db.exbhv.PersistentEventBhv";
-    }
+    public String getEntityTypeName() { return "org.codelibs.empros.db.exentity.PersistentEvent"; }
+    public String getConditionBeanTypeName() { return "org.codelibs.empros.db.cbean.PersistentEventCB"; }
+    public String getBehaviorTypeName() { return "org.codelibs.empros.db.exbhv.PersistentEventBhv"; }
 
     // ===================================================================================
     //                                                                         Object Type
     //                                                                         ===========
-    @Override
-    public Class<PersistentEvent> getEntityType() {
-        return PersistentEvent.class;
-    }
+    public Class<PersistentEvent> getEntityType() { return PersistentEvent.class; }
 
     // ===================================================================================
     //                                                                     Object Instance
     //                                                                     ===============
-    @Override
-    public Entity newEntity() {
-        return newMyEntity();
-    }
-
-    public PersistentEvent newMyEntity() {
-        return new PersistentEvent();
-    }
+    public PersistentEvent newEntity() { return new PersistentEvent(); }
 
     // ===================================================================================
     //                                                                   Map Communication
     //                                                                   =================
-    @Override
-    public void acceptPrimaryKeyMap(final Entity e,
-            final Map<String, ? extends Object> m) {
-        doAcceptPrimaryKeyMap((PersistentEvent) e, m);
-    }
-
-    @Override
-    public void acceptAllColumnMap(final Entity e,
-            final Map<String, ? extends Object> m) {
-        doAcceptAllColumnMap((PersistentEvent) e, m);
-    }
-
-    @Override
-    public Map<String, Object> extractPrimaryKeyMap(final Entity e) {
-        return doExtractPrimaryKeyMap(e);
-    }
-
-    @Override
-    public Map<String, Object> extractAllColumnMap(final Entity e) {
-        return doExtractAllColumnMap(e);
-    }
+    public void acceptPrimaryKeyMap(Entity et, Map<String, ? extends Object> mp)
+    { doAcceptPrimaryKeyMap((PersistentEvent)et, mp); }
+    public void acceptAllColumnMap(Entity et, Map<String, ? extends Object> mp)
+    { doAcceptAllColumnMap((PersistentEvent)et, mp); }
+    public Map<String, Object> extractPrimaryKeyMap(Entity et) { return doExtractPrimaryKeyMap(et); }
+    public Map<String, Object> extractAllColumnMap(Entity et) { return doExtractAllColumnMap(et); }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 the CodeLibs Project and the Others.
+ * Copyright 2012-2020 CodeLibs Project and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,16 +17,16 @@ package org.codelibs.empros.processor;
 
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
-import org.codelibs.core.CoreLibConstants;
+import org.codelibs.core.io.InputStreamUtil;
+import org.codelibs.core.lang.ClassUtil;
+import org.codelibs.core.net.URLUtil;
 import org.codelibs.empros.exception.EmprosAutoRegisterException;
 import org.codelibs.empros.factory.ProcessorFactory;
-import org.seasar.util.io.InputStreamUtil;
-import org.seasar.util.lang.ClassUtil;
-import org.seasar.util.net.URLUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +43,7 @@ public class AutoRegisterProcessor extends ParallelProcessor {
     private static final Logger logger = LoggerFactory
             .getLogger(AutoRegisterProcessor.class);
 
-    protected List<ProcessorFactory> processorFactoryList = new ArrayList<ProcessorFactory>();
+    protected List<ProcessorFactory> processorFactoryList = new ArrayList<>();
 
     public AutoRegisterProcessor(final int threadPoolSize) {
         super(new ArrayList<EventProcessor>(), threadPoolSize);
@@ -62,16 +62,16 @@ public class AutoRegisterProcessor extends ParallelProcessor {
             try {
                 final String content = new String(
                         InputStreamUtil.getBytes(URLUtil.openStream(url)),
-                        CoreLibConstants.UTF_8);
+                        StandardCharsets.UTF_8);
                 for (final String value : content.split("\n")) {
-                    if (org.seasar.util.lang.StringUtil.isNotBlank(value)) {
+                    if (org.codelibs.core.lang.StringUtil.isNotBlank(value)) {
                         final String factoryClassName = value.trim();
                         if (factoryClassName.charAt(0) == '#') {
                             continue;
                         }
                         final Class<ProcessorFactory> factoryClass = ClassUtil
                                 .forName(factoryClassName);
-                        final ProcessorFactory processorFactory = factoryClass
+                        final ProcessorFactory processorFactory = factoryClass.getDeclaredConstructor()
                                 .newInstance();
                         processorFactoryList.add(processorFactory);
                         nextProcessorList.add(processorFactory.create());

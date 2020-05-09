@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 the CodeLibs Project and the Others.
+ * Copyright 2012-2020 CodeLibs Project and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,8 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.seasar.util.lang.StringUtil;
-import org.seasar.util.security.MessageDigestUtil;
+import org.codelibs.core.lang.StringUtil;
+import org.codelibs.core.security.MessageDigestUtil;
 
 /**
  * An event data is represented as Event instance.

@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 the CodeLibs Project and the Others.
+ * Copyright 2012-2020 CodeLibs Project and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ public class DatabaseStore implements DataStore {
     @Transactional
     public void store(final List<Event> eventList,
             final DataStoreListener listener) {
-        final List<PersistentEvent> pEventList = new ArrayList<PersistentEvent>(
+        final List<PersistentEvent> pEventList = new ArrayList<>(
                 eventList.size());
         try {
             for (final Event event : eventList) {

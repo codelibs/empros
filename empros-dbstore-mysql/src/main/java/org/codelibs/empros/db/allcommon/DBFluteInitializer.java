@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 the CodeLibs Project and the Others.
+ * Copyright 2012-2020 CodeLibs Project and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,13 +15,11 @@
  */
 package org.codelibs.empros.db.allcommon;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.seasar.dbflute.DBDef;
-import org.seasar.dbflute.cbean.ConditionBeanContext;
-import org.seasar.dbflute.jdbc.DataSourceHandler;
-import org.seasar.dbflute.resource.DBFluteSystem;
-import org.seasar.dbflute.s2dao.extension.TnSqlLogRegistry;
+import org.dbflute.dbway.DBDef;
+import org.dbflute.jdbc.DataSourceHandler;
+import org.dbflute.system.DBFluteSystem;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author DBFlute(AutoGenerator)
@@ -31,8 +29,8 @@ public class DBFluteInitializer {
     // ===================================================================================
     //                                                                          Definition
     //                                                                          ==========
-    /** Log instance. */
-    private static final Log _log = LogFactory.getLog(DBFluteInitializer.class);
+    /** The logger instance for this class. (NotNull) */
+    private static final Logger _log = LoggerFactory.getLogger(DBFluteInitializer.class);
 
     // ===================================================================================
     //                                                                           Attribute
@@ -46,9 +44,9 @@ public class DBFluteInitializer {
      * Constructor, which initializes various components.
      * @param dataSource The instance of data source. (NotNull)
      */
-    public DBFluteInitializer(final javax.sql.DataSource dataSource) {
+    public DBFluteInitializer(javax.sql.DataSource dataSource) {
         if (dataSource == null) {
-            final String msg = "The argument 'dataSource' should not be null!";
+            String msg = "The argument 'dataSource' should not be null!";
             throw new IllegalArgumentException(msg);
         }
         _dataSourceFqcn = dataSource.getClass().getName();
@@ -68,12 +66,13 @@ public class DBFluteInitializer {
     }
 
     /**
-     * This is the story for ... <br />
+     * This is the story for ... <br>
      * You can override this to set your DBFluteConfig settings
      * with calling super.prologue() in it.
      */
     protected void prologue() {
         setupDataSourceHandler(_dataSourceFqcn);
+        adjustDBFluteSystem();
     }
 
     /**
@@ -83,67 +82,55 @@ public class DBFluteInitializer {
         if (!DBFluteConfig.getInstance().isLocked()) {
             DBFluteConfig.getInstance().lock();
         }
+        if (!DBFluteSystem.isLocked()) {
+            DBFluteSystem.lock();
+        }
     }
 
     // ===================================================================================
     //                                                                            Contents
     //                                                                            ========
-    protected void handleSqlLogRegistry() { // for S2Container
-        if (DBFluteConfig.getInstance().isUseSqlLogRegistry()) {
-            final StringBuilder sb = new StringBuilder();
-            sb.append("{SqlLog Information}").append(ln());
-            sb.append("  [SqlLogRegistry]").append(ln());
-            if (TnSqlLogRegistry.setupSqlLogRegistry()) {
-                sb.append(
-                        "    ...Setting up sqlLogRegistry(org.seasar.extension.jdbc)")
-                        .append(ln());
-                sb.append("    because the property 'useSqlLogRegistry' of the config of DBFlute is true");
-            } else {
-                sb.append("    The sqlLogRegistry(org.seasar.extension.jdbc) is not supported at the version");
-            }
-            _log.info(sb);
-        } else {
-            final Object sqlLogRegistry = TnSqlLogRegistry
-                    .findContainerSqlLogRegistry();
-            if (sqlLogRegistry != null) {
-                TnSqlLogRegistry.closeRegistration();
-            }
-        }
-    }
-
-    protected void loadCoolClasses() { // for S2Container 
-        ConditionBeanContext.loadCoolClasses(); // against the ClassLoader Headache!
-    }
-
     /**
-     * Set up the handler of data source to the configuration of DBFlute. <br />
+     * Set up the handler of data source to the configuration of DBFlute. <br>
      * If it uses commons-DBCP, it needs to arrange some for transaction.
      * <ul>
      *     <li>A. To use DataSourceUtils which is Spring Framework class.</li>
      *     <li>B. To use TransactionConnection that is original class and doesn't close really.</li>
      * </ul>
      * If you use a transaction library which has a data source which supports transaction,
-     * It doesn't need these arrangement. (For example, the framework 'Atomikos') <br />
+     * It doesn't need these arrangement. (For example, the framework 'Atomikos') <br>
      * This method should be executed when application is initialized.
      * @param dataSourceFqcn The FQCN of data source. (NotNull)
      */
-    protected void setupDataSourceHandler(final String dataSourceFqcn) { // for Spring
+    protected void setupDataSourceHandler(String dataSourceFqcn) { // for Spring
         final DBFluteConfig config = DBFluteConfig.getInstance();
-        final DataSourceHandler dataSourceHandler = config
-                .getDataSourceHandler();
+        final DataSourceHandler dataSourceHandler = config.getDataSourceHandler();
         if (dataSourceHandler != null) {
             return;
         }
-        if (dataSourceFqcn.startsWith("org.apache.commons.dbcp.")) {
+        if (needsSpringTransactionalDataSource(dataSourceFqcn)) {
             config.unlock();
             config.setDataSourceHandler(new DBFluteConfig.SpringTransactionalDataSourceHandler());
         }
     }
 
+    protected boolean needsSpringTransactionalDataSource(String dataSourceFqcn) {
+        return dataSourceFqcn.startsWith("org.apache.commons.dbcp.")
+            || dataSourceFqcn.startsWith("org.apache.commons.dbcp2.")
+            || dataSourceFqcn.startsWith("org.apache.tomcat.jdbc.pool.")
+            || dataSourceFqcn.startsWith("com.zaxxer.hikari.");
+    }
+
+    /**
+     * Adjust DBFlute system if it needs.
+     */
+    protected void adjustDBFluteSystem() {
+    }
+
     // ===================================================================================
     //                                                                       Assist Helper
     //                                                                       =============
-    protected boolean isCurrentDBDef(final DBDef currentDBDef) {
+    protected boolean isCurrentDBDef(DBDef currentDBDef) {
         return DBCurrent.getInstance().isCurrentDBDef(currentDBDef);
     }
 
@@ -151,6 +138,6 @@ public class DBFluteInitializer {
     //                                                                      General Helper
     //                                                                      ==============
     protected String ln() {
-        return DBFluteSystem.getBasicLn();
+        return DBFluteSystem.ln();
     }
 }
