@@ -1,4 +1,5 @@
-Empros[![Build Status](https://travis-ci.org/codelibs/empros.svg?branch=master)](https://travis-ci.org/codelibs/empros)
+Empros
+[![Java CI with Maven](https://github.com/codelibs/empros/actions/workflows/maven.yml/badge.svg)](https://github.com/codelibs/empros/actions/workflows/maven.yml)
 ======
 
 ## Overview
