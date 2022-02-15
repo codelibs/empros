@@ -13,29 +13,42 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.codelibs.empros.exception;
+package org.codelibs.empros.server.response;
 
 /**
- * EmprosClientException is thrown when an client request is invalid.
+ * EventResponse is a response of processed events.
  * 
  * @author shinsuke
  *
  */
-public class EmprosConfigException extends EmprosRuntimeException {
+public class EventResponse {
+    private String status;
 
-    private static final long serialVersionUID = 1L;
+    private long received;
 
-    public EmprosConfigException(final String messageCode, final Object[] args,
-            final Throwable cause) {
-        super(messageCode, args, cause);
+    private long processed;
+
+    public String getStatus() {
+        return status;
     }
 
-    public EmprosConfigException(final String messageCode, final Object... args) {
-        super(messageCode, args);
+    public void setStatus(final String status) {
+        this.status = status;
     }
 
-    public EmprosConfigException(final String messageCode, final Throwable cause) {
-        super(messageCode, cause);
+    public long getProcessed() {
+        return processed;
     }
 
+    public void setProcessed(final long num) {
+        processed = num;
+    }
+
+    public long getReceived() {
+        return received;
+    }
+
+    public void setReceived(final long received) {
+        this.received = received;
+    }
 }

@@ -1,5 +1,0 @@
-# logging sample
-org.codelibs.empros.factory.LoggingProcessorFactory
-
-# datastore sample
-org.codelibs.empros.factory.DataStoreProcessorFactory

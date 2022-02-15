@@ -34,6 +34,7 @@ import com.orangesignal.csv.CsvWriter;
 import org.codelibs.core.io.CloseableUtil;
 import org.codelibs.core.lang.StringUtil;
 import org.codelibs.core.message.MessageFormatter;
+import org.codelibs.empros.config.CsvStoreConfig;
 import org.codelibs.empros.event.Event;
 import org.codelibs.empros.exception.EmprosDataStoreException;
 import org.slf4j.Logger;
@@ -88,6 +89,8 @@ public class CsvStore implements DataStore {
 
     public CsvStore(final CsvConfig csvConfig) {
         this.csvConfig = csvConfig;
+        csvDataWriter = new CsvDataWriter();
+        csvDataWriter.start();
     }
 
     @Override

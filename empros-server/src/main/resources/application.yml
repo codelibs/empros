@@ -1,0 +1,33 @@
+server:
+  port: 8080
+  max-http-header-size: "100KB"
+  servlet:
+    context-path: "/"
+  compression:
+    enabled: true
+    mime-types: "text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json"
+
+thread_pool:
+  generic:
+    core_pool_size: 100
+    queue_capacity: 10
+    max_pool_size: 500
+
+processor:
+  mode: "parallel"
+  thead_pool_size: 5
+
+datastore:
+  csvstore:
+    writer_timeout: 60000
+    column_list:
+      - "aaa"
+      - "bbb"
+  #dbstore:
+  #  config_files:
+  #    - "dbflute-h2.xml"
+  #    - "data-source-h2.xml"
+  #esstore:
+  #  address: "localhost:9200"
+  #  index: "empros-store"
+

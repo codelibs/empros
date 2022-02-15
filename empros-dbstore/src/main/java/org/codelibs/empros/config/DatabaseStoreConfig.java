@@ -13,18 +13,21 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.codelibs.empros.factory;
+package org.codelibs.empros.config;
 
-import org.codelibs.empros.processor.EventProcessor;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 
-/**
- * ProcessorFactory is a factory to create a Processor instance.
- * 
- * @author shinsuke
- *
- */
-public interface ProcessorFactory {
-    EventProcessor create();
-    void destroy();
-    boolean isAvailable();
+@Component
+@ConfigurationProperties(prefix = "datastore.dbstore")
+public class DatabaseStoreConfig {
+    private String[] configFiles;
+
+    public String[] getConfigFiles() {
+        return configFiles;
+    }
+
+    public void setConfigFiles(String[] configFiles) {
+        this.configFiles = configFiles;
+    }
 }

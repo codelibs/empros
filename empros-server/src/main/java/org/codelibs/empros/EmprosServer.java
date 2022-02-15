@@ -13,18 +13,16 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.codelibs.empros.factory;
+package org.codelibs.empros;
 
-import org.codelibs.empros.processor.EventProcessor;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
 
-/**
- * ProcessorFactory is a factory to create a Processor instance.
- * 
- * @author shinsuke
- *
- */
-public interface ProcessorFactory {
-    EventProcessor create();
-    void destroy();
-    boolean isAvailable();
+@SpringBootApplication
+@ComponentScan
+public class EmprosServer {
+    public static void main(String[] args) {
+        SpringApplication.run(EmprosServer.class, args);
+    }
 }

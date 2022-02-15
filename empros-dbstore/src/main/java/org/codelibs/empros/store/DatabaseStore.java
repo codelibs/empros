@@ -27,14 +27,14 @@ import org.codelibs.empros.event.Event;
 import org.springframework.transaction.annotation.Transactional;
 
 public class DatabaseStore implements DataStore {
-    @Resource
     protected PersistentEventBhv persistentEventBhv;
 
-    @Resource
     protected PersistentEventValueBhv persistentEventValueBhv;
 
-    public DatabaseStore() {
-        // nothing
+    public DatabaseStore(PersistentEventBhv persistentEventBhv, PersistentEventValueBhv persistentEventValueBhv) {
+
+        this.persistentEventBhv = persistentEventBhv;
+        this.persistentEventValueBhv = persistentEventValueBhv;
     }
 
     /* (non-Javadoc)

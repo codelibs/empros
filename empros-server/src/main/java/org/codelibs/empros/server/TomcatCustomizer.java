@@ -13,18 +13,16 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.codelibs.empros.factory;
+package org.codelibs.empros.server;
 
-import org.codelibs.empros.processor.EventProcessor;
+import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
+import org.springframework.boot.web.server.WebServerFactoryCustomizer;
+import org.springframework.stereotype.Component;
 
-/**
- * ProcessorFactory is a factory to create a Processor instance.
- * 
- * @author shinsuke
- *
- */
-public interface ProcessorFactory {
-    EventProcessor create();
-    void destroy();
-    boolean isAvailable();
+@Component
+public class TomcatCustomizer implements WebServerFactoryCustomizer<TomcatServletWebServerFactory> {
+    @Override
+    public void customize(TomcatServletWebServerFactory factory) {
+        factory.addConnectorCustomizers(connector -> connector.setProperty("relaxedQueryChars", "[]|{}^\\`"));
+    }
 }
