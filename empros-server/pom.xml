@@ -10,7 +10,6 @@
 	<artifactId>empros-server</artifactId>
 	<name>Empros Server</name>
 	<build>
-		<finalName>empros</finalName>
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>

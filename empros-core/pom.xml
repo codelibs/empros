@@ -12,7 +12,6 @@
 	<name>Empros</name>
 	<packaging>jar</packaging>
 	<build>
-		<finalName>empros</finalName>
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
