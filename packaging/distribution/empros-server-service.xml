@@ -1,0 +1,9 @@
+<service>
+  <id>empros-server</id>
+  <name>EmprosServer</name>
+  <description>This service runs empros server. Created by winsw.</description>
+  <env name="EMPROS_HOME" value="%BASE%"/>
+  <executable>java</executable>
+  <arguments>-classpath %BASE%\config -Xmx256m -jar "%BASE%\empros-server.jar"</arguments>
+  <log mode="roll"></log>
+</service>
