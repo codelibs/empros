@@ -2,7 +2,6 @@
 
 cd $(dirname $0) || exit 1
 base_dir=$(pwd)
-empros_dir="$base_dir/empros"
 work_dir="$base_dir/workspace"
 
 echo "Build empros server."
