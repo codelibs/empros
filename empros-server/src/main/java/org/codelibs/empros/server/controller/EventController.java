@@ -60,6 +60,11 @@ public class EventController {
         this.asyncExecutor = asyncExecutor;
     }
 
+    @RequestMapping(method = { RequestMethod.HEAD})
+    public String head() {
+        return "";
+    }
+
     @RequestMapping(method = { RequestMethod.POST, RequestMethod.PUT })
     public DeferredResult<Object> create(@RequestBody(required = false) Object data) {
         if (logger.isInfoEnabled()) {
