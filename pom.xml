@@ -42,7 +42,7 @@
 		<junit-version>5.11.4</junit-version>
 		<elasticsearch.version>8.17.0</elasticsearch.version>
 		<elasticsearch.httpclient.version>8.17.0</elasticsearch.httpclient.version>
-		<spring.boot.version>3.4.0</spring.boot.version>
+		<spring.boot.version>3.5.7</spring.boot.version>
 	</properties>
 	<modules>
 		<module>empros-core</module>
