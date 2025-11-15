@@ -69,7 +69,7 @@ public class CsvStore implements DataStore {
 
     protected CsvDataWriter csvDataWriter;
 
-    private Object timestampKey;
+    private String timestampKey;
 
     public CsvStore() {
         csvConfig = new CsvConfig();
@@ -186,6 +186,14 @@ public class CsvStore implements DataStore {
 
     public void setWriterTimeout(final long writerTimeout) {
         this.writerTimeout = writerTimeout;
+    }
+
+    public String getTimestampKey() {
+        return timestampKey;
+    }
+
+    public void setTimestampKey(final String timestampKey) {
+        this.timestampKey = timestampKey;
     }
 
     protected static class CsvData {
