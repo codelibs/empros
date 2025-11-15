@@ -45,7 +45,7 @@ public class SerialProcessorTest {
             @Override
             public void onFinish(ProcessContext context) {
             }
-
+            @Override
             public void onFailure(Throwable t) {
             }
         };
@@ -60,7 +60,7 @@ public class SerialProcessorTest {
             public void onFinish(ProcessContext context) {
                 latch.countDown();
             }
-
+            @Override
             public void onFailure(Throwable t) {
             }
         };
@@ -74,6 +74,7 @@ public class SerialProcessorTest {
                 latch.countDown();
             }
 
+            @Override
             public void onFailure(Throwable t) {
                 fail("Should not fail");
             }
@@ -92,7 +93,7 @@ public class SerialProcessorTest {
             public void onFinish(ProcessContext context) {
                 latch.countDown();
             }
-
+            @Override
             public void onFailure(Throwable t) {
             }
         };
@@ -110,6 +111,7 @@ public class SerialProcessorTest {
                 latch.countDown();
             }
 
+            @Override
             public void onFailure(Throwable t) {
                 fail("Should not fail");
             }
@@ -130,7 +132,7 @@ public class SerialProcessorTest {
             public void onFinish(ProcessContext context) {
                 latch.countDown();
             }
-
+            @Override
             public void onFailure(Throwable t) {
             }
         };
@@ -150,6 +152,7 @@ public class SerialProcessorTest {
                 latch.countDown();
             }
 
+            @Override
             public void onFailure(Throwable t) {
                 fail("Should not fail");
             }
@@ -174,7 +177,7 @@ public class SerialProcessorTest {
             public void onFinish(ProcessContext context) {
                 latch.countDown();
             }
-
+            @Override
             public void onFailure(Throwable t) {
             }
         };
@@ -192,6 +195,7 @@ public class SerialProcessorTest {
                 fail("Should not succeed");
             }
 
+            @Override
             public void onFailure(Throwable t) {
                 assertEquals(testException, t);
                 latch.countDown();
@@ -212,7 +216,7 @@ public class SerialProcessorTest {
             public void onFinish(ProcessContext context) {
                 latch.countDown();
             }
-
+            @Override
             public void onFailure(Throwable t) {
             }
         };
@@ -231,6 +235,7 @@ public class SerialProcessorTest {
                 fail("Should not succeed");
             }
 
+            @Override
             public void onFailure(Throwable t) {
                 assertEquals(testException, t);
                 latch.countDown();

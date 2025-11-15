@@ -140,10 +140,7 @@ public class ProcessContext implements Cloneable {
             // replace with the following values.
             context.processed = new AtomicLong(0);
             if (processingEventList != null) {
-                context.processingEventList = new ArrayList<>(
-                        processingEventList.size());
-                Collections.copy(context.processingEventList,
-                        processingEventList);
+                context.processingEventList = new ArrayList<>(processingEventList);
             }
         } catch (final CloneNotSupportedException e) {
             //  Won't happen

@@ -52,7 +52,7 @@ public class ProcessorUtilTest {
             @Override
             public void onFinish(ProcessContext context) {
             }
-
+            @Override
             public void onFailure(Throwable t) {
             }
         };
@@ -93,6 +93,7 @@ public class ProcessorUtilTest {
                 latch.countDown();
             }
 
+            @Override
             public void onFailure(Throwable t) {
                 latch.countDown();
             }
@@ -115,6 +116,7 @@ public class ProcessorUtilTest {
                 latch.countDown();
             }
 
+            @Override
             public void onFailure(Throwable t) {
             }
         };
@@ -138,6 +140,7 @@ public class ProcessorUtilTest {
                 latch.countDown();
             }
 
+            @Override
             public void onFailure(Throwable t) {
             }
         };
@@ -151,6 +154,7 @@ public class ProcessorUtilTest {
                 throw new RuntimeException("Test exception");
             }
 
+            @Override
             public void onFailure(Throwable t) {
             }
         };
@@ -172,6 +176,7 @@ public class ProcessorUtilTest {
                 latch.countDown();
             }
 
+            @Override
             public void onFailure(Throwable t) {
                 failureRef.set(t);
                 latch.countDown();
@@ -198,6 +203,7 @@ public class ProcessorUtilTest {
                 latch.countDown();
             }
 
+            @Override
             public void onFailure(Throwable t) {
             }
         };
@@ -235,6 +241,7 @@ public class ProcessorUtilTest {
                 latch.countDown();
             }
 
+            @Override
             public void onFailure(Throwable t) {
             }
         };
@@ -247,6 +254,7 @@ public class ProcessorUtilTest {
             public void onSuccess(ProcessContext context) {
             }
 
+            @Override
             public void onFailure(Throwable t) {
                 throw new RuntimeException("Listener exception");
             }
