@@ -55,7 +55,12 @@ public class PersistentEvent extends BsPersistentEvent {
             pEventValueList.add(pEventValue);
         }
         setCreatedBy(event.getCreatedBy());
-        setCreatedTime(LocalDateTime.parse(event.getCreatedTime().toString()));
+        final java.util.Date createdTime = event.getCreatedTime();
+        if (createdTime != null) {
+            setCreatedTime(LocalDateTime.parse(createdTime.toString()));
+        } else {
+            setCreatedTime(LocalDateTime.now());
+        }
     }
 
     public void updateValues() {
