@@ -50,7 +50,6 @@ public class ParallelProcessorTest {
             public void onFinish(ProcessContext context) {
             }
 
-            @Override
             public void onFailure(Throwable t) {
             }
         };
@@ -76,7 +75,6 @@ public class ParallelProcessorTest {
                 latch.countDown();
             }
 
-            @Override
             public void onFailure(Throwable t) {
                 fail("Should not fail");
             }
@@ -96,7 +94,6 @@ public class ParallelProcessorTest {
                 latch.countDown();
             }
 
-            @Override
             public void onFailure(Throwable t) {
             }
         };
@@ -114,7 +111,6 @@ public class ParallelProcessorTest {
                 latch.countDown();
             }
 
-            @Override
             public void onFailure(Throwable t) {
                 fail("Should not fail: " + t.getMessage());
             }
@@ -136,7 +132,6 @@ public class ParallelProcessorTest {
                 latch.countDown();
             }
 
-            @Override
             public void onFailure(Throwable t) {
             }
         };
@@ -158,7 +153,6 @@ public class ParallelProcessorTest {
                 latch.countDown();
             }
 
-            @Override
             public void onFailure(Throwable t) {
                 fail("Should not fail: " + t.getMessage());
             }
@@ -185,7 +179,6 @@ public class ParallelProcessorTest {
                 latch.countDown();
             }
 
-            @Override
             public void onFailure(Throwable t) {
             }
         };
@@ -207,7 +200,6 @@ public class ParallelProcessorTest {
                 latch.countDown();
             }
 
-            @Override
             public void onFailure(Throwable t) {
                 fail("Should not fail: " + t.getMessage());
             }
@@ -227,7 +219,6 @@ public class ParallelProcessorTest {
                 latch.countDown();
             }
 
-            @Override
             public void onFailure(Throwable t) {
             }
         };
@@ -248,7 +239,6 @@ public class ParallelProcessorTest {
                 latch.countDown();
             }
 
-            @Override
             public void onFailure(Throwable t) {
                 fail("Should not fail: " + t.getMessage());
             }
@@ -268,7 +258,6 @@ public class ParallelProcessorTest {
                 latch.countDown();
             }
 
-            @Override
             public void onFailure(Throwable t) {
             }
         };
@@ -286,7 +275,6 @@ public class ParallelProcessorTest {
                 fail("Should not succeed");
             }
 
-            @Override
             public void onFailure(Throwable t) {
                 assertEquals(testException, t);
                 latch.countDown();
@@ -308,7 +296,6 @@ public class ParallelProcessorTest {
                 latch.countDown();
             }
 
-            @Override
             public void onFailure(Throwable t) {
             }
         };
@@ -328,7 +315,6 @@ public class ParallelProcessorTest {
                 latch.countDown();
             }
 
-            @Override
             public void onFailure(Throwable t) {
                 fail("Should not fail: " + t.getMessage());
             }

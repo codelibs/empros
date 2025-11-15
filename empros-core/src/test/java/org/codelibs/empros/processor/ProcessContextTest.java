@@ -52,7 +52,6 @@ public class ProcessContextTest {
                 // Default listener
             }
 
-            @Override
             public void onFailure(Throwable t) {
                 // Default listener
             }
@@ -139,7 +138,6 @@ public class ProcessContextTest {
                 latch.countDown();
             }
 
-            @Override
             public void onFailure(Throwable t) {
             }
         };
