@@ -45,7 +45,6 @@ public class SerialProcessorTest {
             @Override
             public void onFinish(ProcessContext context) {
             }
-            @Override
             public void onFailure(Throwable t) {
             }
         };
@@ -60,7 +59,6 @@ public class SerialProcessorTest {
             public void onFinish(ProcessContext context) {
                 latch.countDown();
             }
-            @Override
             public void onFailure(Throwable t) {
             }
         };
@@ -93,7 +91,6 @@ public class SerialProcessorTest {
             public void onFinish(ProcessContext context) {
                 latch.countDown();
             }
-            @Override
             public void onFailure(Throwable t) {
             }
         };
@@ -132,7 +129,6 @@ public class SerialProcessorTest {
             public void onFinish(ProcessContext context) {
                 latch.countDown();
             }
-            @Override
             public void onFailure(Throwable t) {
             }
         };
@@ -177,7 +173,6 @@ public class SerialProcessorTest {
             public void onFinish(ProcessContext context) {
                 latch.countDown();
             }
-            @Override
             public void onFailure(Throwable t) {
             }
         };
@@ -216,7 +211,6 @@ public class SerialProcessorTest {
             public void onFinish(ProcessContext context) {
                 latch.countDown();
             }
-            @Override
             public void onFailure(Throwable t) {
             }
         };

@@ -52,7 +52,6 @@ public class ProcessorUtilTest {
             @Override
             public void onFinish(ProcessContext context) {
             }
-            @Override
             public void onFailure(Throwable t) {
             }
         };
@@ -116,7 +115,6 @@ public class ProcessorUtilTest {
                 latch.countDown();
             }
 
-            @Override
             public void onFailure(Throwable t) {
             }
         };
@@ -140,7 +138,6 @@ public class ProcessorUtilTest {
                 latch.countDown();
             }
 
-            @Override
             public void onFailure(Throwable t) {
             }
         };
@@ -203,7 +200,6 @@ public class ProcessorUtilTest {
                 latch.countDown();
             }
 
-            @Override
             public void onFailure(Throwable t) {
             }
         };
@@ -241,7 +237,6 @@ public class ProcessorUtilTest {
                 latch.countDown();
             }
 
-            @Override
             public void onFailure(Throwable t) {
             }
         };
