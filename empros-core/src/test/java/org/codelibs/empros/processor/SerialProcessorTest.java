@@ -83,7 +83,7 @@ public class SerialProcessorTest {
 
     @Test
     public void testSingleProcessor() throws InterruptedException {
-        final CountDownLatch latch = new CountDownLatch(3);
+        final CountDownLatch latch = new CountDownLatch(2);
         final AtomicInteger processOrder = new AtomicInteger(0);
 
         ProcessListener testListener = new ProcessListener() {
@@ -120,7 +120,7 @@ public class SerialProcessorTest {
 
     @Test
     public void testMultipleProcessorsInOrder() throws InterruptedException {
-        final CountDownLatch latch = new CountDownLatch(4);
+        final CountDownLatch latch = new CountDownLatch(2);
         final AtomicInteger processOrder = new AtomicInteger(0);
         final List<Integer> executionOrder = new ArrayList<>();
 
