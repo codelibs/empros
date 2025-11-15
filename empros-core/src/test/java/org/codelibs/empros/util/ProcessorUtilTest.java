@@ -273,7 +273,7 @@ public class ProcessorUtilTest {
     // Helper class for testing
     private static class TestEventProcessor implements EventProcessor {
         @Override
-        public void invoke(ProcessContext context, ProcessorListener listener) {
+        public void process(ProcessContext context, ProcessorListener listener) {
             // Minimal implementation
         }
     }

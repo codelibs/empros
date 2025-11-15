@@ -269,7 +269,7 @@ public class SerialProcessorTest {
         }
 
         @Override
-        public void invoke(ProcessContext context, ProcessorListener listener) {
+        public void process(ProcessContext context, ProcessorListener listener) {
             int order = processOrder.incrementAndGet();
             if (executionOrder != null) {
                 synchronized (executionOrder) {
@@ -288,7 +288,7 @@ public class SerialProcessorTest {
         }
 
         @Override
-        public void invoke(ProcessContext context, ProcessorListener listener) {
+        public void process(ProcessContext context, ProcessorListener listener) {
             listener.onFailure(exception);
         }
     }

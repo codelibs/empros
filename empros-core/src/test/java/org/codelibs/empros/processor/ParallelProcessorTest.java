@@ -356,7 +356,7 @@ public class ParallelProcessorTest {
         }
 
         @Override
-        public void invoke(ProcessContext context, ProcessorListener listener) {
+        public void process(ProcessContext context, ProcessorListener listener) {
             if (threadIds != null) {
                 threadIds.add(Thread.currentThread().getId());
             }
@@ -378,7 +378,7 @@ public class ParallelProcessorTest {
         }
 
         @Override
-        public void invoke(ProcessContext context, ProcessorListener listener) {
+        public void process(ProcessContext context, ProcessorListener listener) {
             context.addNumOfProcessedEvents(count);
             listener.onSuccess(context);
         }
@@ -392,7 +392,7 @@ public class ParallelProcessorTest {
         }
 
         @Override
-        public void invoke(ProcessContext context, ProcessorListener listener) {
+        public void process(ProcessContext context, ProcessorListener listener) {
             context.setResponse(response);
             listener.onSuccess(context);
         }
@@ -406,7 +406,7 @@ public class ParallelProcessorTest {
         }
 
         @Override
-        public void invoke(ProcessContext context, ProcessorListener listener) {
+        public void process(ProcessContext context, ProcessorListener listener) {
             listener.onFailure(exception);
         }
     }
