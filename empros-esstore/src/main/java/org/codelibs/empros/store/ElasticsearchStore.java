@@ -58,6 +58,7 @@ public class ElasticsearchStore implements DataStore {
     public ElasticsearchStore() {
         // nothing
         address = System.getProperty(HTTP_ADDRESS, "localhost:9200").trim();
+        index = "events";
     }
 
     public void init() {
