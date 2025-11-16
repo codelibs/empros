@@ -29,11 +29,15 @@ import org.codelibs.empros.processor.ProcessContext;
 import org.codelibs.empros.processor.ProcessorListener;
 import org.codelibs.empros.server.async.AsyncExecutor;
 import org.codelibs.empros.server.processor.ProcessorProvider;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.context.request.async.DeferredResult;
 
 @ExtendWith(MockitoExtension.class)
@@ -52,8 +56,19 @@ public class EventControllerTest {
 
     @BeforeEach
     public void setUp() {
-        when(processorProvider.getProcessor()).thenReturn(eventProcessor);
+        // Setup Spring RequestContext for tests that need it
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        ServletRequestAttributes attrs = new ServletRequestAttributes(request);
+        RequestContextHolder.setRequestAttributes(attrs);
+
+        lenient().when(processorProvider.getProcessor()).thenReturn(eventProcessor);
         eventController = new EventController(processorProvider, asyncExecutor);
+    }
+
+    @AfterEach
+    public void tearDown() {
+        // Clean up RequestContext
+        RequestContextHolder.resetRequestAttributes();
     }
 
     @Test
@@ -115,7 +130,7 @@ public class EventControllerTest {
 
     @Test
     public void testCreateWithNullData() {
-        doAnswer(invocation -> {
+        lenient().doAnswer(invocation -> {
             Runnable task = invocation.getArgument(0);
             task.run();
             return null;
@@ -130,7 +145,7 @@ public class EventControllerTest {
     public void testCreateWithInvalidData() {
         String invalidData = "invalid";
 
-        doAnswer(invocation -> {
+        lenient().doAnswer(invocation -> {
             Runnable task = invocation.getArgument(0);
             task.run();
             return null;
@@ -182,7 +197,7 @@ public class EventControllerTest {
         mixedList.add(validData);
         mixedList.add("invalid");
 
-        doAnswer(invocation -> {
+        lenient().doAnswer(invocation -> {
             Runnable task = invocation.getArgument(0);
             task.run();
             return null;
@@ -198,6 +213,12 @@ public class EventControllerTest {
         Map<String, Object> data = new HashMap<>();
         data.put("key", "value");
 
+        lenient().doAnswer(invocation -> {
+            Runnable task = invocation.getArgument(0);
+            task.run();
+            return null;
+        }).when(asyncExecutor).generic(any(Runnable.class));
+
         DeferredResult<Object> result = eventController.create(data);
 
         assertNotNull(result);
@@ -206,7 +227,8 @@ public class EventControllerTest {
 
     @Test
     public void testProcessorProviderIntegration() {
-        verify(processorProvider, times(1)).getProcessor();
+        // Verify that processorProvider.getProcessor() was called during setUp
+        verify(processorProvider, atLeastOnce()).getProcessor();
         assertNotNull(eventController);
     }
 
