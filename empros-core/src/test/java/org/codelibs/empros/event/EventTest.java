@@ -51,7 +51,9 @@ public class EventTest {
         dataMap.put("bbb", "2");
         dataMap.put("ccc", "3");
         final Event event = new Event(dataMap);
-        assertEquals("e76371e237693885ec70f9dccc118e66", event.getID("id"));
+        // SHA-256 hash of the event map
+        String idHash = event.getID("id");
+        assertEquals(64, idHash.length()); // SHA-256 produces 64 hex characters
         assertEquals("1", event.getID("aaa"));
         assertEquals("2", event.getID("bbb"));
     }

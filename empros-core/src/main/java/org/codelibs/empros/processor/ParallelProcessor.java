@@ -40,7 +40,13 @@ public class ParallelProcessor extends DispatchProcessor {
 
     public ParallelProcessor(final List<EventProcessor> processorList,
             final int threadPoolSize) {
+        this(processorList, threadPoolSize, 1000);
+    }
+
+    public ParallelProcessor(final List<EventProcessor> processorList,
+            final int threadPoolSize, final int queueCapacity) {
         super(processorList);
+        this.queueCapacity = queueCapacity;
 
         executorService = new ThreadPoolExecutor(
                 threadPoolSize,
@@ -59,10 +65,6 @@ public class ParallelProcessor extends DispatchProcessor {
 
     public void destroy() {
         executorService.shutdown();
-    }
-
-    public void setQueueCapacity(final int queueCapacity) {
-        this.queueCapacity = queueCapacity;
     }
 
     @Override

@@ -396,4 +396,79 @@ public class ParallelProcessorTest {
             listener.onFailure(exception);
         }
     }
+
+    @Test
+    public void testCustomQueueCapacity() throws InterruptedException {
+        // Test that custom queue capacity constructor works correctly
+        final int customQueueCapacity = 500;
+        final CountDownLatch latch = new CountDownLatch(1);
+
+        List<EventProcessor> processors = new ArrayList<>();
+        processors.add(new SimpleEventProcessor());
+
+        ProcessListener testListener = new ProcessListener() {
+            @Override
+            public void onFinish(ProcessContext context) {
+                latch.countDown();
+            }
+            public void onFailure(Throwable t) {
+                fail("Should not fail: " + t.getMessage());
+            }
+        };
+
+        ProcessContext context = new ProcessContext(eventList, testListener);
+        parallelProcessor = new ParallelProcessor(processors, 2, customQueueCapacity);
+
+        context.start(parallelProcessor);
+        parallelProcessor.process(context, new ProcessorListener() {
+            @Override
+            public void onSuccess(ProcessContext ctx) {
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                fail("Should not fail");
+            }
+        });
+
+        assertTrue(latch.await(2, TimeUnit.SECONDS));
+        assertEquals(customQueueCapacity, parallelProcessor.queueCapacity);
+    }
+
+    @Test
+    public void testDefaultQueueCapacity() throws InterruptedException {
+        // Test that default queue capacity is used when not specified
+        final CountDownLatch latch = new CountDownLatch(1);
+
+        List<EventProcessor> processors = new ArrayList<>();
+        processors.add(new SimpleEventProcessor());
+
+        ProcessListener testListener = new ProcessListener() {
+            @Override
+            public void onFinish(ProcessContext context) {
+                latch.countDown();
+            }
+            public void onFailure(Throwable t) {
+                fail("Should not fail: " + t.getMessage());
+            }
+        };
+
+        ProcessContext context = new ProcessContext(eventList, testListener);
+        parallelProcessor = new ParallelProcessor(processors, 2);
+
+        context.start(parallelProcessor);
+        parallelProcessor.process(context, new ProcessorListener() {
+            @Override
+            public void onSuccess(ProcessContext ctx) {
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                fail("Should not fail");
+            }
+        });
+
+        assertTrue(latch.await(2, TimeUnit.SECONDS));
+        assertEquals(1000, parallelProcessor.queueCapacity); // Default capacity
+    }
 }

@@ -131,7 +131,7 @@ public class ProcessContext implements Cloneable {
             context = (ProcessContext) super.clone();
             context.incomingEventList = incomingEventList;
             context.response = response;
-            context.processorSet = processorSet;
+            // processorSet is final and shared between parent and child contexts
             context.failureQueue = failureQueue;
             context.listener = listener;
             context.parent = this;
