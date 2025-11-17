@@ -17,38 +17,52 @@ package org.codelibs.empros.processor;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.codelibs.empros.util.ProcessorUtil;
 
 /**
  * ParallelProcessor sends events to multiple event-processors simultaneously.
- * 
+ *
  * @author shinsuke
  *
  */
 public class ParallelProcessor extends DispatchProcessor {
 
+    private static final AtomicInteger threadCounter = new AtomicInteger(0);
+
     protected ExecutorService executorService;
+
+    protected int queueCapacity = 1000;
 
     public ParallelProcessor(final List<EventProcessor> processorList,
             final int threadPoolSize) {
         super(processorList);
 
-        executorService = Executors.newFixedThreadPool(threadPoolSize, (r -> {
-                        final Thread thread = new Thread(r,
-                                "ParallelProcessor-"
-                                        + System.currentTimeMillis());
-                        thread.setDaemon(true);
-                        return thread;
-                    }
-        ));
+        executorService = new ThreadPoolExecutor(
+                threadPoolSize,
+                threadPoolSize,
+                60L,
+                TimeUnit.SECONDS,
+                new LinkedBlockingQueue<>(queueCapacity),
+                r -> {
+                    final Thread thread = new Thread(r,
+                            "ParallelProcessor-" + threadCounter.incrementAndGet());
+                    thread.setDaemon(true);
+                    return thread;
+                },
+                new ThreadPoolExecutor.CallerRunsPolicy());
     }
 
     public void destroy() {
         executorService.shutdown();
+    }
+
+    public void setQueueCapacity(final int queueCapacity) {
+        this.queueCapacity = queueCapacity;
     }
 
     @Override
@@ -61,8 +75,8 @@ public class ParallelProcessor extends DispatchProcessor {
             } else {
                 invokeProcessorsByParallel(context, listener, size);
             }
-        } catch (final Throwable t) { // NOPMD
-            listener.onFailure(t);
+        } catch (final Exception e) {
+            listener.onFailure(e);
         }
     }
 

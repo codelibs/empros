@@ -36,11 +36,15 @@ import org.codelibs.empros.exception.EmprosClientException;
 import org.codelibs.empros.exception.EmprosConfigException;
 import org.codelibs.empros.exception.EmprosHttpRequestException;
 import org.codelibs.empros.util.ProcessorUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class HttpProcessor implements EventProcessor {
+    private static final Logger logger = LoggerFactory.getLogger(HttpProcessor.class);
+
     protected CloseableHttpAsyncClient httpClient;
 
     protected String defaultUrl;
@@ -48,6 +52,10 @@ public class HttpProcessor implements EventProcessor {
     protected ObjectMapper objectMapper;
 
     protected String requestEncoding = "UTF-8";
+
+    protected int socketTimeout = 3000;
+
+    protected int connectTimeout = 3000;
 
     public HttpProcessor() {
         initHttpClient();
@@ -57,8 +65,8 @@ public class HttpProcessor implements EventProcessor {
     protected void initHttpClient() {
         try {
             final IOReactorConfig ioReactorConfig = IOReactorConfig.custom()
-                    .setSoTimeout(3000)
-                    .setConnectTimeout(3000)
+                    .setSoTimeout(socketTimeout)
+                    .setConnectTimeout(connectTimeout)
                     .build();
             httpClient = HttpAsyncClientBuilder.create()
                     .setDefaultIOReactorConfig(ioReactorConfig)
@@ -77,8 +85,7 @@ public class HttpProcessor implements EventProcessor {
         try {
             httpClient.close();
         } catch (final IOException e) {
-            // ignore
-            throw new EmprosClientException("Failed to close HttpClient", e);
+            logger.warn("Failed to close HttpClient", e);
         }
     }
 
@@ -125,8 +132,8 @@ public class HttpProcessor implements EventProcessor {
 
                 });
             }
-        } catch (final Throwable t) {
-            ProcessorUtil.fail(context, this, listener, t);
+        } catch (final Exception e) {
+            ProcessorUtil.fail(context, this, listener, e);
         }
     }
 
@@ -158,6 +165,14 @@ public class HttpProcessor implements EventProcessor {
 
     protected String getUrl(final Event event) {
         return defaultUrl;
+    }
+
+    public void setSocketTimeout(final int socketTimeout) {
+        this.socketTimeout = socketTimeout;
+    }
+
+    public void setConnectTimeout(final int connectTimeout) {
+        this.connectTimeout = connectTimeout;
     }
 
 }

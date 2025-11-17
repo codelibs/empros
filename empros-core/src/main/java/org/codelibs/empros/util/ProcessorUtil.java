@@ -33,6 +33,9 @@ public class ProcessorUtil {
     }
 
     public static List<Event> getCurrentEventList(final ProcessContext context) {
+        if (context == null) {
+            throw new IllegalArgumentException("ProcessContext cannot be null");
+        }
         final List<Event> processingEventList = context
                 .getProcessingEventList();
         if (processingEventList != null) {

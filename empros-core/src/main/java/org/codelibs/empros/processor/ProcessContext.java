@@ -17,10 +17,10 @@ package org.codelibs.empros.processor;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Queue;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -41,7 +41,7 @@ public class ProcessContext implements Cloneable {
 
     private Object response;
 
-    private Set<EventProcessor> processorSet = new HashSet<>();
+    private final Set<EventProcessor> processorSet = ConcurrentHashMap.newKeySet();
 
     private Queue<Throwable> failureQueue = new ConcurrentLinkedQueue<>();
 
@@ -88,9 +88,7 @@ public class ProcessContext implements Cloneable {
     }
 
     public void start(final EventProcessor processor) {
-        synchronized (processorSet) {
-            processorSet.add(processor);
-        }
+        processorSet.add(processor);
     }
 
     public void finish(final EventProcessor processor) {
@@ -143,7 +141,7 @@ public class ProcessContext implements Cloneable {
                 context.processingEventList = new ArrayList<>(processingEventList);
             }
         } catch (final CloneNotSupportedException e) {
-            //  Won't happen
+            throw new IllegalStateException("Failed to clone ProcessContext", e);
         }
         return context;
     }

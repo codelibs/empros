@@ -70,7 +70,7 @@ public class Event extends LinkedHashMap<String, Object> {
                 return idValue.toString();
             }
         }
-        return MessageDigestUtil.digest("MD5", super.toString());
+        return MessageDigestUtil.digest("SHA-256", super.toString());
     }
 
     public Object getObject(final String path) {
