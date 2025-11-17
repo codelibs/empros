@@ -397,6 +397,13 @@ public class ParallelProcessorTest {
         }
     }
 
+    private static class SimpleEventProcessor implements EventProcessor {
+        @Override
+        public void process(ProcessContext context, ProcessorListener listener) {
+            listener.onSuccess(context);
+        }
+    }
+
     @Test
     public void testCustomQueueCapacity() throws InterruptedException {
         // Test that custom queue capacity constructor works correctly
