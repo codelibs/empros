@@ -48,11 +48,11 @@ public class Event extends LinkedHashMap<String, Object> {
     }
 
     public Date getCreatedTime() {
-        return (Date) createdTime.clone();
+        return createdTime != null ? (Date) createdTime.clone() : null;
     }
 
     public void setCreatedTime(final Date createdTime) {
-        this.createdTime = (Date) createdTime.clone();
+        this.createdTime = createdTime != null ? (Date) createdTime.clone() : null;
     }
 
     public String getCreatedBy() {

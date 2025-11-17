@@ -42,7 +42,8 @@ public class PersistentEvent extends BsPersistentEvent {
     public PersistentEvent(final Event event) {
         parseObject(org.codelibs.core.lang.StringUtil.EMPTY, event);
         setCreatedBy(event.getCreatedBy());
-        setCreatedTime(new Timestamp(event.getCreatedTime().getTime()));
+        final java.util.Date createdTime = event.getCreatedTime();
+        setCreatedTime(new Timestamp(createdTime != null ? createdTime.getTime() : System.currentTimeMillis()));
     }
 
     private void parseObject(String namePrefix, final Map<?, ?> event) {

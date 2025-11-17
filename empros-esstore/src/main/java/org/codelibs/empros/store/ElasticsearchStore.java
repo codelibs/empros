@@ -43,6 +43,8 @@ public class ElasticsearchStore implements DataStore {
 
     protected String address;
 
+    protected String[] hosts;
+
     protected Client client;
 
     protected int requestEventSize = 2;
@@ -51,9 +53,12 @@ public class ElasticsearchStore implements DataStore {
 
     protected String idKey = "id";
 
+    protected String timestampKey = "@timestamp";
+
     public ElasticsearchStore() {
         // nothing
         address = System.getProperty(HTTP_ADDRESS, "localhost:9200").trim();
+        index = "events";
     }
 
     public void init() {
@@ -175,5 +180,38 @@ public class ElasticsearchStore implements DataStore {
 
     public void setIdKey(final String idKey) {
         this.idKey = idKey;
+    }
+
+    public String getTimestampKey() {
+        return timestampKey;
+    }
+
+    public void setTimestampKey(final String timestampKey) {
+        this.timestampKey = timestampKey;
+    }
+
+    public String[] getHosts() {
+        return hosts;
+    }
+
+    public void setHosts(final String[] hosts) {
+        this.hosts = hosts;
+    }
+
+    // Alias methods for compatibility with tests
+    public String getIndexName() {
+        return index;
+    }
+
+    public void setIndexName(final String indexName) {
+        this.index = indexName;
+    }
+
+    public int getMaxBulkSize() {
+        return requestEventSize;
+    }
+
+    public void setMaxBulkSize(final int maxBulkSize) {
+        this.requestEventSize = maxBulkSize;
     }
 }

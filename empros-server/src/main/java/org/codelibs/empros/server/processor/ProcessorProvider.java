@@ -24,7 +24,7 @@ import org.codelibs.empros.factory.ProcessorFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PreDestroy;
+import jakarta.annotation.PreDestroy;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;

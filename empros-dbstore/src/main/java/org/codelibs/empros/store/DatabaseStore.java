@@ -18,7 +18,7 @@ package org.codelibs.empros.store;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.codelibs.empros.db.exbhv.PersistentEventBhv;
 import org.codelibs.empros.db.exbhv.PersistentEventValueBhv;
