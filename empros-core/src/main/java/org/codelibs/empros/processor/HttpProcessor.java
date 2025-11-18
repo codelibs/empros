@@ -82,10 +82,12 @@ public class HttpProcessor implements EventProcessor {
     }
 
     public void destroy() {
-        try {
-            httpClient.close();
-        } catch (final IOException e) {
-            logger.warn("Failed to close HttpClient", e);
+        if (httpClient != null) {
+            try {
+                httpClient.close();
+            } catch (final IOException e) {
+                logger.warn("Failed to close HttpClient", e);
+            }
         }
     }
 
