@@ -81,6 +81,15 @@ public class ProcessorUtilTest {
     }
 
     @Test
+    public void testGetCurrentEventList_WithNullContext() {
+        IllegalArgumentException exception = assertThrows(
+            IllegalArgumentException.class,
+            () -> ProcessorUtil.getCurrentEventList(null)
+        );
+        assertEquals("ProcessContext cannot be null", exception.getMessage());
+    }
+
+    @Test
     public void testFinish_WithListener() throws InterruptedException {
         final CountDownLatch latch = new CountDownLatch(1);
         final AtomicBoolean success = new AtomicBoolean(false);

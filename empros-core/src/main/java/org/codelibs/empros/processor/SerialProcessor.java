@@ -80,8 +80,8 @@ public class SerialProcessor extends DispatchProcessor {
                     }
                 }
             }
-        } catch (final Throwable t) { // NOPMD
-            ProcessorUtil.fail(context, this, listener, t);
+        } catch (final Exception e) {
+            ProcessorUtil.fail(context, this, listener, e);
         }
     }
 

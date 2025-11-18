@@ -216,6 +216,46 @@ public class ProcessContextTest {
     }
 
     @Test
+    public void testCloneSharesProcessorSet() throws InterruptedException {
+        // Test that processorSet is shared between parent and child contexts
+        EventProcessor processor1 = new TestEventProcessor();
+        EventProcessor processor2 = new TestEventProcessor();
+
+        final CountDownLatch latch = new CountDownLatch(1);
+        final AtomicBoolean finished = new AtomicBoolean(false);
+
+        ProcessListener testListener = new ProcessListener() {
+            @Override
+            public void onFinish(ProcessContext context) {
+                finished.set(true);
+                latch.countDown();
+            }
+            public void onFailure(Throwable t) {
+            }
+        };
+
+        ProcessContext testContext = new ProcessContext(eventList, testListener);
+
+        // Start processor1 in parent
+        testContext.start(processor1);
+
+        // Clone the context
+        ProcessContext clonedContext = testContext.clone();
+
+        // Start processor2 in child - both should share the same processorSet
+        clonedContext.start(processor2);
+
+        // Finish processor1 from parent
+        testContext.finish(processor1);
+        assertFalse(finished.get()); // Should not finish yet
+
+        // Finish processor2 from child - should trigger onFinish since processorSet is shared
+        clonedContext.finish(processor2);
+        assertTrue(latch.await(1, TimeUnit.SECONDS));
+        assertTrue(finished.get());
+    }
+
+    @Test
     public void testFailureQueueConcurrency() throws InterruptedException {
         final int numThreads = 10;
         final int errorsPerThread = 100;
