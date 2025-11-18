@@ -73,12 +73,12 @@ public class ParallelProcessor extends DispatchProcessor {
         final int size = nextProcessorList.size();
         try {
             if (size == 0) {
-                listener.onSuccess(context);
+                ProcessorUtil.finish(context, this, listener);
             } else {
                 invokeProcessorsByParallel(context, listener, size);
             }
         } catch (final Exception e) {
-            listener.onFailure(e);
+            ProcessorUtil.fail(context, this, listener, e);
         }
     }
 
