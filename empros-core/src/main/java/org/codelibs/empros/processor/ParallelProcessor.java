@@ -88,28 +88,35 @@ public class ParallelProcessor extends DispatchProcessor {
         for (final EventProcessor processor : nextProcessorList) {
             executorService.execute( () -> {
                     final ProcessContext childContext = context.clone();
-                    processor.process(childContext, new ProcessorListener() {
-                        @Override
-                        public void onSuccess(
-                                final ProcessContext currentContext) {
-                            if (childContext.getResponse() != null) {
-                                context.setResponse(childContext.getResponse());
+                    try {
+                        processor.process(childContext, new ProcessorListener() {
+                            @Override
+                            public void onSuccess(
+                                    final ProcessContext currentContext) {
+                                if (childContext.getResponse() != null) {
+                                    context.setResponse(childContext.getResponse());
+                                }
+                                context.addNumOfProcessedEvents(childContext
+                                        .getProcessed());
+                                final int count = counter.decrementAndGet();
+                                if (count == 0) {
+                                    ProcessorUtil.finish(context,
+                                            ParallelProcessor.this, listener);
+                                }
                             }
-                            context.addNumOfProcessedEvents(childContext
-                                    .getProcessed());
-                            final int count = counter.decrementAndGet();
-                            if (count == 0) {
-                                ProcessorUtil.finish(context,
-                                        ParallelProcessor.this, listener);
-                            }
-                        }
 
-                        @Override
-                        public void onFailure(final Throwable t) {
-                            ProcessorUtil.fail(context, ParallelProcessor.this,
-                                    listener, t);
-                        }
-                    });
+                            @Override
+                            public void onFailure(final Throwable t) {
+                                ProcessorUtil.fail(context, ParallelProcessor.this,
+                                        listener, t);
+                            }
+                        });
+                    } catch (final Throwable t) {
+                        // Handle exceptions thrown directly by processor.process()
+                        // without calling listener.onFailure()
+                        ProcessorUtil.fail(context, ParallelProcessor.this,
+                                listener, t);
+                    }
                 }
             );
         }
