@@ -45,8 +45,8 @@ public class H2ConfigServletTest {
     @BeforeEach
     public void setUp() {
         servlet = new H2ConfigServlet();
-        lenient().when(servletConfig.getServletContext()).thenReturn(servletContext);
-        lenient().when(servletContext.getRealPath(anyString())).thenReturn("/tmp/db/");
+        lenient().doReturn(servletContext).when(servletConfig).getServletContext();
+        lenient().doReturn("/tmp/db/").when(servletContext).getRealPath(anyString());
     }
 
     /**
@@ -66,7 +66,7 @@ public class H2ConfigServletTest {
     public void testInit_WithoutH2Class() throws ServletException {
         // Test initialization when H2 class is not available
         // This should not throw an exception but log appropriately
-        when(servletConfig.getInitParameter("baseDir")).thenReturn("/tmp/h2db");
+        doReturn("/tmp/h2db").when(servletConfig).getInitParameter("baseDir");
 
         // Should complete without throwing exception even if H2 is not available
         assertDoesNotThrow(() -> servlet.init(servletConfig));
@@ -75,8 +75,8 @@ public class H2ConfigServletTest {
     @Test
     public void testInit_WithDefaultBaseDir() throws ServletException {
         // Test initialization with default base directory
-        when(servletConfig.getInitParameter("baseDir")).thenReturn(null);
-        when(servletContext.getRealPath("/WEB-INF/db/")).thenReturn("/app/WEB-INF/db/");
+        doReturn(null).when(servletConfig).getInitParameter("baseDir");
+        doReturn("/app/WEB-INF/db/").when(servletContext).getRealPath("/WEB-INF/db/");
 
         assertDoesNotThrow(() -> servlet.init(servletConfig));
     }
@@ -84,7 +84,7 @@ public class H2ConfigServletTest {
     @Test
     public void testInit_WithCustomBaseDir() throws ServletException {
         // Test initialization with custom base directory
-        when(servletConfig.getInitParameter("baseDir")).thenReturn("/custom/db/path");
+        doReturn("/custom/db/path").when(servletConfig).getInitParameter("baseDir");
 
         assertDoesNotThrow(() -> servlet.init(servletConfig));
     }
@@ -92,7 +92,7 @@ public class H2ConfigServletTest {
     @Test
     public void testInit_WithTcpAllowOthers() throws ServletException {
         // Test initialization with tcpAllowOthers enabled
-        when(servletConfig.getInitParameter("tcpAllowOthers")).thenReturn("true");
+        doReturn("true").when(servletConfig).getInitParameter("tcpAllowOthers");
 
         assertDoesNotThrow(() -> servlet.init(servletConfig));
     }
@@ -101,7 +101,7 @@ public class H2ConfigServletTest {
     public void testInit_WithTcpPort() throws ServletException {
         // Test initialization with custom TCP port
         int port = findAvailablePort();
-        when(servletConfig.getInitParameter("tcpPort")).thenReturn(String.valueOf(port));
+        doReturn(String.valueOf(port)).when(servletConfig).getInitParameter("tcpPort");
 
         assertDoesNotThrow(() -> servlet.init(servletConfig));
     }
@@ -109,7 +109,7 @@ public class H2ConfigServletTest {
     @Test
     public void testInit_WithTcpSSL() throws ServletException {
         // Test initialization with TCP SSL enabled
-        when(servletConfig.getInitParameter("tcpSSL")).thenReturn("true");
+        doReturn("true").when(servletConfig).getInitParameter("tcpSSL");
 
         assertDoesNotThrow(() -> servlet.init(servletConfig));
     }
@@ -117,7 +117,7 @@ public class H2ConfigServletTest {
     @Test
     public void testInit_WithTcpPassword() throws ServletException {
         // Test initialization with TCP password
-        when(servletConfig.getInitParameter("tcpPassword")).thenReturn("testPassword");
+        doReturn("testPassword").when(servletConfig).getInitParameter("tcpPassword");
 
         assertDoesNotThrow(() -> servlet.init(servletConfig));
     }
@@ -126,11 +126,11 @@ public class H2ConfigServletTest {
     public void testInit_WithAllParameters() throws ServletException {
         // Test initialization with all parameters
         int port = findAvailablePort();
-        when(servletConfig.getInitParameter("baseDir")).thenReturn("/custom/db");
-        when(servletConfig.getInitParameter("tcpAllowOthers")).thenReturn("true");
-        when(servletConfig.getInitParameter("tcpPort")).thenReturn(String.valueOf(port));
-        when(servletConfig.getInitParameter("tcpSSL")).thenReturn("true");
-        when(servletConfig.getInitParameter("tcpPassword")).thenReturn("password");
+        doReturn("/custom/db").when(servletConfig).getInitParameter("baseDir");
+        doReturn("true").when(servletConfig).getInitParameter("tcpAllowOthers");
+        doReturn(String.valueOf(port)).when(servletConfig).getInitParameter("tcpPort");
+        doReturn("true").when(servletConfig).getInitParameter("tcpSSL");
+        doReturn("password").when(servletConfig).getInitParameter("tcpPassword");
 
         assertDoesNotThrow(() -> servlet.init(servletConfig));
     }
@@ -144,7 +144,7 @@ public class H2ConfigServletTest {
     @Test
     public void testDestroy_WithServer() throws ServletException {
         // Test destroy after initialization
-        when(servletConfig.getInitParameter("baseDir")).thenReturn("/tmp/h2db");
+        doReturn("/tmp/h2db").when(servletConfig).getInitParameter("baseDir");
         servlet.init(servletConfig);
 
         // Should not throw exception even if server.stop() fails
@@ -154,8 +154,8 @@ public class H2ConfigServletTest {
     @Test
     public void testInit_ErrorHandling() throws ServletException {
         // Test that init handles errors gracefully
-        when(servletContext.getRealPath(anyString())).thenReturn(null);
-        when(servletConfig.getInitParameter("baseDir")).thenReturn(null);
+        doReturn(null).when(servletContext).getRealPath(anyString());
+        doReturn(null).when(servletConfig).getInitParameter("baseDir");
 
         // Even with null paths, should handle gracefully
         assertDoesNotThrow(() -> servlet.init(servletConfig));
