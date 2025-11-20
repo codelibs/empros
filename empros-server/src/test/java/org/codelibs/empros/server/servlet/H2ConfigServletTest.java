@@ -16,6 +16,10 @@
 package org.codelibs.empros.server.servlet;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+import java.io.IOException;
+import java.net.ServerSocket;
 
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletContext;
@@ -26,8 +30,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class H2ConfigServletTest {
@@ -43,8 +45,21 @@ public class H2ConfigServletTest {
     @BeforeEach
     public void setUp() {
         servlet = new H2ConfigServlet();
-        when(servletConfig.getServletContext()).thenReturn(servletContext);
-        when(servletContext.getRealPath(anyString())).thenReturn("/tmp/db/");
+        lenient().when(servletConfig.getServletContext()).thenReturn(servletContext);
+        lenient().when(servletContext.getRealPath(anyString())).thenReturn("/tmp/db/");
+    }
+
+    /**
+     * Finds an available TCP port for testing.
+     * @return an available port number
+     */
+    private int findAvailablePort() {
+        try (ServerSocket socket = new ServerSocket(0)) {
+            socket.setReuseAddress(true);
+            return socket.getLocalPort();
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to find available port", e);
+        }
     }
 
     @Test
@@ -85,7 +100,8 @@ public class H2ConfigServletTest {
     @Test
     public void testInit_WithTcpPort() throws ServletException {
         // Test initialization with custom TCP port
-        when(servletConfig.getInitParameter("tcpPort")).thenReturn("9092");
+        int port = findAvailablePort();
+        when(servletConfig.getInitParameter("tcpPort")).thenReturn(String.valueOf(port));
 
         assertDoesNotThrow(() -> servlet.init(servletConfig));
     }
@@ -109,9 +125,10 @@ public class H2ConfigServletTest {
     @Test
     public void testInit_WithAllParameters() throws ServletException {
         // Test initialization with all parameters
+        int port = findAvailablePort();
         when(servletConfig.getInitParameter("baseDir")).thenReturn("/custom/db");
         when(servletConfig.getInitParameter("tcpAllowOthers")).thenReturn("true");
-        when(servletConfig.getInitParameter("tcpPort")).thenReturn("9092");
+        when(servletConfig.getInitParameter("tcpPort")).thenReturn(String.valueOf(port));
         when(servletConfig.getInitParameter("tcpSSL")).thenReturn("true");
         when(servletConfig.getInitParameter("tcpPassword")).thenReturn("password");
 
