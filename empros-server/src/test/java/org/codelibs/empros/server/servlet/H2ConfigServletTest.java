@@ -92,7 +92,11 @@ public class H2ConfigServletTest {
     @Test
     public void testInit_WithTcpAllowOthers() throws ServletException {
         // Test initialization with tcpAllowOthers enabled
+        lenient().doReturn(null).when(servletConfig).getInitParameter("baseDir");
         doReturn("true").when(servletConfig).getInitParameter("tcpAllowOthers");
+        lenient().doReturn(null).when(servletConfig).getInitParameter("tcpPort");
+        lenient().doReturn(null).when(servletConfig).getInitParameter("tcpSSL");
+        lenient().doReturn(null).when(servletConfig).getInitParameter("tcpPassword");
 
         assertDoesNotThrow(() -> servlet.init(servletConfig));
     }
@@ -101,7 +105,11 @@ public class H2ConfigServletTest {
     public void testInit_WithTcpPort() throws ServletException {
         // Test initialization with custom TCP port
         int port = findAvailablePort();
+        lenient().doReturn(null).when(servletConfig).getInitParameter("baseDir");
+        lenient().doReturn(null).when(servletConfig).getInitParameter("tcpAllowOthers");
         doReturn(String.valueOf(port)).when(servletConfig).getInitParameter("tcpPort");
+        lenient().doReturn(null).when(servletConfig).getInitParameter("tcpSSL");
+        lenient().doReturn(null).when(servletConfig).getInitParameter("tcpPassword");
 
         assertDoesNotThrow(() -> servlet.init(servletConfig));
     }
@@ -109,7 +117,11 @@ public class H2ConfigServletTest {
     @Test
     public void testInit_WithTcpSSL() throws ServletException {
         // Test initialization with TCP SSL enabled
+        lenient().doReturn(null).when(servletConfig).getInitParameter("baseDir");
+        lenient().doReturn(null).when(servletConfig).getInitParameter("tcpAllowOthers");
+        lenient().doReturn(null).when(servletConfig).getInitParameter("tcpPort");
         doReturn("true").when(servletConfig).getInitParameter("tcpSSL");
+        lenient().doReturn(null).when(servletConfig).getInitParameter("tcpPassword");
 
         assertDoesNotThrow(() -> servlet.init(servletConfig));
     }
@@ -117,6 +129,10 @@ public class H2ConfigServletTest {
     @Test
     public void testInit_WithTcpPassword() throws ServletException {
         // Test initialization with TCP password
+        lenient().doReturn(null).when(servletConfig).getInitParameter("baseDir");
+        lenient().doReturn(null).when(servletConfig).getInitParameter("tcpAllowOthers");
+        lenient().doReturn(null).when(servletConfig).getInitParameter("tcpPort");
+        lenient().doReturn(null).when(servletConfig).getInitParameter("tcpSSL");
         doReturn("testPassword").when(servletConfig).getInitParameter("tcpPassword");
 
         assertDoesNotThrow(() -> servlet.init(servletConfig));
