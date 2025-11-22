@@ -71,18 +71,24 @@ public class EventController {
             logger.info("event request");
         }
 
-        final List<Event> eventList = new ArrayList<Event>();
-        if (data instanceof Map<?, ?>) {
-            final Event event = new Event((Map<?, ?>) data);
+        final List<Event> eventList = new ArrayList<>();
+        if (data instanceof Map) {
+            @SuppressWarnings("unchecked")
+            final Map<?, ?> dataMap = (Map<?, ?>) data;
+            final Event event = new Event(dataMap);
             event.setCreatedBy(getCreatedBy());
             event.setCreatedTime(new Date());
             eventList.add(event);
-        } else if (data instanceof List<?>) {
+        } else if (data instanceof List) {
             final String createdBy = getCreatedBy();
             final Date now = new Date();
-            for (final Object obj : (List<?>) data) {
-                if (obj instanceof Map<?, ?>) {
-                    final Event event = new Event((Map<?, ?>) obj);
+            @SuppressWarnings("unchecked")
+            final List<?> dataList = (List<?>) data;
+            for (final Object obj : dataList) {
+                if (obj instanceof Map) {
+                    @SuppressWarnings("unchecked")
+                    final Map<?, ?> objMap = (Map<?, ?>) obj;
+                    final Event event = new Event(objMap);
                     event.setCreatedBy(createdBy);
                     event.setCreatedTime(now);
                     eventList.add(event);
@@ -103,37 +109,43 @@ public class EventController {
         );
 
         final Runnable task = () -> {
-            if (eventList.isEmpty()) {
-                result.setErrorResult(new EmprosClientException("WEMW0001",
-                        new Object[0]));
-            } else {
-                final ProcessContext processContext = new ProcessContext(
-                        eventList, (context) -> {
-                        final ProcessContext originalContext = context
-                                .getOriginal();
-                        final Throwable[] failures = originalContext
-                                .getFailures();
-                        if (failures.length == 0) {
-                            final Object response = originalContext
-                                    .getResponse();
-                            if (response != null) {
-                                result.setResult(response);
+            try {
+                if (eventList.isEmpty()) {
+                    result.setErrorResult(new EmprosClientException("WEMW0001",
+                            new Object[0]));
+                } else {
+                    final ProcessContext processContext = new ProcessContext(
+                            eventList, (context) -> {
+                            final ProcessContext originalContext = context
+                                    .getOriginal();
+                            final Throwable[] failures = originalContext
+                                    .getFailures();
+                            if (failures.length == 0) {
+                                final Object response = originalContext
+                                        .getResponse();
+                                if (response != null) {
+                                    result.setResult(response);
+                                } else {
+                                    final EventResponse eventResponse = new EventResponse();
+                                    eventResponse.setStatus("ok");
+                                    eventResponse.setReceived(eventList
+                                            .size());
+                                    eventResponse
+                                            .setProcessed(originalContext
+                                                    .getProcessed());
+                                    result.setResult(eventResponse);
+                                }
                             } else {
-                                final EventResponse eventResponse = new EventResponse();
-                                eventResponse.setStatus("ok");
-                                eventResponse.setReceived(eventList
-                                        .size());
-                                eventResponse
-                                        .setProcessed(originalContext
-                                                .getProcessed());
-                                result.setResult(eventResponse);
+                                result.setErrorResult(new EmprosProcessException(
+                                        failures));
                             }
-                        } else {
-                            result.setErrorResult(new EmprosProcessException(
-                                    failures));
-                        }
-                    });
-                eventProcessor.process(processContext, null);
+                        });
+                    eventProcessor.process(processContext, null);
+                }
+            } catch (final Throwable t) {
+                logger.error("Unexpected error during event processing", t);
+                result.setErrorResult(new EmprosProcessException(
+                        new Throwable[] { t }));
             }
         };
         asyncExecutor.generic(task);
@@ -142,8 +154,22 @@ public class EventController {
     }
 
     protected String getCreatedBy() {
-        return ((ServletRequestAttributes) RequestContextHolder
-                .currentRequestAttributes()).getRequest().getRemoteAddr();
+        final var request = ((ServletRequestAttributes) RequestContextHolder
+                .currentRequestAttributes()).getRequest();
+
+        // Check X-Forwarded-For header first (for proxy/load balancer scenarios)
+        String forwardedFor = request.getHeader("X-Forwarded-For");
+        if (forwardedFor != null && !forwardedFor.isEmpty()) {
+            // X-Forwarded-For can contain multiple IPs, get the first one (original client)
+            int commaIndex = forwardedFor.indexOf(',');
+            if (commaIndex > 0) {
+                return forwardedFor.substring(0, commaIndex).trim();
+            }
+            return forwardedFor.trim();
+        }
+
+        // Fall back to remote address
+        return request.getRemoteAddr();
     }
 
 }

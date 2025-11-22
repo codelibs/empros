@@ -108,23 +108,48 @@ public class H2ConfigServlet extends HttpServlet {
         );
     }
 
-    private Object getH2Server(final String[] args)
-            throws IllegalAccessException, InvocationTargetException,
-            SecurityException, NoSuchMethodException {
+    private Object getH2Server(final String[] args) {
         try {
             serverClass = Class.forName("org.h2.tools.Server");
+            if (logger.isDebugEnabled()) {
+                logger.debug("H2 Server class loaded successfully");
+            }
         } catch (final ClassNotFoundException e) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("H2 Server class not found - H2 support is not available", e);
+            }
             return null;
         }
 
-        final Method createTcpServerMethod = serverClass.getMethod(
-                "createTcpServer", new Class<?>[] { String[].class });
-        final Object h2Server = createTcpServerMethod.invoke(null,
-                new Object[] { args });
+        try {
+            final Method createTcpServerMethod = serverClass.getMethod(
+                    "createTcpServer", new Class<?>[] { String[].class });
+            final Object h2Server = createTcpServerMethod.invoke(null,
+                    new Object[] { args });
+            if (logger.isDebugEnabled()) {
+                logger.debug("H2 TCP Server created successfully");
+            }
 
-        final Method startMethod = serverClass.getMethod("start",
-                (Class[]) null);
-        return startMethod.invoke(h2Server, (Object[]) null);
+            final Method startMethod = serverClass.getMethod("start",
+                    (Class[]) null);
+            final Object startedServer = startMethod.invoke(h2Server, (Object[]) null);
+            if (logger.isDebugEnabled()) {
+                logger.debug("H2 TCP Server started successfully");
+            }
+            return startedServer;
+        } catch (final NoSuchMethodException e) {
+            logger.error("Failed to find required H2 Server method - incompatible H2 version?", e);
+            return null;
+        } catch (final IllegalAccessException e) {
+            logger.error("Failed to access H2 Server method - security restriction?", e);
+            return null;
+        } catch (final InvocationTargetException e) {
+            logger.error("Failed to invoke H2 Server method - initialization error", e.getCause());
+            return null;
+        } catch (final Exception e) {
+            logger.error("Unexpected error while initializing H2 Server", e);
+            return null;
+        }
     }
 
 }

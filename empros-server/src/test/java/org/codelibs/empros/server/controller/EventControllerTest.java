@@ -258,4 +258,130 @@ public class EventControllerTest {
         assertNotNull(result);
         verify(eventProcessor, times(1)).process(any(ProcessContext.class), any());
     }
+
+    @Test
+    public void testGetCreatedBy_WithXForwardedForHeader() {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setRemoteAddr("192.168.1.100");
+        request.addHeader("X-Forwarded-For", "10.0.0.1");
+
+        ServletRequestAttributes attrs = new ServletRequestAttributes(request);
+        RequestContextHolder.setRequestAttributes(attrs);
+
+        String createdBy = eventController.getCreatedBy();
+
+        assertEquals("10.0.0.1", createdBy, "Should return first IP from X-Forwarded-For header");
+    }
+
+    @Test
+    public void testGetCreatedBy_WithMultipleXForwardedForIPs() {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setRemoteAddr("192.168.1.100");
+        request.addHeader("X-Forwarded-For", "10.0.0.1, 10.0.0.2, 10.0.0.3");
+
+        ServletRequestAttributes attrs = new ServletRequestAttributes(request);
+        RequestContextHolder.setRequestAttributes(attrs);
+
+        String createdBy = eventController.getCreatedBy();
+
+        assertEquals("10.0.0.1", createdBy, "Should return first IP from comma-separated X-Forwarded-For header");
+    }
+
+    @Test
+    public void testGetCreatedBy_WithoutXForwardedForHeader() {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setRemoteAddr("192.168.1.100");
+
+        ServletRequestAttributes attrs = new ServletRequestAttributes(request);
+        RequestContextHolder.setRequestAttributes(attrs);
+
+        String createdBy = eventController.getCreatedBy();
+
+        assertEquals("192.168.1.100", createdBy, "Should return remote address when X-Forwarded-For is not present");
+    }
+
+    @Test
+    public void testGetCreatedBy_WithEmptyXForwardedForHeader() {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setRemoteAddr("192.168.1.100");
+        request.addHeader("X-Forwarded-For", "");
+
+        ServletRequestAttributes attrs = new ServletRequestAttributes(request);
+        RequestContextHolder.setRequestAttributes(attrs);
+
+        String createdBy = eventController.getCreatedBy();
+
+        assertEquals("192.168.1.100", createdBy, "Should return remote address when X-Forwarded-For is empty");
+    }
+
+    @Test
+    public void testGetCreatedBy_WithXForwardedForHeaderWithSpaces() {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setRemoteAddr("192.168.1.100");
+        request.addHeader("X-Forwarded-For", "  10.0.0.1  , 10.0.0.2 ");
+
+        ServletRequestAttributes attrs = new ServletRequestAttributes(request);
+        RequestContextHolder.setRequestAttributes(attrs);
+
+        String createdBy = eventController.getCreatedBy();
+
+        assertEquals("10.0.0.1", createdBy, "Should trim spaces from X-Forwarded-For IP");
+    }
+
+    @Test
+    public void testAsyncExceptionHandling_ProcessorThrowsException() {
+        Map<String, Object> data = new HashMap<>();
+        data.put("key", "value");
+
+        final RuntimeException testException = new RuntimeException("Test exception");
+
+        doAnswer(invocation -> {
+            Runnable task = invocation.getArgument(0);
+            task.run();
+            return null;
+        }).when(asyncExecutor).generic(any(Runnable.class));
+
+        doAnswer(invocation -> {
+            throw testException;
+        }).when(eventProcessor).process(any(ProcessContext.class), any());
+
+        DeferredResult<Object> result = eventController.create(data);
+
+        assertNotNull(result);
+        // The DeferredResult should not be set to success
+        verify(asyncExecutor, times(1)).generic(any(Runnable.class));
+    }
+
+    @Test
+    public void testEventCreatedByMetadata() {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setRemoteAddr("192.168.1.100");
+        request.addHeader("X-Forwarded-For", "10.0.0.1");
+
+        ServletRequestAttributes attrs = new ServletRequestAttributes(request);
+        RequestContextHolder.setRequestAttributes(attrs);
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("key", "value");
+
+        doAnswer(invocation -> {
+            Runnable task = invocation.getArgument(0);
+            task.run();
+            return null;
+        }).when(asyncExecutor).generic(any(Runnable.class));
+
+        doAnswer(invocation -> {
+            ProcessContext context = invocation.getArgument(0);
+            // Verify the event has the correct createdBy metadata
+            assertEquals(1, context.getIncomingEventList().size());
+            assertEquals("10.0.0.1", context.getIncomingEventList().get(0).getCreatedBy());
+            assertNotNull(context.getIncomingEventList().get(0).getCreatedTime());
+            return null;
+        }).when(eventProcessor).process(any(ProcessContext.class), any());
+
+        DeferredResult<Object> result = eventController.create(data);
+
+        assertNotNull(result);
+        verify(eventProcessor, times(1)).process(any(ProcessContext.class), any());
+    }
 }

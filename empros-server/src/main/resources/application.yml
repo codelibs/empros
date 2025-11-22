@@ -15,7 +15,7 @@ thread_pool:
 
 processor:
   mode: "parallel"
-  thead_pool_size: 5
+  thread_pool_size: 5
 
 datastore:
   csvstore:

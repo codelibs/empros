@@ -478,4 +478,104 @@ public class ParallelProcessorTest {
         assertTrue(latch.await(2, TimeUnit.SECONDS));
         assertEquals(1000, parallelProcessor.queueCapacity); // Default capacity
     }
+
+    @Test
+    public void testNullListenerSafety_EmptyProcessorList() throws InterruptedException {
+        // Test that null listener is handled safely when processor list is empty
+        final CountDownLatch latch = new CountDownLatch(1);
+
+        ProcessListener testListener = new ProcessListener() {
+            @Override
+            public void onFinish(ProcessContext context) {
+                latch.countDown();
+            }
+            public void onFailure(Throwable t) {
+                fail("Should not fail: " + t.getMessage());
+            }
+        };
+
+        ProcessContext context = new ProcessContext(eventList, testListener);
+        parallelProcessor = new ParallelProcessor(new ArrayList<>(), 2);
+
+        // Pass null listener - should not throw NullPointerException
+        context.start(parallelProcessor);
+        parallelProcessor.process(context, null);
+
+        assertTrue(latch.await(2, TimeUnit.SECONDS), "ProcessListener should be called even with null ProcessorListener");
+    }
+
+    @Test
+    public void testNullListenerSafety_WithProcessors() throws InterruptedException {
+        // Test that null listener is handled safely when processing events
+        final CountDownLatch latch = new CountDownLatch(1);
+        final AtomicInteger processCount = new AtomicInteger(0);
+
+        ProcessListener testListener = new ProcessListener() {
+            @Override
+            public void onFinish(ProcessContext context) {
+                latch.countDown();
+            }
+            public void onFailure(Throwable t) {
+                fail("Should not fail: " + t.getMessage());
+            }
+        };
+
+        ProcessContext context = new ProcessContext(eventList, testListener);
+
+        List<EventProcessor> processors = new ArrayList<>();
+        processors.add(new TestEventProcessor(processCount, 10));
+        processors.add(new TestEventProcessor(processCount, 10));
+
+        parallelProcessor = new ParallelProcessor(processors, 2);
+
+        // Pass null listener - should not throw NullPointerException
+        context.start(parallelProcessor);
+        parallelProcessor.process(context, null);
+
+        assertTrue(latch.await(2, TimeUnit.SECONDS), "ProcessListener should be called even with null ProcessorListener");
+        assertEquals(2, processCount.get(), "All processors should be executed");
+    }
+
+    @Test
+    public void testNullListenerSafety_OnException() throws InterruptedException {
+        // Test that null listener is handled safely when exception occurs
+        final CountDownLatch latch = new CountDownLatch(1);
+        final RuntimeException testException = new RuntimeException("Test exception");
+
+        ProcessListener testListener = new ProcessListener() {
+            @Override
+            public void onFinish(ProcessContext context) {
+                // Check for failures
+                if (context.getFailures().length > 0) {
+                    latch.countDown();
+                }
+            }
+            public void onFailure(Throwable t) {
+                fail("Should not call onFailure: " + t.getMessage());
+            }
+        };
+
+        ProcessContext context = new ProcessContext(eventList, testListener);
+
+        List<EventProcessor> processors = new ArrayList<>();
+        processors.add(new EventProcessor() {
+            @Override
+            public void process(ProcessContext ctx, ProcessorListener listener) {
+                throw testException;
+            }
+        });
+
+        parallelProcessor = new ParallelProcessor(processors, 2);
+
+        // Pass null listener - should not throw NullPointerException even when exception occurs
+        context.start(parallelProcessor);
+        try {
+            parallelProcessor.process(context, null);
+        } catch (RuntimeException e) {
+            // Exception might be caught by ProcessorUtil.fail
+        }
+
+        // Even with exception, the context should be finished
+        assertTrue(latch.await(2, TimeUnit.SECONDS), "ProcessListener should be called even with null ProcessorListener and exception");
+    }
 }
